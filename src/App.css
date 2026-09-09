@@ -139,8 +139,7 @@ main {
     box-shadow: 0 16px 35px #314a3a20;
 }
 
-.nav-explore:hover .explore-menu,
-.nav-explore:focus-within .explore-menu {
+.nav-explore.is-open .explore-menu {
     display: grid;
 }
 
