@@ -115,6 +115,65 @@ main {
     gap: 5px;
 }
 
+.language-picker {
+    position: relative;
+}
+
+.language-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 0;
+    border: 0;
+    color: #53665c;
+    background: transparent;
+    cursor: pointer;
+    font: 11px 'DM Mono';
+}
+
+.language-trigger:hover,
+.language-trigger:focus-visible {
+    color: #17271f;
+}
+
+.language-menu {
+    position: absolute;
+    z-index: 8;
+    top: 27px;
+    right: -12px;
+    display: grid;
+    min-width: 135px;
+    padding: 7px;
+    border: 1px solid #d6ded5;
+    background: #fffdf8;
+    box-shadow: 0 16px 35px #314a3a20;
+}
+
+.language-menu button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 9px;
+    border: 0;
+    color: #53665c;
+    background: transparent;
+    cursor: pointer;
+    font-size: 12px;
+    text-align: left;
+}
+
+.language-menu button:hover,
+.language-menu button:focus-visible,
+.language-menu button[aria-selected='true'] {
+    color: #17271f;
+    background: #f1eee4;
+}
+
+.language-menu small {
+    color: #d77243;
+    font: 10px 'DM Mono';
+}
+
 .language-globe {
     width: 18px;
     height: 18px;
@@ -874,6 +933,241 @@ footer p {
     margin: 0;
 }
 
+/* About BIS */
+.bis-page {
+    color: #17271f;
+    padding-bottom: 0;
+}
+
+.bis-page h1,
+.bis-page h2,
+.bis-page h3,
+.bis-page p {
+    margin-top: 0;
+}
+
+.bis-page h1,
+.bis-page h2 {
+    letter-spacing: -.055em;
+}
+
+.bis-page h1 em,
+.bis-page h2 em {
+    color: #d77243;
+    font-family: 'Playfair Display', serif;
+    font-weight: 500;
+}
+
+.bis-page .eyebrow {
+    justify-content: flex-start;
+}
+
+.bis-hero,
+.bis-section {
+    max-width: 1240px;
+    margin: auto;
+    padding-left: 5.5%;
+    padding-right: 5.5%;
+}
+
+.bis-hero {
+    min-height: 610px;
+    display: grid;
+    grid-template-columns: 1.1fr .9fr;
+    gap: 8%;
+    align-items: center;
+    padding-top: 70px;
+    padding-bottom: 80px;
+}
+
+.bis-hero-copy h1 {
+    max-width: 680px;
+    margin: 23px 0;
+    font-size: clamp(48px, 6vw, 76px);
+    font-weight: 500;
+    line-height: .98;
+}
+
+.bis-lede,
+.bis-section-intro>p:last-child,
+.bis-section-heading>p,
+.bis-audience-grid>div>p:not(.eyebrow),
+.bis-consumer-block>p:not(.eyebrow) {
+    color: #617067;
+    font-size: 14px;
+    line-height: 1.75;
+}
+
+.bis-lede {
+    max-width: 560px;
+    margin-bottom: 30px;
+}
+
+.bis-hero-art {
+    position: relative;
+    min-height: 390px;
+    overflow: hidden;
+    background: #e8f0e6;
+}
+
+.bis-hero-art:before,
+.bis-hero-art:after {
+    content: '';
+    position: absolute;
+    width: 330px;
+    height: 330px;
+    border: 1px solid #a9bda8;
+    border-radius: 50%;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.bis-hero-art:after {
+    width: 190px;
+    height: 190px;
+    border-color: #d77243;
+}
+
+.bis-seal {
+    position: absolute;
+    z-index: 1;
+    left: 50%;
+    top: 50%;
+    display: grid;
+    width: 112px;
+    height: 112px;
+    place-content: center;
+    transform: translate(-50%, -50%);
+    border: 1px solid #203329;
+    border-radius: 50%;
+    color: #203329;
+    text-align: center;
+    font: 600 22px 'DM Mono';
+}
+
+.bis-seal span {
+    margin-top: 4px;
+    color: #d77243;
+    font: 8px 'DM Mono';
+    letter-spacing: .08em;
+}
+
+.bis-art-line {
+    position: absolute;
+    z-index: 1;
+    width: 35%;
+    border-top: 1px solid #8da78f;
+    transform-origin: left;
+}
+
+.line-one { left: 15%; top: 28%; transform: rotate(26deg); }
+.line-two { right: 14%; top: 69%; transform: rotate(-28deg); }
+
+.bis-art-node {
+    position: absolute;
+    z-index: 2;
+    display: grid;
+    width: 42px;
+    height: 42px;
+    place-items: center;
+    border: 1px solid #8da78f;
+    border-radius: 50%;
+    background: #f7f5ef;
+    color: #203329;
+    font: 11px 'DM Mono';
+}
+
+.node-one { left: 12%; top: 20%; }
+.node-two { right: 13%; top: 22%; color: #d77243; }
+.node-three { right: 10%; bottom: 18%; }
+.bis-art-label { position: absolute; color: #718277; font: 9px 'DM Mono'; letter-spacing: .14em; }
+.label-one { left: 11%; bottom: 21%; }
+.label-two { right: 21%; top: 14%; }
+
+.bis-section { padding-top: 105px; padding-bottom: 110px; }
+.bis-overview { display: grid; grid-template-columns: .7fr 1.3fr; gap: 8%; }
+.bis-section-intro h2,
+.bis-section-heading h2,
+.bis-audience-grid h2,
+.bis-final-cta h2 { margin: 17px 0 22px; font-size: clamp(38px, 4.8vw, 59px); font-weight: 500; line-height: .98; }
+.bis-section-intro>p:last-child { max-width: 330px; margin-bottom: 0; }
+.bis-principle-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+.bis-card { position: relative; min-height: 215px; padding: 22px; border: 1px solid #d6ded5; background: #fffdf8; transition: transform .2s, border-color .2s; }
+.bis-card:hover { transform: translateY(-4px); border-color: #d77243; }
+.bis-card-number, .bis-matter-card>span { color: #d77243; font: 11px 'DM Mono'; }
+.bis-card h3 { margin: 38px 0 11px; font-size: 17px; }
+.bis-card p, .bis-matter-card p, .bis-scheme-card p { color: #718077; font-size: 12px; line-height: 1.6; }
+.bis-card p { max-width: 235px; margin-bottom: 0; }
+.bis-card-mark { position: absolute; right: 22px; bottom: 19px; color: #d77243; }
+.bis-band { max-width: none; background: #eef3eb; }
+.bis-band .bis-section { max-width: 1240px; }
+.bis-process .bis-section-intro { max-width: 580px; }
+.bis-process-track { display: grid; grid-template-columns: repeat(6, 1fr); margin-top: 55px; border-top: 1px solid #c4d2c3; }
+.bis-process-track article { min-height: 195px; padding: 19px 16px 0 0; border-right: 1px solid #c4d2c3; }
+.bis-process-track article:not(:first-child) { padding-left: 16px; }
+.bis-process-track article:last-child { border-right: 0; }
+.bis-process-icon { display: grid; width: 34px; height: 34px; place-items: center; border: 1px solid #d77243; border-radius: 50%; color: #d77243; font: 10px 'DM Mono'; }
+.bis-process-track h3 { margin: 30px 0 8px; font-size: 14px; }
+.bis-process-track p { max-width: 140px; margin: 0; color: #718277; font-size: 11px; line-height: 1.55; }
+.bis-section-heading { display: flex; align-items: end; justify-content: space-between; gap: 8%; margin-bottom: 52px; }
+.bis-section-heading>p { max-width: 320px; margin-bottom: 4px; }
+.bis-matter-grid { display: grid; grid-template-columns: repeat(5, 1fr); border-top: 1px solid #cbd4cb; }
+.bis-matter-card { min-height: 205px; padding: 21px 18px 20px 0; border-right: 1px solid #cbd4cb; }
+.bis-matter-card:not(:first-child) { padding-left: 18px; }
+.bis-matter-card:last-child { border-right: 0; }
+.bis-matter-card h3 { margin: 36px 0 10px; font-size: 16px; }
+.bis-matter-card p { margin: 0; }
+.bis-certification { padding-top: 80px; }
+.bis-cert-track { display: flex; align-items: stretch; }
+.bis-cert-step { position: relative; flex: 1; min-height: 135px; padding: 20px 12px 0 0; border-top: 1px solid #cbd4cb; }
+.bis-cert-step:not(:last-child):after { content: '→'; position: absolute; top: 15px; right: 8px; color: #d77243; }
+.bis-cert-step span { color: #d77243; font: 11px 'DM Mono'; }
+.bis-cert-step strong { display: block; max-width: 115px; margin-top: 22px; font-size: 12px; line-height: 1.4; }
+.bis-soft-band { background: #f0ece2; }
+.bis-scheme-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.bis-scheme-card { min-height: 230px; padding: 23px; background: #fffdf8; border: 1px solid #ded8ca; }
+.bis-scheme-card h3 { margin: 44px 0 8px; font-size: 18px; }
+.bis-scheme-card p { margin-bottom: 0; }
+.bis-scheme-card .bis-scheme-subtitle { margin: -3px 0 10px; color: #d77243; font-size: 11px; }
+.bis-disclaimer, .about-us-disclaimer { color: #8a968c; font-size: 10px; line-height: 1.5; }
+.bis-labs { display: grid; grid-template-columns: .75fr 1.25fr; gap: 8%; }
+.bis-lab-panel { align-self: center; padding: 24px; border: 1px solid #d6ded5; background: #fffdf8; }
+.bis-lab-panel-head { display: flex; justify-content: space-between; padding-bottom: 17px; border-bottom: 1px solid #dfe4dc; color: #8a968c; font: 9px 'DM Mono'; letter-spacing: .08em; }
+.bis-lab-fields { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0 18px; }
+.bis-lab-fields div { min-height: 74px; padding: 17px 0; border-bottom: 1px solid #e7ebe4; }
+.bis-lab-fields span, .bis-lab-fields b { display: block; }
+.bis-lab-fields span { color: #8a968c; font: 10px 'DM Mono'; }
+.bis-lab-fields b { margin-top: 7px; color: #53665c; font-size: 11px; font-weight: 500; }
+.bis-lab-panel .text-button { display: inline-block; margin-top: 20px; }
+.bis-standards-band { background: #203329; color: #f7f5ef; }
+.bis-standards .bis-section-heading h2 { color: #f7f5ef; }
+.bis-standards .bis-section-heading h2 em { color: #e7a17d; }
+.bis-standards .eyebrow { color: #e7a17d; }
+.bis-standards .eyebrow span { background: #e7a17d; }
+.bis-standards .bis-section-heading>p { color: #b2c3b4; }
+.bis-standards .bis-section-heading { margin-bottom: 0; }
+.bis-audiences { padding-top: 115px; }
+.bis-audience-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8%; }
+.bis-audience-grid>div { padding-right: 5%; }
+.bis-consumer-block { padding-left: 8%; border-left: 1px solid #d6ded5; }
+.bis-checklist { display: grid; gap: 0; margin: 29px 0 30px; padding: 0; list-style: none; }
+.bis-checklist li { display: flex; gap: 12px; align-items: start; padding: 11px 0; border-top: 1px solid #dfe4dc; color: #53665c; font-size: 12px; line-height: 1.4; }
+.bis-checklist li span { color: #d77243; font: 12px 'DM Mono'; }
+.bis-story-band { background: #e8f0e6; }
+.bis-story-copy { max-width: 700px; margin: -15px 0 55px; color: #617067; font-size: 14px; line-height: 1.75; }
+.bis-comparison { display: grid; grid-template-columns: 1fr 80px 1fr; gap: 25px; align-items: stretch; }
+.bis-comparison>div { display: grid; gap: 0; }
+.bis-comparison>div>span { padding-bottom: 13px; color: #8a968c; font: 10px 'DM Mono'; letter-spacing: .08em; }
+.bis-comparison strong { padding: 15px 0; border-top: 1px solid #c4d2c3; color: #53665c; font-size: 13px; font-weight: 500; }
+.bis-comparison-active strong { color: #203329; }
+.bis-comparison-arrow { place-items: center; color: #d77243; font-size: 27px; }
+.bis-final-cta { max-width: 900px; margin: auto; padding: 125px 5.5%; text-align: center; }
+.bis-final-cta .eyebrow { justify-content: center; }
+.bis-final-cta h2 { margin: 19px 0 18px; font-size: clamp(44px, 5vw, 65px); }
+.bis-final-cta>p:not(.eyebrow) { max-width: 500px; margin: 0 auto 30px; color: #617067; font-size: 14px; line-height: 1.7; }
+.bis-page>.about-us-disclaimer { max-width: 1240px; margin: 0 auto; padding: 0 5.5% 35px; text-align: center; }
+
 .chat-widget {
     position: fixed;
     z-index: 10;
@@ -1010,6 +1304,14 @@ footer p {
     box-shadow: 0 20px 70px #17271f66;
 }
 
+.access-modal {
+    position: relative;
+    width: min(100%, 420px);
+    padding: 40px;
+    background: #f7f5ef;
+    box-shadow: 0 20px 70px #17271f66;
+}
+
 .modal-close {
     position: absolute;
     top: 12px;
@@ -1022,11 +1324,27 @@ footer p {
     margin: 24px 0 12px;
 }
 
+.access-modal h2 {
+    margin: 24px 0 12px;
+    color: #17271f;
+    font-size: 42px;
+    font-weight: 500;
+    letter-spacing: -.055em;
+    line-height: .98;
+}
+
 .auth-modal>p:not(.eyebrow) {
     color: #718077;
     font-size: 13px;
     line-height: 1.5;
     margin-bottom: 26px;
+}
+
+.access-modal>p:not(.eyebrow) {
+    margin-bottom: 26px;
+    color: #718077;
+    font-size: 13px;
+    line-height: 1.5;
 }
 
 .auth-modal label {
@@ -1455,6 +1773,62 @@ footer p {
     color: #9aa59c;
     font-size: 10px;
     text-align: center;
+}
+
+@media (max-width: 900px) {
+    .bis-hero { grid-template-columns: 1fr; gap: 45px; min-height: auto; padding-top: 55px; }
+    .bis-hero-copy { max-width: 720px; }
+    .bis-hero-art { min-height: 330px; max-width: 600px; width: 100%; }
+    .bis-overview, .bis-labs { grid-template-columns: 1fr; gap: 45px; }
+    .bis-section-intro>p:last-child { max-width: 600px; }
+    .bis-process-track { grid-template-columns: repeat(3, 1fr); }
+    .bis-process-track article:nth-child(3) { border-right: 0; }
+    .bis-process-track article:nth-child(n+4) { border-top: 1px solid #c4d2c3; }
+    .bis-matter-grid { grid-template-columns: repeat(3, 1fr); }
+    .bis-matter-card:nth-child(3) { border-right: 0; }
+    .bis-matter-card:nth-child(n+4) { border-top: 1px solid #cbd4cb; }
+    .bis-scheme-grid { grid-template-columns: 1fr; }
+    .bis-scheme-card { min-height: 0; }
+}
+
+@media (max-width: 600px) {
+    .bis-hero, .bis-section { padding-left: 6%; padding-right: 6%; }
+    .bis-hero { padding-top: 30px; padding-bottom: 58px; }
+    .bis-hero-copy h1 { font-size: clamp(42px, 13vw, 58px); }
+    .bis-hero-art { min-height: 280px; }
+    .bis-hero-art:before { width: 260px; height: 260px; }
+    .bis-hero-art:after { width: 150px; height: 150px; }
+    .bis-seal { width: 94px; height: 94px; font-size: 18px; }
+    .bis-principle-grid, .bis-audience-grid { grid-template-columns: 1fr; }
+    .bis-card { min-height: 190px; }
+    .bis-section { padding-top: 75px; padding-bottom: 75px; }
+    .bis-section-heading { display: block; margin-bottom: 35px; }
+    .bis-section-heading>p { margin-top: 20px; }
+    .bis-process-track { display: block; margin-top: 35px; }
+    .bis-process-track article, .bis-process-track article:not(:first-child) { min-height: 0; display: grid; grid-template-columns: 45px 1fr; column-gap: 15px; padding: 17px 0; border-right: 0; border-top: 1px solid #c4d2c3; }
+    .bis-process-track article:first-child { border-top: 0; }
+    .bis-process-icon { grid-row: span 2; }
+    .bis-process-track h3 { margin: 1px 0 5px; }
+    .bis-process-track p { max-width: none; }
+    .bis-matter-grid { grid-template-columns: 1fr 1fr; }
+    .bis-matter-card, .bis-matter-card:not(:first-child) { min-height: 175px; padding: 17px 12px 17px 0; }
+    .bis-matter-card:nth-child(odd) { border-right: 1px solid #cbd4cb; }
+    .bis-matter-card:nth-child(even) { border-right: 0; padding-left: 12px; }
+    .bis-matter-card h3 { margin-top: 25px; }
+    .bis-cert-track { display: block; border-left: 1px solid #cbd4cb; }
+    .bis-cert-step, .bis-cert-step:not(:last-child) { min-height: 0; display: grid; grid-template-columns: 42px 1fr; gap: 12px; padding: 16px 0 16px 17px; border-top: 0; border-bottom: 1px solid #cbd4cb; }
+    .bis-cert-step:not(:last-child):after { content: '↓'; top: auto; right: auto; bottom: -13px; left: -7px; z-index: 1; padding: 2px 0; background: #f7f5ef; }
+    .bis-cert-step strong { max-width: none; margin-top: 0; }
+    .bis-lab-panel { padding: 16px; }
+    .bis-lab-panel-head { gap: 15px; line-height: 1.4; }
+    .bis-lab-fields { grid-template-columns: 1fr; }
+    .bis-audiences { padding-top: 75px; }
+    .bis-audience-grid>div { padding-right: 0; }
+    .bis-consumer-block { padding-left: 0; padding-top: 48px; border-top: 1px solid #d6ded5; border-left: 0; }
+    .bis-comparison { grid-template-columns: 1fr; gap: 12px; }
+    .bis-comparison-arrow { min-height: 30px; }
+    .bis-comparison-active { padding-top: 10px; }
+    .bis-final-cta { padding: 85px 6%; }
 }
 
 @media (max-width: 800px) {
@@ -2595,4 +2969,29 @@ footer p {
 
 .discovery-empty .button {
     margin-top: 10px;
+}
+
+.auth-success {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 14px 5.5%;
+    border-bottom: 1px solid #cbdcc9;
+    color: #315d39;
+    background: #e8f3e5;
+    font-size: 13px;
+}
+
+.auth-success span {
+    display: grid;
+    width: 20px;
+    height: 20px;
+    place-items: center;
+    border-radius: 50%;
+    color: white;
+    background: #6c9a68;
+    font-size: 12px;
 }

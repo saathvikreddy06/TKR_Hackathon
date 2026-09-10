@@ -58,8 +58,12 @@ function AuthPage({ mode = 'login', onAuthenticated }) {
                 // Tell App.jsx about the user's role
                 onAuthenticated(role)
 
-                // Navigate only after successful registration
-                navigate('/dashboard')
+                // Return to home only after successful registration.
+                navigate('/', {
+                    state: {
+                        authMessage: 'Registration successful. Welcome to standIQ.'
+                    }
+                })
 
             }
 
@@ -86,7 +90,11 @@ function AuthPage({ mode = 'login', onAuthenticated }) {
                  * actual role from Firestore.
                  */
 
-                navigate('/dashboard')
+                navigate('/', {
+                    state: {
+                        authMessage: 'Login successful. Welcome back.'
+                    }
+                })
             }
 
         }

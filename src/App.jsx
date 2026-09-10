@@ -31,6 +31,7 @@ import './App.css'
 
 function SiteHeader({ onOpenAuth, role, language, onLanguageChange }) {
     const [isExploreOpen, setIsExploreOpen] = useState(false)
+    const [isLanguageOpen, setIsLanguageOpen] = useState(false)
     const [isLoggingOut, setIsLoggingOut] = useState(false)
     const navigate = useNavigate()
 
@@ -132,37 +133,63 @@ function SiteHeader({ onOpenAuth, role, language, onLanguageChange }) {
             </nav>
 
             <div className="header-actions">
-                <label className="language-control">
+                <div className="language-control">
                     <img
                         className="language-globe"
                         src="/globe.jpeg"
                         alt="Language"
                     />
 
-                    <span className="language-value">
-                        <select
-                            className="language-select"
-                            value={language}
-                            onChange={(event) =>
-                                onLanguageChange(
-                                    event.target.value
+                    <div className="language-picker">
+                        <button
+                            className="language-trigger"
+                            type="button"
+                            onClick={() =>
+                                setIsLanguageOpen(
+                                    (isOpen) => !isOpen
                                 )
                             }
-                            aria-label="Choose language"
+                            aria-expanded={isLanguageOpen}
+                            aria-haspopup="listbox"
                         >
-                            <option value="EN">EN</option>
-                            <option value="HI">HI</option>
-                            <option value="TE">TE</option>
-                        </select>
+                            {language}
+                            <span
+                                className="nav-chevron"
+                                aria-hidden="true"
+                            >
+                                ⌄
+                            </span>
+                        </button>
 
-                        <span
-                            className="nav-chevron"
-                            aria-hidden="true"
-                        >
-                            ⌄
-                        </span>
-                    </span>
-                </label>
+                        {isLanguageOpen && (
+                            <div
+                                className="language-menu"
+                                role="listbox"
+                                aria-label="Choose language"
+                            >
+                                {[
+                                    ['EN', 'English'],
+                                    ['HI', 'Hindi'],
+                                    ['TE', 'Telugu']
+                                ].map(([value, label]) => (
+                                    <button
+                                        key={value}
+                                        type="button"
+                                        role="option"
+                                        aria-selected={language === value}
+                                        onClick={() => {
+                                            onLanguageChange(value)
+                                            setIsLanguageOpen(false)
+                                        }}
+                                    >
+                                        <span>{label}</span>
+                                        <small>{value}</small>
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </div>
 
                 {role ? (
                     <>
@@ -252,9 +279,58 @@ function ScrollToTop() {
 
 
 function ProtectedRoute({ role, children }) {
-    return role
-        ? children
-        : <Navigate to="/login" replace />
+    const navigate = useNavigate()
+
+    if (role) return children
+
+    return (
+        <div
+            className="modal-backdrop"
+            onClick={() => navigate('/')}
+        >
+            <div
+                className="access-modal"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="access-modal-title"
+                onClick={(event) => event.stopPropagation()}
+            >
+                <button
+                    className="modal-close"
+                    type="button"
+                    onClick={() => navigate('/')}
+                    aria-label="Close login required dialog"
+                >
+                    ×
+                </button>
+
+                <p className="eyebrow">
+                    <span></span> Login required
+                </p>
+
+                <h2 id="access-modal-title">Continue with standIQ.</h2>
+                <p>
+                    Please log in first to access this BIS tool and continue your standards journey.
+                </p>
+
+                <button
+                    className="button auth-submit"
+                    type="button"
+                    onClick={() => navigate('/login')}
+                >
+                    Continue to login <span>↗</span>
+                </button>
+
+                <button
+                    className="switch-auth"
+                    type="button"
+                    onClick={() => navigate('/signup')}
+                >
+                    New to standIQ? Create an account
+                </button>
+            </div>
+        </div>
+    )
 }
 
 
@@ -338,6 +414,7 @@ function App() {
 
     // Firebase authentication loading state
     const [authLoading, setAuthLoading] = useState(true)
+    const [hasResolvedInitialAuth, setHasResolvedInitialAuth] = useState(false)
 
     useEffect(() => {
         let authChangeId = 0
@@ -346,7 +423,9 @@ function App() {
             async (user) => {
                 const currentAuthChangeId = ++authChangeId
 
-                setAuthLoading(true)
+                if (!hasResolvedInitialAuth) {
+                    setAuthLoading(true)
+                }
 
                 // Clear access immediately while the profile is being checked.
                 setRole(null)
@@ -380,14 +459,17 @@ function App() {
 
                 }
 
-                // Firebase has finished checking authentication
-                setAuthLoading(false)
+                // Only the first Firebase callback should block the app shell.
+                if (!hasResolvedInitialAuth) {
+                    setHasResolvedInitialAuth(true)
+                    setAuthLoading(false)
+                }
             }
         )
 
         // Cleanup listener when App unmounts
         return () => unsubscribe()
-    }, [])
+    }, [hasResolvedInitialAuth])
 
 
     // Wait until Firebase determines authentication state
