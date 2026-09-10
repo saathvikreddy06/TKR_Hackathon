@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
     BrowserRouter,
     Navigate,
@@ -33,9 +33,21 @@ function SiteHeader({ onOpenAuth, role, language, onLanguageChange }) {
     const [isExploreOpen, setIsExploreOpen] = useState(false)
     const [isLanguageOpen, setIsLanguageOpen] = useState(false)
     const [isLoggingOut, setIsLoggingOut] = useState(false)
+    const exploreRef = useRef(null)
     const navigate = useNavigate()
 
     const closeExploreMenu = () => setIsExploreOpen(false)
+
+    useEffect(() => {
+        const handlePageClick = (event) => {
+            if (!exploreRef.current?.contains(event.target)) {
+                setIsExploreOpen(false)
+            }
+        }
+
+        document.addEventListener('click', handlePageClick)
+        return () => document.removeEventListener('click', handlePageClick)
+    }, [])
 
     const handleLogout = async () => {
         setIsLoggingOut(true)
@@ -72,6 +84,7 @@ function SiteHeader({ onOpenAuth, role, language, onLanguageChange }) {
                 </NavLink>
 
                 <div
+                    ref={exploreRef}
                     className={`nav-explore ${isExploreOpen ? 'is-open' : ''
                         }`}
                 >
@@ -100,7 +113,6 @@ function SiteHeader({ onOpenAuth, role, language, onLanguageChange }) {
                             '/standards',
                             '/recommend',
                             '/laboratories',
-                            '/related-standards',
                             '/consultants'
                         ].map((path, index) => (
                             <NavLink
@@ -114,7 +126,6 @@ function SiteHeader({ onOpenAuth, role, language, onLanguageChange }) {
                                         'Standards',
                                         'Product Analyzer',
                                         'Testing Laboratories',
-                                        'Related Standards',
                                         'Consultants'
                                     ][index]
                                 }
@@ -253,7 +264,8 @@ function ChatAssistant() {
                 aria-label="Open chat assistant"
                 onClick={() => navigate('/assistant')}
             >
-                ✦
+                <img src="/logo.jpeg" alt="" />
+                <span className="chat-label">Ask standIQ</span>
                 <span className="chat-ping"></span>
             </button>
         </div>
@@ -573,24 +585,7 @@ function App() {
 
                         <Route
                             path="/laboratories"
-                            element={
-                                <ProtectedRoute role={role}>
-                                    <DiscoveryPage
-                                        type="laboratories"
-                                    />
-                                </ProtectedRoute>
-                            }
-                        />
-
-                        <Route
-                            path="/related-standards"
-                            element={
-                                <ProtectedRoute role={role}>
-                                    <DiscoveryPage
-                                        type="related"
-                                    />
-                                </ProtectedRoute>
-                            }
+                            element={<DiscoveryPage type="laboratories" />}
                         />
 
                         <Route

@@ -10,8 +10,6 @@ import {
 
 function AuthPage({ mode = 'login', onAuthenticated }) {
 
-    const [currentMode, setCurrentMode] = useState(mode)
-
     const [username, setUsername] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
@@ -41,7 +39,7 @@ function AuthPage({ mode = 'login', onAuthenticated }) {
             // SIGNUP
             // ========================================
 
-            if (currentMode === 'signup') {
+            if (mode === 'signup') {
 
                 const user = await registerUser(
                     username,
@@ -195,11 +193,7 @@ function AuthPage({ mode = 'login', onAuthenticated }) {
 
         setError('')
 
-        setCurrentMode(
-            currentMode === 'login'
-                ? 'signup'
-                : 'login'
-        )
+        navigate(mode === 'login' ? '/signup' : '/login')
     }
 
 
@@ -223,7 +217,7 @@ function AuthPage({ mode = 'login', onAuthenticated }) {
 
 
                 <h1>
-                    {currentMode === 'login'
+                    {mode === 'login'
                         ? 'Welcome back.'
                         : 'Start with clarity.'
                     }
@@ -231,7 +225,7 @@ function AuthPage({ mode = 'login', onAuthenticated }) {
 
 
                 <p>
-                    {currentMode === 'login'
+                    {mode === 'login'
                         ? 'Continue your standards journey.'
                         : 'Save standards, conversations, and consultations in one place.'
                     }
@@ -245,7 +239,7 @@ function AuthPage({ mode = 'login', onAuthenticated }) {
                         Only shown during signup
                     ======================================== */}
 
-                    {currentMode === 'signup' && (
+                    {mode === 'signup' && (
 
                         <label>
 
@@ -319,7 +313,7 @@ function AuthPage({ mode = 'login', onAuthenticated }) {
                         Only shown during signup
                     ======================================== */}
 
-                    {currentMode === 'signup' && (
+                    {mode === 'signup' && (
 
                         <label>
 
@@ -375,7 +369,7 @@ function AuthPage({ mode = 'login', onAuthenticated }) {
 
                         {loading
                             ? 'Please wait...'
-                            : currentMode === 'login'
+                            : mode === 'login'
                                 ? 'Log in'
                                 : 'Create account'
                         }
@@ -399,7 +393,7 @@ function AuthPage({ mode = 'login', onAuthenticated }) {
                     onClick={switchMode}
                 >
 
-                    {currentMode === 'login'
+                    {mode === 'login'
                         ? 'New to standIQ? Create an account'
                         : 'Already have an account? Log in'
                     }
