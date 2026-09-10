@@ -3,4 +3,5 @@ uvicorn[standard]
 python-dotenv
 firebase-admin
 google-genai
+groq
 requests

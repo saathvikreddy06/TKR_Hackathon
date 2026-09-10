@@ -26,7 +26,7 @@ def generate_query_embedding(query: str):
     return response.embeddings[0].values
 
 
-def search_standards(query: str, limit: int = 5):
+def search_standards(query: str, limit: int = 10):
     """Find the most semantically similar BIS standards."""
 
     query_embedding = generate_query_embedding(query)

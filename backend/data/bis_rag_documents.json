@@ -1598,5 +1598,37 @@
     "source_url": "https://steel.gov.in/quality-control-orders",
     "document_url": "https://www.services.bis.gov.in/php/BIS_2.0/bisconnect/knowyourstandards/indian_standards/isdetails/1785_1",
     "text": "BIS STANDARD\n============\n\nStandard Number:\nIS 1785 Part 1\n\nStandard ID:\nBIS-STD-100\n\nYear:\n1983\n\nTitle:\nPlain Hard-Drawn Steel Wire for Pre-stressed Concrete - Part 1: Cold-Drawn Stress-Relieved Wire (Second Revision)\n\nShort Title:\nCold-Drawn Steel Wire for Pre-Stressed Concrete (PSC)\n\nProduct Category:\nSteel & Metallurgy\n\nIndustry:\nBridge Engineering, Railway Sleepers & Heavy Concrete\n\nCertification Scheme:\nScheme-I (ISI)\n\nCertification Route:\nMandatory Scheme-I Factory Audit + Lab Testing\n\nMandatory QCO:\nYes\n\nStatus:\nActive / Mandatory QCO\n\nScope:\nPrescribes requirements for plain, cold-drawn, stress-relieved high tensile steel wire for pre-stressed concrete structures, railway sleepers, and flyover girders.\n\nKey Testing Parameters:\n- Tensile Strength and 0.2% Proof Stress (min 1570 to 1860 MPa)\n- Elongation at Maximum Force (min 3.5%)\n- Isothermal Stress Relaxation Test (1000h test at 20°C)\n- Reverse Bend Test over Cylindrical Mandrel\n- Dimensional Diameter Uniformity\n\nMaterials:\n- High Carbon High Tensile Steel (C 0.70% to 0.85%)\n\nKeywords:\n- pre-stressed concrete wire\n- HT wire\n- railway sleeper wire\n- IS 1785\n- stress relieved wire\n- Ministry of Steel QCO\n\nPublication Date:\n1983-09-22\n\nRevision Date:\n2019-11-15\n\nSupersedes:\nIS 1785 (Part 1):1966\n\nSuperseded By:\nNone\n\nAmendments:\n- Amendment No. 1 (1993)\n- Amendment No. 2 (2018)\n\nVerification Status:\nverified_accurate\n\nVerification Note:\nConfirmed against Ministry of Steel QCO Gazette Schedule."
+  },
+  {
+    "standard_id": "BIS-STD-101",
+    "standard_number": "IS 15298",
+    "part": "Part 2",
+    "section": null,
+    "year": "2016",
+    "title": "Personal Protective Equipment - Part 2: Safety Footwear",
+    "product_category": "Personal Protective Equipment",
+    "industry": "Construction, Manufacturing, Industrial Safety",
+    "scheme": "Scheme-I (ISI)",
+    "mandatory_qco": true,
+    "status": "Superseded by IS 15298 (Part 2):2024",
+    "source_url": "https://www.bis.gov.in/product-certification/products-under-compulsory-certification/scheme-i-mark-scheme/?lang=en",
+    "document_url": "https://www.bis.gov.in/wp-content/uploads/2020/05/PM-IS-15298-2-cmd2.pdf",
+    "text": "BIS STANDARD\n============\n\nStandard Number:\nIS 15298 Part 2\n\nStandard ID:\nBIS-STD-101\n\nYear:\n2016\n\nTitle:\nPersonal Protective Equipment - Part 2: Safety Footwear\n\nShort Title:\nSafety Footwear\n\nProduct Category:\nPersonal Protective Equipment\n\nIndustry:\nConstruction, Manufacturing, Industrial Safety\n\nCertification Scheme:\nScheme-I (ISI)\n\nCertification Route:\nMandatory Scheme-I Certification\n\nMandatory QCO:\nYes\n\nStatus:\nSuperseded by IS 15298 (Part 2):2024\n\nScope:\nSpecifies basic and additional requirements for safety footwear designed to protect the wearer against workplace hazards. The standard covers safety footwear with protective features including toe protection, impact resistance, compression resistance, slip resistance and puncture protection.\n\nKey Testing Parameters:\n- Toe protection\n- Impact resistance\n- Compression resistance\n- Slip resistance\n- Penetration resistance\n- Water resistance\n- Abrasion resistance\n- Chromium VI content of leather components\n\nMaterials:\n- Leather and other footwear materials\n- Protective toe caps\n- Penetration-resistant inserts\n\nKeywords:\n- IS 15298\n- IS 15298 Part 2\n- IS 15298 (Part 2):2016\n- safety footwear\n- safety shoes\n- protective footwear\n- industrial safety shoes\n- 200 J toe impact\n- 15 kN compression\n- PPE footwear\n\nPublication Date:\nNone\n\nRevision Date:\n2024\n\nSupersedes:\nNone\n\nSuperseded By:\nIS 15298 (Part 2):2024\n\nAmendments:\n- Amendment No. 1\n- Amendment No. 2\n\nVerification Status:\nverified_accurate\n\nVerification Note:\nVerified against official BIS Scheme-I listing, BIS Product Manual for IS 15298 (Part 2):2016, and BIS 2025 revision implementation circular."
+  },
+  {
+    "standard_id": "BIS-STD-102",
+    "standard_number": "IS 15683",
+    "part": null,
+    "section": null,
+    "year": "2018",
+    "title": "Portable Fire Extinguishers - Performance and Construction - Specification",
+    "product_category": "Fire Safety Equipment",
+    "industry": "Fire Safety, Industrial Safety, Building Safety",
+    "scheme": "Scheme-I (ISI)",
+    "mandatory_qco": true,
+    "status": "Active / Mandatory QCO",
+    "source_url": "https://www.bis.gov.in/product-certification/products-under-compulsory-certification/scheme-i-mark-scheme/?lang=en",
+    "document_url": "https://www.bis.gov.in/product-certification/product-specific-information-2/product-manualsmk/",
+    "text": "BIS STANDARD\n============\n\nStandard Number:\nIS 15683\n\nStandard ID:\nBIS-STD-102\n\nYear:\n2018\n\nTitle:\nPortable Fire Extinguishers - Performance and Construction - Specification\n\nShort Title:\nPortable Fire Extinguishers\n\nProduct Category:\nFire Safety Equipment\n\nIndustry:\nFire Safety, Industrial Safety, Building Safety\n\nCertification Scheme:\nScheme-I (ISI)\n\nCertification Route:\nMandatory Scheme-I Certification\n\nMandatory QCO:\nYes\n\nStatus:\nActive / Mandatory QCO\n\nScope:\nSpecifies performance, reliability, safety and construction requirements for portable fire extinguishers. It covers portable extinguishers intended for different classes of fire and includes requirements for construction, pressure, operation, reliability and fire-fighting performance.\n\nKey Testing Parameters:\n- General operating performance\n- Pressure requirements\n- Resistance to temperature changes\n- Leakage test\n- Impact resistance\n- Vibration resistance\n- Resistance to corrosion\n- Intermittent discharge test\n- Rating suitability for different classes of fire\n- Electrical conductivity of extinguisher discharge\n- Construction requirements\n\nMaterials:\n- Steel\n- Aluminium\n- Approved composite materials\n- Fire-extinguishing media\n\nKeywords:\n- IS 15683\n- IS 15683:2018\n- portable fire extinguisher\n- portable fire extinguishers\n- fire extinguisher\n- Class A fires\n- Class B fires\n- ABC extinguisher\n- BC extinguisher\n- CO2 extinguisher\n- foam extinguisher\n- water extinguisher\n- fire safety\n\nPublication Date:\n2018\n\nRevision Date:\nNone\n\nSupersedes:\nPrevious edition of IS 15683\n\nSuperseded By:\nNone\n\nAmendments:\nNot specified\n\nVerification Status:\nverified_accurate\n\nVerification Note:\nVerified against official BIS Scheme-I listing, BIS fire extinguisher product material, BIS LIMS and Fire Extinguishers Quality Control Order, 2023."
   }
 ]
