@@ -175,20 +175,6 @@ function SiteHeader({ onOpenAuth, role, language }) {
                             Dashboard
                         </NavLink>
 
-                        <NavLink
-                            className="dashboard-link"
-                            to="/consultations"
-                        >
-                            Consultations
-                        </NavLink>
-
-                        <NavLink
-                            className="dashboard-link"
-                            to="/history"
-                        >
-                            History
-                        </NavLink>
-
                         {role === 'admin' && <NavLink className="dashboard-link" to="/admin">Admin</NavLink>}
 
                         <button

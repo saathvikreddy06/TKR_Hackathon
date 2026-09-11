@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { askStandIQ } from './services/assistantService'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -124,12 +124,18 @@ function AnswerEvidence({ message }) {
 }
 
 function AssistantPage() {
+    const [searchParams] = useSearchParams()
     const [message, setMessage] = useState('')
     const [messages, setMessages] = useState([initialMessage])
     const [isThinking, setIsThinking] = useState(false)
     const [isListening, setIsListening] = useState(false)
     const [voiceSupported] = useState(() => Boolean(window.SpeechRecognition || window.webkitSpeechRecognition))
     const recognitionRef = useRef(null)
+
+    useEffect(() => {
+        const query = searchParams.get('query')
+        if (query) setMessage(query)
+    }, [searchParams])
 
     useEffect(() => {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
