@@ -275,6 +275,8 @@ main {
 }
 
 .hero-section {
+    position: relative;
+    overflow: hidden;
     min-height: 0;
     display: grid;
     grid-template-columns: 1fr;
@@ -285,6 +287,8 @@ main {
 }
 
 .hero-copy {
+    position: relative;
+    z-index: 1;
     width: 100%;
     max-width: 900px;
     margin: 0 auto;

@@ -4,15 +4,20 @@ import os
 
 GENERATION_MODEL = "openai/gpt-oss-120b"
 
-client = Groq(
-    api_key=os.getenv("GROQ_API_KEY")
-)
+api_key = os.getenv("GROQ_API_KEY")
+client = Groq(api_key=api_key) if api_key else None
 
 
 def generate_answer(query: str, retrieved_results: list):
     """
     Generate a BIS-grounded answer using retrieved standards.
     """
+
+    if not client:
+        return {
+            "answer": "GROQ_API_KEY is not configured on backend server.",
+            "sources": []
+        }
 
     if not retrieved_results:
         return {

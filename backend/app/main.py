@@ -46,6 +46,8 @@ def health():
 
 @app.get("/firebase-test")
 def firebase_test():
+    if not db:
+        return {"firebase": "disconnected", "firestore": "disconnected", "reason": "No credentials configured"}
 
     test_ref = db.collection("system").document("connection_test")
 

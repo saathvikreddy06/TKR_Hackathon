@@ -29,6 +29,9 @@ def generate_query_embedding(query: str):
 def search_standards(query: str, limit: int = 10):
     """Find the most semantically similar BIS standards."""
 
+    if db is None:
+        return []
+
     query_embedding = generate_query_embedding(query)
 
     vector_query = (

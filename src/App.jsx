@@ -27,6 +27,7 @@ import {
 } from './pages/services/authService'
 
 import './App.css'
+import ParticleBackground from './components/ParticleBackground'
 
 
 function SiteHeader({ onOpenAuth, role, language, onLanguageChange }) {
@@ -510,6 +511,7 @@ function App() {
             <ScrollToTop />
 
             <div className="app-shell">
+                <ParticleBackground />
 
                 <SiteHeader
                     onOpenAuth={setAuthMode}
