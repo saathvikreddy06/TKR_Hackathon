@@ -1,4 +1,3 @@
-from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
@@ -6,6 +5,8 @@ from app.firebase import db
 from app.retrieval import search_standards
 from app.generation import generate_answer
 from app.scope import is_bis_related, get_scope_response
+from fastapi import FastAPI, Depends
+from app.auth.dependencies import get_current_user
 
 app = FastAPI(
     title="StandIQ API",
@@ -99,4 +100,11 @@ def search(request: SearchRequest):
         "answer": generated["answer"],
         "sources": generated["sources"],
         "in_scope": True
+    }
+
+@app.get("/api/auth/me")
+def get_me(current_user=Depends(get_current_user)):
+    return {
+        "uid": current_user["uid"],
+        "email": current_user.get("email")
     }
