@@ -4133,3 +4133,88 @@ footer p {
     letter-spacing: 0.12em;
     text-transform: uppercase;
 }
+
+/* How StandIQ Works Orbital Animation & Scroll Sync */
+.how-visual:before,
+.how-visual:after,
+.path-line {
+    display: none !important;
+}
+
+.concentric-rings-wrapper {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 440px;
+    height: 440px;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+.concentric-svg {
+    width: 100%;
+    height: 100%;
+}
+
+.orbit-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform-origin: center center;
+    pointer-events: none;
+}
+
+.orbital-dot-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -8px;
+    margin-left: -8px;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.orbital-dot {
+    display: block;
+    width: 10px;
+    height: 10px;
+    background: #6f9074;
+    border-radius: 50%;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.orbital-dot.ambient {
+    width: 6px;
+    height: 6px;
+    background: #d77243;
+    opacity: 0.6;
+}
+
+.orbital-dot-container.is-active .orbital-dot {
+    background: #e07949;
+    box-shadow: 0 0 0 6px rgba(224, 121, 73, 0.35), 0 0 16px rgba(224, 121, 73, 0.8);
+}
+
+.step-block {
+    display: flex;
+    gap: 20px;
+    padding: 18px 22px;
+    margin-bottom: 8px;
+    border-radius: 12px;
+    transition: background 0.3s ease, transform 0.3s ease;
+    cursor: pointer;
+}
+
+.step-block:hover {
+    background: rgba(215, 114, 67, 0.04);
+}
+
+.step-block.active-step-block {
+    background: rgba(215, 114, 67, 0.1);
+    transform: translateX(4px);
+}
