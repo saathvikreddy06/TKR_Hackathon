@@ -1,47 +1,39 @@
-import { useEffect, useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
-const ROUTE_TITLES = {
-    '/': 'HOME',
-    '/about': 'ABOUT BIS',
-    '/about-us': 'ABOUT US',
-    '/login': 'LOG IN',
-    '/signup': 'CREATE ACCOUNT',
-    '/services': 'BIS SERVICES',
-    '/standards': 'STANDARDS',
-    '/recommend': 'PRODUCT ANALYZER',
-    '/laboratories': 'TESTING LABORATORIES',
-    '/consultants': 'CONSULTANTS',
-    '/assistant': 'AI ASSISTANT',
-    '/dashboard': 'DASHBOARD'
-}
-
 export default function PageTitleTransition() {
-    const location = useLocation()
-    const [phase, setPhase] = useState('title') // 'title' | 'fade_overlay' | 'done'
-
-    // Match route title
-    const rawTitle = ROUTE_TITLES[location.pathname]
-    const title = rawTitle || location.pathname.substring(1).replace(/-/g, ' ').toUpperCase() || 'STANDIQ'
-
     // Accessibility check for reduced motion
     const prefersReducedMotion =
         typeof window !== 'undefined' &&
         window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-    useEffect(() => {
-        if (!prefersReducedMotion) {
-            setPhase('title')
+    // Check if user has already seen the StandIQ intro in this browser session
+    const [shouldPlay] = useState(() => {
+        if (prefersReducedMotion) return false
+        try {
+            const hasSeen = sessionStorage.getItem('hasSeenIntro')
+            return !hasSeen
+        } catch {
+            return true
         }
-    }, [location.pathname, prefersReducedMotion])
+    })
 
-    if (prefersReducedMotion || phase === 'done') return null
+    const [phase, setPhase] = useState(() => (shouldPlay ? 'title' : 'done'))
+
+    if (!shouldPlay || phase === 'done') return null
+
+    const handleOverlayFadeComplete = () => {
+        try {
+            sessionStorage.setItem('hasSeenIntro', 'true')
+        } catch (e) {
+            console.error('Failed to set sessionStorage:', e)
+        }
+        setPhase('done')
+    }
 
     return (
         <AnimatePresence mode="wait">
             <div
-                key={location.pathname}
                 style={{
                     position: 'fixed',
                     top: 0,
@@ -59,7 +51,7 @@ export default function PageTitleTransition() {
                     transition={{ duration: 0.2, ease: 'easeOut' }}
                     onAnimationComplete={() => {
                         if (phase === 'fade_overlay') {
-                            setPhase('done')
+                            handleOverlayFadeComplete()
                         }
                     }}
                     style={{
@@ -73,7 +65,7 @@ export default function PageTitleTransition() {
                     }}
                 />
 
-                {/* Elastic Slide Title Animation */}
+                {/* Elastic Slide Title Animation for "StandIQ" */}
                 {phase === 'title' && (
                     <motion.div
                         initial={{
@@ -117,7 +109,7 @@ export default function PageTitleTransition() {
                     >
                         <div className="page-title-transition-card">
                             <span className="page-title-dot" />
-                            <span className="page-title-text">{title}</span>
+                            <span className="page-title-text">StandIQ</span>
                         </div>
                     </motion.div>
                 )}
