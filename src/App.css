@@ -4102,3 +4102,34 @@ footer p {
         margin-left: 0;
     }
 }
+
+/* Page Title Elastic Slide Transition Overlay */
+.page-title-transition-card {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 38px;
+    background: rgba(255, 253, 248, 0.94);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(224, 121, 73, 0.35);
+    border-radius: 999px;
+    box-shadow: 0 24px 48px rgba(23, 39, 31, 0.14), 0 4px 16px rgba(224, 121, 73, 0.2);
+    pointer-events: none;
+    user-select: none;
+}
+
+.page-title-dot {
+    width: 10px;
+    height: 10px;
+    background: #e07949;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(224, 121, 73, 0.7);
+}
+
+.page-title-text {
+    color: #17271f;
+    font: 700 clamp(18px, 2.5vw, 28px) 'DM Mono', monospace;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}

@@ -28,6 +28,7 @@ import {
 
 import './App.css'
 import ParticleBackground from './components/ParticleBackground'
+import PageTitleTransition from './components/PageTitleTransition'
 
 
 function SiteHeader({ onOpenAuth, role, language, onLanguageChange }) {
@@ -512,6 +513,7 @@ function App() {
 
             <div className="app-shell">
                 <ParticleBackground />
+                <PageTitleTransition />
 
                 <SiteHeader
                     onOpenAuth={setAuthMode}
