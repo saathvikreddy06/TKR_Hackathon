@@ -5,6 +5,7 @@ from app.firebase import db
 from app.retrieval import search_standards
 from app.generation import generate_answer
 from app.scope import is_bis_related, get_scope_response
+from app.language import detect_language, prepare_retrieval_query
 from fastapi import FastAPI, Depends
 from app.auth.dependencies import get_current_user
 from app.auth.dependencies import get_optional_current_user
@@ -79,19 +80,23 @@ def firebase_test():
 @app.post("/api/search")
 def search(request: SearchRequest, current_user=Depends(get_optional_current_user)):
 
+    detected_language = detect_language(request.query)
+    language = detected_language["language"]
+
     # ------------------------------------------
     # Scope check
     # ------------------------------------------
 
     if not is_bis_related(request.query):
 
-        scope_response = get_scope_response()
+        scope_response = get_scope_response(language)
 
         return {
             "query": request.query,
             "answer": scope_response["answer"],
             "sources": [],
-            "in_scope": False
+            "in_scope": False,
+            **detected_language
         }
 
     # ------------------------------------------
@@ -99,7 +104,7 @@ def search(request: SearchRequest, current_user=Depends(get_optional_current_use
     # ------------------------------------------
 
     results = search_standards(
-        query=request.query,
+        query=prepare_retrieval_query(request.query, language),
         limit=request.limit
     )
 
@@ -109,14 +114,16 @@ def search(request: SearchRequest, current_user=Depends(get_optional_current_use
 
     generated = generate_answer(
         query=request.query,
-        retrieved_results=results[:3]
+        retrieved_results=results[:3],
+        language=language
     )
 
     response = {
         "query": request.query,
         "answer": generated["answer"],
         "sources": generated["sources"],
-        "in_scope": True
+        "in_scope": True,
+        **detected_language
     }
 
     if current_user:

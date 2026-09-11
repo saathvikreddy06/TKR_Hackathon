@@ -1,6 +1,10 @@
 from groq import Groq
 import os
+import re
+
 from dotenv import load_dotenv
+from app.language import get_language_instruction
+
 
 load_dotenv()
 
@@ -10,7 +14,21 @@ api_key = os.getenv("GROQ_API_KEY") or os.getenv("API_KEY")
 client = Groq(api_key=api_key) if api_key else None
 
 
-def generate_answer(query: str, retrieved_results: list):
+def answer_matches_language(answer: str, language: str) -> bool:
+    if language == "te":
+        return bool(re.search(r"[\u0c00-\u0c7f]", answer))
+
+    if language == "hi":
+        return bool(re.search(r"[\u0900-\u097f]", answer))
+
+    return True
+
+
+def generate_answer(
+    query: str,
+    retrieved_results: list,
+    language: str = "en"
+):
     """
     Generate a BIS-grounded answer using retrieved standards.
     """
@@ -22,10 +40,24 @@ def generate_answer(query: str, retrieved_results: list):
         }
 
     if not retrieved_results:
+        no_evidence_messages = {
+            "te": (
+                "అందుబాటులో ఉన్న BIS knowledge base ఈ ప్రశ్నకు "
+                "ఖచ్చితంగా సమాధానం ఇవ్వడానికి సరిపడ సమాచారం కలిగి లేదు."
+            ),
+            "hi": (
+                "उपलब्ध BIS knowledge base में इस प्रश्न का सही "
+                "उत्तर देने के लिए पर्याप्त जानकारी नहीं है।"
+            ),
+        }
+
         return {
-            "answer": (
-                "I could not find a relevant BIS standard in the "
-                "available knowledge base."
+            "answer": no_evidence_messages.get(
+                language,
+                (
+                    "I could not find a relevant BIS standard in the "
+                    "available knowledge base."
+                )
             ),
             "sources": []
         }
@@ -33,7 +65,6 @@ def generate_answer(query: str, retrieved_results: list):
     context_parts = []
 
     for i, result in enumerate(retrieved_results, start=1):
-
         context_parts.append(
             f"""
 SOURCE {i}
@@ -62,9 +93,39 @@ Source:
 
     context = "\n".join(context_parts)
 
-    system_prompt = """
+    language_name = {
+        "en": "English",
+        "te": "Telugu",
+        "hi": "Hindi",
+    }.get(language, "English")
+
+    system_prompt = f"""
 You are StandIQ, an intelligent assistant for Indian Standards
 published by the Bureau of Indian Standards (BIS).
+
+{get_language_instruction(language)}
+
+FINAL LANGUAGE RULE (HIGHEST PRIORITY):
+
+The user's language is {language_name} ({language}).
+
+Write the complete final answer in {language_name}.
+
+Do not answer in English when the language is Telugu or Hindi.
+
+Translate explanatory sentences naturally even though the retrieved
+BIS evidence below may be in English.
+
+Keep standard numbers, years, URLs, and technical identifiers
+in their original form.
+
+For Telugu, a valid answer style is:
+"ఈ ఉత్పత్తికి సంబంధించిన BIS ప్రమాణం IS 2347:2017."
+
+For Hindi, a valid answer style is:
+"इस उत्पाद से संबंधित BIS मानक IS 2347:2017 है।"
+
+Supported languages are English, Telugu, and Hindi.
 
 Your task is to answer the user's question using ONLY the BIS
 information retrieved and supplied by the application.
@@ -92,9 +153,8 @@ CORE RULES
 4. Every factual BIS claim must be supported by the retrieved
    information.
 
-5. If the retrieved information is insufficient, say:
-   "The available BIS knowledge base does not contain sufficient
-   information to answer this accurately."
+5. If the retrieved information is insufficient, say this clearly
+   in the user's language.
 
 6. Prefer the most relevant retrieved standard.
 
@@ -218,60 +278,80 @@ information.
 Do not make broad claims about certification, QCOs, legal
 requirements, or technical specifications unless the retrieved
 information explicitly supports them.
+
+Answer-language requirement:
+
+{get_language_instruction(language)}
+
+Return only the answer in {language_name}.
+
+Do not add an English translation or language explanation.
+
+Keep standard numbers, years, official BIS names, source URLs,
+and technical identifiers exactly as provided in the retrieved
+information.
 """
+
+    messages = [
+        {
+            "role": "system",
+            "content": system_prompt
+        },
+        {
+            "role": "user",
+            "content": user_prompt
+        }
+    ]
 
     response = client.chat.completions.create(
         model=GENERATION_MODEL,
-        messages=[
-            {
-                "role": "system",
-                "content": system_prompt
-            },
-            {
-                "role": "user",
-                "content": user_prompt
-            }
-        ],
+        messages=messages,
         temperature=0.1,
         max_tokens=800
     )
 
     answer = response.choices[0].message.content
 
+    # Verify that Telugu/Hindi responses actually contain
+    # characters from the requested script.
+    if not answer_matches_language(answer, language):
+        retry_messages = messages + [
+            {
+                "role": "user",
+                "content": (
+                    f"Your previous draft was not written in "
+                    f"{language_name}. Rewrite the complete answer "
+                    f"in natural {language_name} now. "
+                    "Do not include any English translation. "
+                    "Preserve all IS numbers, years, URLs, and "
+                    "technical identifiers exactly."
+                )
+            }
+        ]
+
+        retry_response = client.chat.completions.create(
+            model=GENERATION_MODEL,
+            messages=retry_messages,
+            temperature=0.1,
+            max_tokens=800
+        )
+
+        answer = retry_response.choices[0].message.content
+
     sources = []
 
     for result in retrieved_results:
-
         sources.append({
-            "standard_number":
-                result.get("standard_number"),
-
-            "part":
-                result.get("part"),
-
-            "year":
-                result.get("year"),
-
-            "title":
-                result.get("title"),
-
-            "scheme":
-                result.get("scheme"),
-
-            "mandatory_qco":
-                result.get("mandatory_qco"),
-
-            "status":
-                result.get("status"),
-
-            "document_url":
-                result.get("document_url"),
-
-            "source_url":
-                result.get("source_url"),
-
-            "distance":
-                result.get("distance")
+            "standard_number": result.get("standard_number"),
+            "part": result.get("part"),
+            "year": result.get("year"),
+            "title": result.get("title"),
+            "scheme": result.get("scheme"),
+            "mandatory_qco": result.get("mandatory_qco"),
+            "status": result.get("status"),
+            "document_url": result.get("document_url"),
+            "source_url": result.get("source_url"),
+            "distance": result.get("distance")
         })
 
     return {

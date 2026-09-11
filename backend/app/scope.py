@@ -18,6 +18,15 @@ BIS_KEYWORDS = [
     "certification",
     "standard",
     "standards",
+    "ప్రమాణం",
+    "ప్రమాణాలు",
+    "ధృవీకరణ",
+    "హాల్‌మార్కింగ్",
+    "హాల్మార్కింగ్",
+    "मानक",
+    "मानकों",
+    "प्रमाणन",
+    "हॉलमार्किंग",
 ]
 
 
@@ -89,6 +98,18 @@ def is_bis_related(query: str) -> bool:
         "concrete",
         "steel tube",
         "transformer",
+        "ప్రెజర్ కుక్కర్",
+        "స్టీల్",
+        "బంగారం",
+        "హెల్మెట్",
+        "నీరు",
+        "బొమ్మలు",
+        "प्रेशर कुकर",
+        "स्टील",
+        "सोना",
+        "हेलमेट",
+        "पानी",
+        "खिलौने",
     ]
 
     for term in product_terms:
@@ -99,13 +120,26 @@ def is_bis_related(query: str) -> bool:
     return False
 
 
-def get_scope_response():
+def get_scope_response(language="en"):
+    responses = {
+        "te": (
+            "నేను BIS ప్రమాణాలు, భారతీయ ప్రమాణాలు, BIS ధృవీకరణ మరియు "
+            "సంబంధిత Quality Control Orders గురించి మాత్రమే సహాయం చేయగలను. "
+            "ఈ పరిధిలోని ప్రశ్నలను అడగండి."
+        ),
+        "hi": (
+            "मैं BIS मानकों, भारतीय मानकों, BIS प्रमाणन और संबंधित Quality "
+            "Control Orders के बारे में ही सहायता कर सकता हूँ। कृपया इसी "
+            "दायरे में प्रश्न पूछें।"
+        ),
+    }
+
     return {
-        "answer": (
+        "answer": responses.get(language, (
             "I'm StandIQ, an assistant focused on BIS standards, "
             "Indian Standards, BIS certification, and related "
             "Quality Control Orders. I can only answer questions "
             "within that scope."
-        ),
+        )),
         "sources": []
     }

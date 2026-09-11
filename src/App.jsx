@@ -38,9 +38,8 @@ import ParticleBackground from './components/ParticleBackground'
 import IntroSplash from './components/IntroSplash'
 
 
-function SiteHeader({ onOpenAuth, role, language, onLanguageChange }) {
+function SiteHeader({ onOpenAuth, role, language }) {
     const [isExploreOpen, setIsExploreOpen] = useState(false)
-    const [isLanguageOpen, setIsLanguageOpen] = useState(false)
     const [isLoggingOut, setIsLoggingOut] = useState(false)
     const exploreRef = useRef(null)
     const navigate = useNavigate()
@@ -161,53 +160,9 @@ function SiteHeader({ onOpenAuth, role, language, onLanguageChange }) {
                     />
 
                     <div className="language-picker">
-                        <button
-                            className="language-trigger"
-                            type="button"
-                            onClick={() =>
-                                setIsLanguageOpen(
-                                    (isOpen) => !isOpen
-                                )
-                            }
-                            aria-expanded={isLanguageOpen}
-                            aria-haspopup="listbox"
-                        >
+                        <span className="language-trigger" aria-label="Current language">
                             {language}
-                            <span
-                                className="nav-chevron"
-                                aria-hidden="true"
-                            >
-                                ⌄
-                            </span>
-                        </button>
-
-                        {isLanguageOpen && (
-                            <div
-                                className="language-menu"
-                                role="listbox"
-                                aria-label="Choose language"
-                            >
-                                {[
-                                    ['EN', 'English'],
-                                    ['HI', 'Hindi'],
-                                    ['TE', 'Telugu']
-                                ].map(([value, label]) => (
-                                    <button
-                                        key={value}
-                                        type="button"
-                                        role="option"
-                                        aria-selected={language === value}
-                                        onClick={() => {
-                                            onLanguageChange(value)
-                                            setIsLanguageOpen(false)
-                                        }}
-                                    >
-                                        <span>{label}</span>
-                                        <small>{value}</small>
-                                    </button>
-                                ))}
-                            </div>
-                        )}
+                        </span>
                     </div>
                 </div>
 
@@ -447,7 +402,7 @@ function AuthModal({ mode, onClose, onSwitch }) {
 function App() {
     const [authMode, setAuthMode] = useState(null)
     const [role, setRole] = useState(null)
-    const [language, setLanguage] = useState('EN')
+    const [language] = useState('EN')
 
     // Splash screen state (one-time intro per session)
     const [showIntro, setShowIntro] = useState(() => {
@@ -567,7 +522,6 @@ function App() {
                     onOpenAuth={setAuthMode}
                     role={role}
                     language={language}
-                    onLanguageChange={setLanguage}
                 />
 
                 <main>

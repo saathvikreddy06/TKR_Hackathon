@@ -11,6 +11,25 @@ const initialMessage = {
     sources: [{ number: 'BIS source registry', title: 'Assistant scope and service directory', clause: 'Public service catalogue' }],
 }
 
+function detectAssistantLanguage(text) {
+    if (/[\u0c00-\u0c7f]/u.test(text)) return 'te-IN'
+    if (/[\u0900-\u097f]/u.test(text)) return 'hi-IN'
+    return 'en-IN'
+}
+
+function getOfficialSourceUrl(source) {
+    if (source.document_url) return source.document_url
+    if (source.source_url) return source.source_url
+
+    const searchTerm = [source.standard_number, source.title]
+        .filter(Boolean)
+        .join(' ')
+
+    if (!searchTerm) return null
+
+    return `https://standards.bis.gov.in/website/know-your-standards?search=${encodeURIComponent(searchTerm)}`
+}
+
 function AnswerEvidence({ message }) {
     if (!message.confidence) return null
 
@@ -25,6 +44,12 @@ function AnswerEvidence({ message }) {
                 >
                     {message.confidence}
                 </span>
+
+                {message.languageName && (
+                    <span className="language-badge">
+                        {message.languageName}
+                    </span>
+                )}
 
                 {message.verdict && (
                     <span className="verdict-badge">
@@ -71,11 +96,12 @@ function AnswerEvidence({ message }) {
                                 </small>
                             </span>
 
-                            {source.document_url && (
+                            {getOfficialSourceUrl(source) && (
                                 <a
-                                    href={source.document_url}
+                                    href={getOfficialSourceUrl(source)}
                                     target="_blank"
                                     rel="noreferrer"
+                                    aria-label={`Open ${source.standard_number || source.title || 'BIS source'} on the official BIS website`}
                                 >
                                     View source
                                 </a>
@@ -149,7 +175,8 @@ function AssistantPage() {
                     from: 'assistant',
                     text: data.answer,
                     confidence: data.in_scope ? 'High' : 'Insufficient evidence',
-                    sources: data.in_scope ? (data.sources || []) : []
+                    sources: data.in_scope ? (data.sources || []) : [],
+                    languageName: data.language_name
                 }
             ])
         } catch (error) {
@@ -179,6 +206,7 @@ function AssistantPage() {
         if (!recognitionRef.current) return
         if (isListening) recognitionRef.current.stop()
         else {
+            recognitionRef.current.lang = detectAssistantLanguage(message)
             setIsListening(true)
             recognitionRef.current.start()
         }
