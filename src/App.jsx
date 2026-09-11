@@ -35,7 +35,7 @@ import {
 
 import './App.css'
 import ParticleBackground from './components/ParticleBackground'
-import PageTitleTransition from './components/PageTitleTransition'
+import IntroSplash from './components/IntroSplash'
 
 
 function SiteHeader({ onOpenAuth, role, language, onLanguageChange }) {
@@ -449,6 +449,28 @@ function App() {
     const [role, setRole] = useState(null)
     const [language, setLanguage] = useState('EN')
 
+    // Splash screen state (one-time intro per session)
+    const [showIntro, setShowIntro] = useState(() => {
+        if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            return false
+        }
+        try {
+            const hasSeen = sessionStorage.getItem('hasSeenIntro')
+            return !hasSeen
+        } catch {
+            return false
+        }
+    })
+
+    const handleIntroComplete = () => {
+        try {
+            sessionStorage.setItem('hasSeenIntro', 'true')
+        } catch (e) {
+            console.error('Failed to set sessionStorage:', e)
+        }
+        setShowIntro(false)
+    }
+
     // Firebase authentication loading state
     const [authLoading, setAuthLoading] = useState(true)
     const [hasResolvedInitialAuth, setHasResolvedInitialAuth] = useState(false)
@@ -509,6 +531,10 @@ function App() {
     }, [hasResolvedInitialAuth])
 
 
+    if (showIntro) {
+        return <IntroSplash onComplete={handleIntroComplete} />
+    }
+
     // Wait until Firebase determines authentication state
     if (authLoading) {
         return (
@@ -536,7 +562,6 @@ function App() {
 
             <div className="app-shell">
                 <ParticleBackground />
-                <PageTitleTransition />
 
                 <SiteHeader
                     onOpenAuth={setAuthMode}
