@@ -1,10 +1,12 @@
 from groq import Groq
 import os
+from dotenv import load_dotenv
 
+load_dotenv()
 
 GENERATION_MODEL = "openai/gpt-oss-120b"
 
-api_key = os.getenv("GROQ_API_KEY")
+api_key = os.getenv("GROQ_API_KEY") or os.getenv("API_KEY")
 client = Groq(api_key=api_key) if api_key else None
 
 

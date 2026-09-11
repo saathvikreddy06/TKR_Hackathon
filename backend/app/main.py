@@ -7,6 +7,14 @@ from app.generation import generate_answer
 from app.scope import is_bis_related, get_scope_response
 from fastapi import FastAPI, Depends
 from app.auth.dependencies import get_current_user
+from app.auth.dependencies import get_optional_current_user
+from app.routes.consultancies import router as consultancies_router
+from app.routes.consultations import router as consultations_router
+from app.routes.chat import router as chat_router
+from app.routes.feedback import router as feedback_router
+from app.routes.history import router as history_router
+from app.routes.admin import router as admin_router
+from google.cloud.firestore_v1 import SERVER_TIMESTAMP
 
 app = FastAPI(
     title="StandIQ API",
@@ -24,6 +32,13 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(consultancies_router)
+app.include_router(consultations_router)
+app.include_router(chat_router)
+app.include_router(feedback_router)
+app.include_router(history_router)
+app.include_router(admin_router)
 
 class SearchRequest(BaseModel):
     query: str
@@ -62,7 +77,7 @@ def firebase_test():
 
 
 @app.post("/api/search")
-def search(request: SearchRequest):
+def search(request: SearchRequest, current_user=Depends(get_optional_current_user)):
 
     # ------------------------------------------
     # Scope check
@@ -97,12 +112,26 @@ def search(request: SearchRequest):
         retrieved_results=results[:3]
     )
 
-    return {
+    response = {
         "query": request.query,
         "answer": generated["answer"],
         "sources": generated["sources"],
         "in_scope": True
     }
+
+    if current_user:
+        db.collection("search_history").document().set({
+            "user_id": current_user["uid"],
+            "query": request.query,
+            "answer": generated["answer"],
+            "sources": [
+                source.get("standard_number") or source.get("id")
+                for source in generated["sources"]
+            ],
+            "created_at": SERVER_TIMESTAMP,
+        })
+
+    return response
 
 @app.get("/api/auth/me")
 def get_me(current_user=Depends(get_current_user)):

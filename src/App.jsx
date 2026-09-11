@@ -19,6 +19,13 @@ import RecommendationPage from './pages/RecommendationPage'
 import AuthPage from './pages/AuthPage'
 import DashboardPage from './pages/DashboardPage'
 import DiscoveryPage from './pages/DiscoveryPage'
+import ConsultationsPage from './pages/ConsultationsPage'
+import AdminPage from './pages/AdminPage'
+import ConsultantProfilePage from './pages/ConsultantProfilePage'
+import ConsultationDetailPage from './pages/ConsultationDetailPage'
+import ChatPage from './pages/ChatPage'
+import FeedbackPage from './pages/FeedbackPage'
+import HistoryPage from './pages/HistoryPage'
 
 import {
     subscribeToAuthChanges,
@@ -212,6 +219,22 @@ function SiteHeader({ onOpenAuth, role, language, onLanguageChange }) {
                         >
                             Dashboard
                         </NavLink>
+
+                        <NavLink
+                            className="dashboard-link"
+                            to="/consultations"
+                        >
+                            Consultations
+                        </NavLink>
+
+                        <NavLink
+                            className="dashboard-link"
+                            to="/history"
+                        >
+                            History
+                        </NavLink>
+
+                        {role === 'admin' && <NavLink className="dashboard-link" to="/admin">Admin</NavLink>}
 
                         <button
                             className="login-link"
@@ -631,6 +654,69 @@ function App() {
                                     <DashboardPage
                                         role={role}
                                     />
+                                </ProtectedRoute>
+                            }
+                        />
+
+                        <Route
+                            path="/consultations"
+                            element={
+                                <ProtectedRoute role={role}>
+                                    <ConsultationsPage role={role} />
+                                </ProtectedRoute>
+                            }
+                        />
+
+                        <Route
+                            path="/consultants/:consultantId"
+                            element={
+                                <ProtectedRoute role={role}>
+                                    <ConsultantProfilePage />
+                                </ProtectedRoute>
+                            }
+                        />
+
+                        <Route
+                            path="/consultations/:consultationId"
+                            element={
+                                <ProtectedRoute role={role}>
+                                    <ConsultationDetailPage role={role} />
+                                </ProtectedRoute>
+                            }
+                        />
+
+                        <Route
+                            path="/chat/:sessionId"
+                            element={
+                                <ProtectedRoute role={role}>
+                                    <ChatPage />
+                                </ProtectedRoute>
+                            }
+                        />
+
+                        <Route
+                            path="/feedback/:consultationId"
+                            element={
+                                <ProtectedRoute role={role}>
+                                    <FeedbackPage />
+                                </ProtectedRoute>
+                            }
+                        />
+
+                        <Route
+                            path="/history"
+                            element={
+                                <ProtectedRoute role={role}>
+                                    <HistoryPage />
+                                </ProtectedRoute>
+                            }
+                        />
+
+                        <Route
+                            path="/admin"
+                            element={
+                                <ProtectedRoute role={role}>
+                                    {role === 'admin' ? <AdminPage /> : <Navigate to="/dashboard" replace />}
                                 </ProtectedRoute>
                             }
                         />
