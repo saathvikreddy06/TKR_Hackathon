@@ -11,10 +11,49 @@ const initialMessage = {
     sources: [{ number: 'BIS source registry', title: 'Assistant scope and service directory', clause: 'Public service catalogue' }],
 }
 
-function detectAssistantLanguage(text) {
-    if (/[\u0c00-\u0c7f]/u.test(text)) return 'te-IN'
-    if (/[\u0900-\u097f]/u.test(text)) return 'hi-IN'
-    return 'en-IN'
+const initialMessageByLanguage = {
+    en: initialMessage.text,
+    te: 'నమస్కారం. ప్రమాణం కనుగొనడం, ధృవీకరణను అర్థం చేసుకోవడం లేదా BIS సేవను గుర్తించడంలో నేను సహాయం చేయగలను.',
+    hi: 'नमस्कार। मैं मानक खोजने, प्रमाणन समझने या BIS सेवा ढूँढने में आपकी सहायता कर सकता हूँ।'
+}
+
+const assistantLanguages = [
+    { code: 'en', label: 'English' },
+    { code: 'te', label: 'తెలుగు' },
+    { code: 'hi', label: 'हिन्दी' }
+]
+
+const UI_TRANSLATIONS = {
+    en: {
+        sources: 'Sources and evidence',
+        certification: 'Certification',
+        qco: 'QCO',
+        yes: 'Yes',
+        no: 'No',
+        viewSource: 'View source',
+        talkToConsultant: 'Talk to a consultant',
+        responseLanguage: 'Response language'
+    },
+    te: {
+        sources: 'మూలాలు మరియు ఆధారాలు',
+        certification: 'ధృవీకరణ',
+        qco: 'QCO',
+        yes: 'అవును',
+        no: 'కాదు',
+        viewSource: 'మూలాన్ని చూడండి',
+        talkToConsultant: 'సలహాదారునితో మాట్లాడండి',
+        responseLanguage: 'సమాధాన భాష'
+    },
+    hi: {
+        sources: 'स्रोत और प्रमाण',
+        certification: 'प्रमाणन',
+        qco: 'QCO',
+        yes: 'हाँ',
+        no: 'नहीं',
+        viewSource: 'स्रोत देखें',
+        talkToConsultant: 'सलाहकार से बात करें',
+        responseLanguage: 'उत्तर की भाषा'
+    }
 }
 
 function getOfficialSourceUrl(source) {
@@ -30,8 +69,9 @@ function getOfficialSourceUrl(source) {
     return `https://standards.bis.gov.in/website/know-your-standards?search=${encodeURIComponent(searchTerm)}`
 }
 
-function AnswerEvidence({ message }) {
+function AnswerEvidence({ message, language }) {
     if (!message.confidence) return null
+    const t = UI_TRANSLATIONS[language] || UI_TRANSLATIONS.en
 
     return (
         <>
@@ -61,7 +101,7 @@ function AnswerEvidence({ message }) {
             {message.sources?.length > 0 && (
                 <details className="source-panel">
                     <summary>
-                        Sources and evidence ({message.sources.length})
+                        {t.sources} ({message.sources.length})
                     </summary>
 
                     {message.sources.map((source, index) => (
@@ -70,7 +110,7 @@ function AnswerEvidence({ message }) {
                             key={`${source.standard_number}-${source.year}-${index}`}
                         >
                             <strong>
-                                {source.standard_number}
+                                {source.standard_number || source.number || source.id}
                                 {source.part
                                     ? ` (${source.part})`
                                     : ''}
@@ -80,18 +120,15 @@ function AnswerEvidence({ message }) {
                             </strong>
 
                             <span>
-                                {source.title}
+                                {language === 'en' && source.title && <span>{source.title}</span>}
 
                                 <small>
                                     {source.scheme
-                                        ? `Certification: ${source.scheme}`
+                                        ? `${t.certification}: ${source.scheme}`
                                         : ''}
 
                                     {source.mandatory_qco !== undefined
-                                        ? ` • QCO: ${source.mandatory_qco
-                                            ? 'Yes'
-                                            : 'No'
-                                        }`
+                                        ? ` • ${t.qco}: ${source.mandatory_qco ? t.yes : t.no}`
                                         : ''}
                                 </small>
                             </span>
@@ -101,9 +138,9 @@ function AnswerEvidence({ message }) {
                                     href={getOfficialSourceUrl(source)}
                                     target="_blank"
                                     rel="noreferrer"
-                                    aria-label={`Open ${source.standard_number || source.title || 'BIS source'} on the official BIS website`}
+                                    aria-label={`${t.viewSource}: ${source.standard_number || 'BIS'}`}
                                 >
-                                    View source
+                                    {t.viewSource}
                                 </a>
                             )}
                         </div>
@@ -116,21 +153,25 @@ function AnswerEvidence({ message }) {
                     className="consultant-link"
                     to="/assistant"
                 >
-                    Talk to a consultant
+                    {t.talkToConsultant}
                 </Link>
             )}
         </>
     )
 }
 
-function AssistantPage() {
+function AssistantPage({ language = 'en', onLanguageChange }) {
     const [searchParams] = useSearchParams()
     const [message, setMessage] = useState('')
-    const [messages, setMessages] = useState([initialMessage])
+    const [messages, setMessages] = useState(() => [{
+        ...initialMessage,
+        text: initialMessageByLanguage[language] || initialMessage.text
+    }])
     const [isThinking, setIsThinking] = useState(false)
     const [isListening, setIsListening] = useState(false)
     const [voiceSupported] = useState(() => Boolean(window.SpeechRecognition || window.webkitSpeechRecognition))
     const recognitionRef = useRef(null)
+    const conversationRef = useRef(null)
 
     useEffect(() => {
         const query = searchParams.get('query')
@@ -143,13 +184,27 @@ function AssistantPage() {
         const recognition = new SpeechRecognition()
         recognition.continuous = false
         recognition.interimResults = false
-        recognition.lang = 'en-IN'
+        recognition.lang = {
+            en: 'en-IN',
+            hi: 'hi-IN',
+            te: 'te-IN'
+        }[language] || 'en-IN'
         recognition.onresult = (event) => setMessage((currentMessage) => `${currentMessage} ${event.results[0][0].transcript}`.trim())
         recognition.onend = () => setIsListening(false)
         recognition.onerror = () => setIsListening(false)
         recognitionRef.current = recognition
         return () => recognition.stop()
-    }, [])
+    }, [language])
+
+    useEffect(() => {
+        const conversation = conversationRef.current
+        if (!conversation) return
+
+        conversation.scrollTo({
+            top: conversation.scrollHeight,
+            behavior: 'smooth'
+        })
+    }, [messages, isThinking])
 
     const sendMessage = async (event) => {
         event.preventDefault()
@@ -172,7 +227,7 @@ function AssistantPage() {
 
         try {
             // Send query to the real StandIQ backend
-            const data = await askStandIQ(trimmedMessage)
+            const data = await askStandIQ(trimmedMessage, language)
 
             // Add backend response to the conversation
             setMessages((currentMessages) => [
@@ -212,7 +267,11 @@ function AssistantPage() {
         if (!recognitionRef.current) return
         if (isListening) recognitionRef.current.stop()
         else {
-            recognitionRef.current.lang = detectAssistantLanguage(message)
+            recognitionRef.current.lang = {
+                en: 'en-IN',
+                hi: 'hi-IN',
+                te: 'te-IN'
+            }[language] || 'en-IN'
             setIsListening(true)
             recognitionRef.current.start()
         }
@@ -220,14 +279,14 @@ function AssistantPage() {
 
     return <section className="assistant-page">
         <div className="assistant-topline"><Link className="back-link" to="/">Back to home</Link><span className="assistant-status"><i></i> BIS assistant online</span></div>
-        <div className="assistant-intro"><p className="eyebrow"><span></span> Your BIS guide</p><h1>Ask with <em>confidence.</em></h1><p>Describe a product, standard, certification question, or hallmarking need. Use text or your voice.</p></div>
+        <div className="assistant-intro"><p className="eyebrow"><span></span> Your BIS guide</p><h1>Ask with <em>confidence.</em></h1><p>Describe a product, standard, certification question, or hallmarking need. Use text or your voice.</p><label className="assistant-language-picker" htmlFor="assistant-language">{(UI_TRANSLATIONS[language] || UI_TRANSLATIONS.en).responseLanguage}<select id="assistant-language" value={language} onChange={(event) => onLanguageChange?.(event.target.value)}>{assistantLanguages.map((option) => <option key={option.code} value={option.code}>{option.label}</option>)}</select></label></div>
         <div className="assistant-window">
             <div className="assistant-window-head"><div className="assistant-head-identity"><img src="/logo.jpeg" alt="standIQ logo" /><span><strong>standIQ assistant</strong><small>Source-backed guidance for Indian standards</small></span></div><span className="header-sparkle">*</span></div>
-            <div className="assistant-conversation" aria-live="polite">{messages.map((chatMessage, index) => <div className={`assistant-message ${chatMessage.from}`} key={`${chatMessage.from}-${index}`}><span className="message-label">{chatMessage.from === 'assistant' ? <><span className="assistant-avatar">*</span> standIQ</> : 'You'}</span><div className="message-text">
+            <div ref={conversationRef} className="assistant-conversation" aria-live="polite">{messages.map((chatMessage, index) => <div className={`assistant-message ${chatMessage.from}`} key={`${chatMessage.from}-${index}`}><span className="message-label">{chatMessage.from === 'assistant' ? <><span className="assistant-avatar">*</span> standIQ</> : 'You'}</span><div className="message-text">
                 <ReactMarkdown remarkPlugins={[remarkGfm]}>
                     {chatMessage.text}
                 </ReactMarkdown>
-            </div><AnswerEvidence message={chatMessage} /></div>)}{isThinking && <div className="assistant-message assistant thinking-message"><span className="message-label"><span className="assistant-avatar">*</span> standIQ</span><p className="typing-indicator" aria-label="Assistant is thinking"><i></i><i></i><i></i></p></div>}</div>
+            </div><AnswerEvidence message={chatMessage} language={language} /></div>)}{isThinking && <div className="assistant-message assistant thinking-message"><span className="message-label"><span className="assistant-avatar">*</span> standIQ</span><p className="typing-indicator" aria-label="Assistant is thinking"><i></i><i></i><i></i></p></div>}</div>
             <div className="suggestion-row"><button type="button" onClick={() => setMessage('Which BIS standard applies to my product?')}>Find a product standard</button><button type="button" onClick={() => setMessage('How do I apply for BIS certification?')}>Understand certification</button><button type="button" onClick={() => setMessage('How does hallmarking work?')}>Learn about hallmarking</button></div>
             <form className="assistant-composer" onSubmit={sendMessage}><textarea value={message} onChange={(event) => setMessage(event.target.value)} onKeyDown={handleComposerKeyDown} placeholder="Ask anything about BIS standards..." aria-label="Ask the BIS assistant" rows="1" /><div className="composer-actions"><span className="voice-hint">{voiceSupported ? (isListening ? 'Listening...' : 'Text or voice input') : 'Voice input is not supported in this browser'}</span><button className={`voice-button ${isListening ? 'listening' : ''}`} type="button" onClick={toggleListening} disabled={!voiceSupported} aria-label={isListening ? 'Stop voice input' : 'Start voice input'}><span className="mic-icon" aria-hidden="true"></span></button><button className="send-button" type="submit" aria-label="Send message">&uarr;</button></div></form>
         </div>

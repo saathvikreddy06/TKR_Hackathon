@@ -77,6 +77,17 @@ def create_consultation(
     consultant_data = consultant.to_dict() or {}
     if consultant_data.get("active", True) is False:
         raise HTTPException(status_code=409, detail="Consultant is inactive")
+    existing_requests = db.collection("consultation_requests").where("user_id", "==", uid).stream()
+    for existing in existing_requests:
+        existing_data = existing.to_dict() or {}
+        if (
+            existing_data.get("consultant_id") == payload.consultant_id
+            and existing_data.get("status") == "pending"
+        ):
+            raise HTTPException(
+                status_code=409,
+                detail="A pending consultation already exists with this consultant",
+            )
     reference = db.collection("consultation_requests").document()
     reference.set({
         "user_id": uid,

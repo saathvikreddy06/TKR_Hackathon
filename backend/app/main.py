@@ -6,7 +6,7 @@ from app.retrieval import search_standards
 from app.generation import generate_answer
 from app.scope import is_bis_related, get_scope_response
 from app.language import detect_language, prepare_retrieval_query
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, HTTPException
 from app.auth.dependencies import get_current_user
 from app.auth.dependencies import get_optional_current_user
 from app.routes.consultancies import router as consultancies_router
@@ -44,6 +44,7 @@ app.include_router(admin_router)
 class SearchRequest(BaseModel):
     query: str
     limit: int = 5
+    language: str | None = None
 
 
 @app.get("/")
@@ -80,8 +81,23 @@ def firebase_test():
 @app.post("/api/search")
 def search(request: SearchRequest, current_user=Depends(get_optional_current_user)):
 
+    supported_languages = {"en", "te", "hi"}
+    if request.language is not None and request.language not in supported_languages:
+        raise HTTPException(
+            status_code=400,
+            detail="Unsupported language. Supported languages are: en, te, hi",
+        )
+
     detected_language = detect_language(request.query)
-    language = detected_language["language"]
+    language = request.language or detected_language["language"]
+    response_language = {
+        "language": language,
+        "language_name": {
+            "en": "English",
+            "hi": "Hindi",
+            "te": "Telugu",
+        }[language],
+    }
 
     # ------------------------------------------
     # Scope check
@@ -96,7 +112,7 @@ def search(request: SearchRequest, current_user=Depends(get_optional_current_use
             "answer": scope_response["answer"],
             "sources": [],
             "in_scope": False,
-            **detected_language
+            **response_language
         }
 
     # ------------------------------------------
@@ -123,7 +139,7 @@ def search(request: SearchRequest, current_user=Depends(get_optional_current_use
         "answer": generated["answer"],
         "sources": generated["sources"],
         "in_scope": True,
-        **detected_language
+        **response_language
     }
 
     if current_user:
@@ -131,6 +147,7 @@ def search(request: SearchRequest, current_user=Depends(get_optional_current_use
             "user_id": current_user["uid"],
             "query": request.query,
             "answer": generated["answer"],
+            "language": language,
             "sources": [
                 source.get("standard_number") or source.get("id")
                 for source in generated["sources"]

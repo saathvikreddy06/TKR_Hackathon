@@ -9,8 +9,50 @@ LANGUAGE_NAMES = {
 
 LANGUAGE_INSTRUCTIONS = {
     "en": "Respond in natural English.",
-    "te": "Respond in natural Telugu. Technical BIS terms may remain in English when that is clearer.",
-    "hi": "Respond in natural Hindi. Technical BIS terms may remain in English when that is clearer.",
+    "te": (
+        "Answer entirely in Telugu (తెలుగు). Translate every explanatory "
+        "sentence, heading, bullet, standard title, and description. Do not "
+        "copy English BIS titles or descriptions. Preserve only official "
+        "identifiers such as IS numbers, BIS, ISI, QCO, Scheme-I, Scheme-II, "
+        "URLs, and official codes."
+    ),
+    "hi": (
+        "Answer entirely in Hindi (हिन्दी). Translate every explanatory "
+        "sentence, heading, bullet, standard title, and description. Do not "
+        "copy English BIS titles or descriptions. Preserve only official "
+        "identifiers such as IS numbers, BIS, ISI, QCO, Scheme-I, Scheme-II, "
+        "URLs, and official codes."
+    ),
+}
+
+SEMANTIC_TRANSLATION_GUIDANCE = {
+    "en": "Use natural English.",
+    "te": (
+        "Translate meaning, not pronunciation. Never transliterate an English "
+        "title or sentence into Telugu script. For example, translate "
+        "'High Strength Deformed Steel Bars and Wires for Concrete Reinforcement - "
+        "Specification' as 'కాంక్రీట్‌లో ఉపబలానికి ఉపయోగించే అధిక బలం కలిగిన "
+        "డీఫార్మ్డ్ స్టీల్ బార్లు మరియు వైర్లకు సంబంధించిన ప్రమాణం'. Prefer "
+        "'ప్రమాణం' for Specification, 'ధృవీకరణ' for Certification, "
+        "'పరీక్షా అవసరాలు' for Testing requirements, and 'తన్యతా బలం' for "
+        "Tensile strength. Technical concepts must be expressed by meaning; "
+        "use transliterated terms only when no natural equivalent exists. "
+        "Never write phrases such as 'హై స్ట్రెంగ్త్ ... ఫర్ కాంక్రీట్ "
+        "రీఇన్ఫోర్స్‌మెంట్' or 'టెన్సైల్ స్ట్రెంగ్త్ రేషియో'."
+    ),
+    "hi": (
+        "Translate meaning, not pronunciation. Never transliterate an English "
+        "title or sentence into Devanagari. For example, translate "
+        "'High Strength Deformed Steel Bars and Wires for Concrete Reinforcement - "
+        "Specification' as 'कंक्रीट में सुदृढ़ीकरण के लिए उच्च शक्ति वाले "
+        "विकृत स्टील बार और वायर से संबंधित मानक'. Prefer 'मानक' or "
+        "'विनिर्देश' for Specification, 'प्रमाणन' for Certification, "
+        "'परीक्षण आवश्यकताएँ' for Testing requirements, and 'तन्यता शक्ति' for "
+        "Tensile strength. Technical concepts must be expressed by meaning; "
+        "use transliterated terms only when no natural equivalent exists. "
+        "Never write phrases such as 'हाई स्ट्रेंथ ... फॉर कंक्रीट "
+        "रीइन्फोर्समेंट' or 'टेनसाइल स्ट्रेंथ रेशियो'."
+    ),
 }
 
 TELUGU_RE = re.compile(r"[\u0c00-\u0c7f]")
@@ -126,6 +168,13 @@ def prepare_retrieval_query(query: str, language: str) -> str:
 
 def get_language_instruction(language: str) -> str:
     return LANGUAGE_INSTRUCTIONS.get(language, LANGUAGE_INSTRUCTIONS["en"])
+
+
+def get_semantic_translation_guidance(language: str) -> str:
+    return SEMANTIC_TRANSLATION_GUIDANCE.get(
+        language,
+        SEMANTIC_TRANSLATION_GUIDANCE["en"],
+    )
 
 
 def get_speech_language(language: str) -> str:

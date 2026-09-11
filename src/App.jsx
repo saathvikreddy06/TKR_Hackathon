@@ -38,11 +38,27 @@ import ParticleBackground from './components/ParticleBackground'
 import IntroSplash from './components/IntroSplash'
 
 
-function SiteHeader({ onOpenAuth, role, language }) {
+const languageOptions = [
+    { code: 'en', label: 'English' },
+    { code: 'te', label: 'తెలుగు' },
+    { code: 'hi', label: 'हिन्दी' }
+]
+
+function SiteHeader({ onOpenAuth, role, language, onLanguageChange }) {
     const [isExploreOpen, setIsExploreOpen] = useState(false)
     const [isLoggingOut, setIsLoggingOut] = useState(false)
+    const [isDashboardActive, setIsDashboardActive] = useState(false)
+    const [isLanguageOpen, setIsLanguageOpen] = useState(false)
     const exploreRef = useRef(null)
+    const languageRef = useRef(null)
+    const location = useLocation()
     const navigate = useNavigate()
+
+    useEffect(() => {
+        if (location.pathname !== '/dashboard') {
+            setIsDashboardActive(false)
+        }
+    }, [location.pathname])
 
     const closeExploreMenu = () => setIsExploreOpen(false)
 
@@ -50,6 +66,9 @@ function SiteHeader({ onOpenAuth, role, language }) {
         const handlePageClick = (event) => {
             if (!exploreRef.current?.contains(event.target)) {
                 setIsExploreOpen(false)
+            }
+            if (!languageRef.current?.contains(event.target)) {
+                setIsLanguageOpen(false)
             }
         }
 
@@ -159,18 +178,41 @@ function SiteHeader({ onOpenAuth, role, language }) {
                         alt="Language"
                     />
 
-                    <div className="language-picker">
-                        <span className="language-trigger" aria-label="Current language">
-                            {language}
-                        </span>
+                    <div ref={languageRef} className="language-picker">
+                        <button
+                            className="language-trigger"
+                            type="button"
+                            aria-label="Choose assistant response language"
+                            aria-expanded={isLanguageOpen}
+                            onClick={() => setIsLanguageOpen((isOpen) => !isOpen)}
+                        >
+                            Language: {languageOptions.find((option) => option.code === language)?.label || 'English'}
+                            <span aria-hidden="true">⌄</span>
+                        </button>
+                        {isLanguageOpen && <div className="language-menu" role="menu">
+                            {languageOptions.map((option) => <button
+                                key={option.code}
+                                type="button"
+                                role="menuitemradio"
+                                aria-checked={language === option.code}
+                                onClick={() => {
+                                    onLanguageChange(option.code)
+                                    setIsLanguageOpen(false)
+                                }}
+                            >
+                                <span>{option.label}</span>
+                                <small>{option.code}</small>
+                            </button>)}
+                        </div>}
                     </div>
                 </div>
 
                 {role ? (
                     <>
                         <NavLink
-                            className="dashboard-link"
+                            className={`dashboard-link ${isDashboardActive ? 'is-clicked' : ''}`}
                             to="/dashboard"
+                            onClick={() => setIsDashboardActive(true)}
                         >
                             Dashboard
                         </NavLink>
@@ -388,7 +430,24 @@ function AuthModal({ mode, onClose, onSwitch }) {
 function App() {
     const [authMode, setAuthMode] = useState(null)
     const [role, setRole] = useState(null)
-    const [language] = useState('EN')
+    const [language, setLanguage] = useState(() => {
+        try {
+            const savedLanguage = localStorage.getItem('standiq-language')
+            return ['en', 'te', 'hi'].includes(savedLanguage) ? savedLanguage : 'en'
+        } catch {
+            return 'en'
+        }
+    })
+
+    const handleLanguageChange = (nextLanguage) => {
+        if (!['en', 'te', 'hi'].includes(nextLanguage)) return
+        setLanguage(nextLanguage)
+        try {
+            localStorage.setItem('standiq-language', nextLanguage)
+        } catch {
+            // Keep the in-memory preference when browser storage is unavailable.
+        }
+    }
 
     // Splash screen state (one-time intro per session)
     const [showIntro, setShowIntro] = useState(() => {
@@ -508,6 +567,7 @@ function App() {
                     onOpenAuth={setAuthMode}
                     role={role}
                     language={language}
+                    onLanguageChange={handleLanguageChange}
                 />
 
                 <main>
@@ -607,7 +667,10 @@ function App() {
                             path="/assistant"
                             element={
                                 <ProtectedRoute role={role}>
-                                    <AssistantPage />
+                                    <AssistantPage
+                                        language={language}
+                                        onLanguageChange={handleLanguageChange}
+                                    />
                                 </ProtectedRoute>
                             }
                         />
