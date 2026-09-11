@@ -306,9 +306,7 @@ main {
 }
 
 .eyebrow span {
-    width: 22px;
-    height: 1px;
-    background: #d77243;
+    display: none;
 }
 
 .hero-copy h1,
