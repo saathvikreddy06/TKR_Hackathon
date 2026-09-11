@@ -44,6 +44,27 @@ def ensure_transition(data: dict, target: str):
         )
 
 
+def attach_consultant_details(data: dict):
+    consultant_id = data.get("consultant_id")
+    if not consultant_id:
+        return data
+    consultant = db.collection("consultancies").document(consultant_id).get()
+    if not consultant.exists:
+        return data
+    consultant_data = consultant.to_dict() or {}
+    data["consultant"] = {
+        "id": consultant_id,
+        "name": consultant_data.get("name"),
+        "consultancy_name": consultant_data.get("consultancy_name"),
+        "consultancy_area": consultant_data.get("consultancy_area"),
+        "place": consultant_data.get("place"),
+    }
+    if data.get("status") in {"accepted", "active", "completed"}:
+        data["consultant"]["phone"] = consultant_data.get("phone")
+        data["consultant"]["email"] = consultant_data.get("email")
+    return data
+
+
 def update_status(consultation_id: str, target: str, current_user: dict):
     reference = db.collection("consultation_requests").document(consultation_id)
     document = get_document("consultation_requests", consultation_id)
@@ -111,6 +132,17 @@ def list_my_consultations(current_user=Depends(get_current_user)):
     for document in db.collection("consultation_requests").stream():
         data = document_data(document)
         if data.get("user_id") == uid or (role == "consultant" and data.get("consultant_id") == uid):
+            if data.get("user_id") == uid:
+                data = attach_consultant_details(data)
+            if role == "consultant" and data.get("user_id"):
+                user_document = db.collection("users").document(data["user_id"]).get()
+                if user_document.exists:
+                    user_data = user_document.to_dict() or {}
+                    data["requester"] = {
+                        "uid": data["user_id"],
+                        "username": user_data.get("username"),
+                        "email": user_data.get("email"),
+                    }
             results.append(data)
     return {"consultations": results}
 
@@ -119,6 +151,8 @@ def list_my_consultations(current_user=Depends(get_current_user)):
 def get_consultation(consultation_id: str, current_user=Depends(get_current_user)):
     data = consultation_data(consultation_id)
     ensure_participant(data, current_user["uid"])
+    if data.get("user_id") == current_user["uid"]:
+        data = attach_consultant_details(data)
     return data
 
 

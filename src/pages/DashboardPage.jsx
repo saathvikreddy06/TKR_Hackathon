@@ -5,6 +5,9 @@ import { getUserProfile } from './services/authService'
 import { listHistory } from './services/historyService'
 import { listMyConsultations } from './services/consultationService'
 import { listConsultants } from './services/consultancyService'
+import { getMyConsultantProfile } from './services/consultancyService'
+import { listConsultantFeedback } from './services/feedbackService'
+import { updateConsultation } from './services/consultationService'
 
 const quickAccess = [
     { icon: '✦', title: 'AI Assistant', description: 'Ask questions about BIS standards and get AI-powered guidance.', action: 'Open', to: '/assistant' },
@@ -23,7 +26,67 @@ function relativeTime(value) {
     return `${Math.floor(minutes / 1440)} days ago`
 }
 
-function DashboardPage() {
+export function ConsultantDashboard() {
+    const [profile, setProfile] = useState(null)
+    const [requests, setRequests] = useState([])
+    const [feedback, setFeedback] = useState([])
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState('')
+
+    const refresh = async () => {
+        try {
+            const [profileData, consultationData] = await Promise.all([getMyConsultantProfile(), listMyConsultations()])
+            setProfile(profileData.profile)
+            setRequests(consultationData.consultations || [])
+            if (profileData.profile?.id) {
+                const feedbackData = await listConsultantFeedback(profileData.profile.id)
+                setFeedback(feedbackData.feedback || [])
+            }
+        } catch (requestError) {
+            setError(requestError.message)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    useEffect(() => { refresh() }, [])
+
+    const transition = async (id, action) => {
+        try {
+            await updateConsultation(id, action)
+            await refresh()
+        } catch (requestError) {
+            setError(requestError.message)
+        }
+    }
+
+    const pending = requests.filter((item) => item.status === 'pending')
+    const active = requests.filter((item) => ['accepted', 'active'].includes(item.status))
+    const completed = requests.filter((item) => ['completed', 'rejected', 'cancelled'].includes(item.status))
+
+    if (loading) return <section className="dashboard-page data-page"><p className="dashboard-state">Loading consultant dashboard...</p></section>
+    return <section className="dashboard-page data-page consultant-dashboard-page">
+        <div className="dashboard-welcome"><p className="eyebrow"><span></span> Consultant workspace</p><h1>{profile?.consultancy_name || 'Your consultancy dashboard'}</h1><p>{profile?.consultancy_area || 'BIS consultancy'} · {profile?.place || 'Location not set'}</p></div>
+        {error && <p className="auth-error" role="alert">{error}</p>}
+        <section className="consultant-dashboard-profile"><div className="consultant-dashboard-avatar">{initials(profile?.name)}</div><div><p className="eyebrow"><span></span> Public profile</p><h2>{profile?.name}</h2><p>{profile?.bio || 'Add a short bio to help users understand your BIS experience.'}</p><div className="consultant-dashboard-tags">{[...(profile?.expertise || []), ...(profile?.categories || [])].slice(0, 6).map((item) => <span key={item}>{item}</span>)}</div></div><Link className="button button-small" to={`/consultants/${profile?.id}`}>View profile <span>↗</span></Link></section>
+        <section className="consultant-dashboard-stats"><div><span>Pending requests</span><strong>{pending.length}</strong></div><div><span>Active consultations</span><strong>{active.length}</strong></div><div><span>Completed history</span><strong>{completed.length}</strong></div><div><span>Feedback received</span><strong>{feedback.length}</strong></div></section>
+        <ConsultantRequestSection title="New consultation requests" items={pending} empty="No new requests right now." actions={(item) => <><button type="button" onClick={() => transition(item.id, 'accept')}>Accept</button><button type="button" onClick={() => transition(item.id, 'reject')}>Reject</button></>} />
+        <ConsultantRequestSection title="Current consultations" items={active} empty="No active consultations." actions={(item) => <>{item.status === 'accepted' && <button type="button" onClick={() => transition(item.id, 'start')}>Start</button>}{item.status === 'active' && <><Link to={`/consultations/${item.id}`}>Open details →</Link><button type="button" onClick={() => transition(item.id, 'complete')}>Complete</button></>}</>} />
+        <ConsultantRequestSection title="Consultation history" items={completed} empty="Completed and closed consultations will appear here." actions={(item) => <Link to={`/consultations/${item.id}`}>View details →</Link>} />
+        <section className="dashboard-section consultant-feedback-section"><div className="dashboard-section-heading"><h2>Feedback from users</h2><span>{feedback.length}</span></div>{feedback.length === 0 ? <p className="dashboard-state">Feedback from completed consultations will appear here.</p> : <div className="feedback-list">{feedback.map((item) => <article className="feedback-row" key={item.id}><div className="feedback-stars" aria-label={`${item.rating} out of 5 stars`}>{'★'.repeat(item.rating)}<span>{'★'.repeat(5 - item.rating)}</span></div><p>{item.comment || 'No written comment.'}</p><small>Consultation {item.consultation_id}</small></article>)}</div>}</section>
+    </section>
+}
+
+function ConsultantRequestSection({ title, items, empty, actions }) {
+    return <section className="dashboard-section consultant-request-section"><div className="dashboard-section-heading"><h2>{title}</h2><span>{items.length}</span></div>{items.length === 0 ? <p className="dashboard-state">{empty}</p> : <div className="consultant-request-list">{items.map((item) => <article className="consultant-request-row" key={item.id}><div><small>{item.status}</small><h3>{item.subject}</h3><p>{item.description}</p><span className="requester-details">Requested by {item.requester?.username || item.requester?.email || 'StandIQ user'}{item.requester?.email ? ` · ${item.requester.email}` : ''}</span></div><div className="consultant-request-actions">{actions(item)}</div></article>)}</div>}</section>
+}
+
+function initials(name = '') {
+    return name.split(' ').filter(Boolean).map((part) => part[0]).join('').slice(0, 2).toUpperCase() || 'C'
+}
+
+function DashboardPage({ role = 'user' }) {
+    if (role === 'consultant') return <ConsultantDashboard />
     const navigate = useNavigate()
     const [query, setQuery] = useState('')
     const [userName, setUserName] = useState('')

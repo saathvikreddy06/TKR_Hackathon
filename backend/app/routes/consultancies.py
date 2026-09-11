@@ -15,6 +15,10 @@ router = APIRouter(prefix="/api/consultants", tags=["consultants"])
 class ConsultantCreate(BaseModel):
     name: str = Field(min_length=2, max_length=120)
     email: str | None = None
+    phone: str | None = Field(default=None, max_length=30)
+    consultancy_name: str = Field(min_length=2, max_length=160)
+    consultancy_area: str = Field(min_length=2, max_length=160)
+    place: str = Field(min_length=2, max_length=160)
     bio: str = Field(default="", max_length=2000)
     expertise: list[str] = Field(default_factory=list, max_length=30)
     standards_handled: list[str] = Field(default_factory=list, max_length=100)
@@ -25,6 +29,10 @@ class ConsultantCreate(BaseModel):
 class ConsultantUpdate(BaseModel):
     name: str | None = Field(default=None, min_length=2, max_length=120)
     email: str | None = None
+    phone: str | None = Field(default=None, max_length=30)
+    consultancy_name: str | None = Field(default=None, min_length=2, max_length=160)
+    consultancy_area: str | None = Field(default=None, min_length=2, max_length=160)
+    place: str | None = Field(default=None, min_length=2, max_length=160)
     bio: str | None = Field(default=None, max_length=2000)
     expertise: list[str] | None = Field(default=None, max_length=30)
     standards_handled: list[str] | None = Field(default=None, max_length=100)
@@ -35,6 +43,11 @@ class ConsultantUpdate(BaseModel):
 
 def can_manage(uid: str, consultant_id: str):
     return owns_or_admin(uid, consultant_id)
+
+
+def profile_is_complete(data: dict) -> bool:
+    required_fields = ("name", "email", "consultancy_name", "consultancy_area", "place")
+    return all(str(data.get(field, "")).strip() for field in required_fields)
 
 
 @router.get("")
@@ -48,6 +61,8 @@ def list_consultants(
     consultants = []
     for document in db.collection("consultancies").stream():
         data = document_data(document)
+        data["profile_complete"] = profile_is_complete(data)
+        data.pop("phone", None)
         if data.get("active", True) is False:
             continue
         if available is not None and data.get("availability", False) != available:
@@ -72,12 +87,25 @@ def list_consultants(
     return {"consultants": consultants}
 
 
+@router.get("/me/profile")
+def get_my_consultant_profile(current_user=Depends(get_current_user)):
+    document = db.collection("consultancies").document(current_user["uid"]).get()
+    if not document.exists:
+        return {"profile": None, "profile_complete": False}
+    data = document_data(document)
+    data["profile_complete"] = profile_is_complete(data)
+    return {"profile": data, "profile_complete": data["profile_complete"]}
+
+
 @router.get("/{consultant_id}")
 def get_consultant(consultant_id: str):
     document = db.collection("consultancies").document(consultant_id).get()
     if not document.exists or document.to_dict().get("active", True) is False:
         raise HTTPException(status_code=404, detail="Consultant not found")
-    return document_data(document)
+    data = document_data(document)
+    data["profile_complete"] = profile_is_complete(data)
+    data.pop("phone", None)
+    return data
 
 
 @router.post("", status_code=status.HTTP_201_CREATED)
@@ -92,6 +120,7 @@ def create_consultant(
     if reference.get().exists:
         raise HTTPException(status_code=409, detail="Consultant profile already exists")
     data = payload.model_dump()
+    data["email"] = data.get("email") or current_user.get("email")
     data.update({
         "user_id": uid,
         "active": True,

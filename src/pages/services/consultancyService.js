@@ -11,5 +11,6 @@ export const listConsultants = (filters = {}) => {
 }
 
 export const getConsultant = (consultantId) => apiRequest(`/api/consultants/${consultantId}`)
+export const getMyConsultantProfile = () => apiRequest('/api/consultants/me/profile')
 export const createConsultant = (profile) => apiRequest('/api/consultants', { method: 'POST', body: JSON.stringify(profile) })
 export const updateConsultant = (consultantId, profile) => apiRequest(`/api/consultants/${consultantId}`, { method: 'PUT', body: JSON.stringify(profile) })

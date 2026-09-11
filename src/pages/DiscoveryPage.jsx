@@ -87,7 +87,7 @@ function ConsultantCard({ consultant, onRequest }) {
     const hasAvailability = typeof consultant.availability === 'boolean'
     return <article className="consultant-card consultant-card-polished">
         <div className="consultant-card-top"><div className="consultant-avatar">{initials(consultant.name)}</div>{hasAvailability && <span className={`status-badge status-${consultant.availability ? 'current' : 'pending'}`}>{consultant.availability ? 'Available' : 'Currently unavailable'}</span>}</div>
-        <div className="consultant-card-head"><div><h2>{consultant.name}</h2><span>{categories[0] || 'BIS consultant'}</span></div></div>
+        <div className="consultant-card-head"><div><h2>{consultant.consultancy_name || consultant.name}</h2><span>{consultant.name}{consultant.place ? ` · ${consultant.place}` : ''}</span></div></div>
         {(expertise.length > 0 || categories.length > 0) && <div className="consultant-tags">{[...expertise, ...categories].slice(0, 4).map((item) => <span key={item}>{item}</span>)}</div>}
         <p>{consultant.bio || 'Review this consultant profile to understand their available BIS expertise.'}</p>
         <div className="consultant-card-actions"><Link className="card-link" to={`/consultants/${consultant.id}`}>View profile <span>→</span></Link><button className="button button-small" type="button" onClick={() => onRequest(consultant)}>Request <span>↗</span></button></div>

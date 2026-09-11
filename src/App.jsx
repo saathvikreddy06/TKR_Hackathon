@@ -26,12 +26,15 @@ import ConsultationDetailPage from './pages/ConsultationDetailPage'
 import ChatPage from './pages/ChatPage'
 import FeedbackPage from './pages/FeedbackPage'
 import HistoryPage from './pages/HistoryPage'
+import ConsultantSetupPage from './pages/ConsultantSetupPage'
+import ConsultantDashboardPage from './pages/ConsultantDashboardPage'
 
 import {
     subscribeToAuthChanges,
     getUserProfile,
     logoutUser
 } from './pages/services/authService'
+import { getMyConsultantProfile } from './pages/services/consultancyService'
 
 import './App.css'
 import ParticleBackground from './components/ParticleBackground'
@@ -93,7 +96,7 @@ function SiteHeader({ onOpenAuth, role, language, onLanguageChange }) {
         <header className="site-header">
             <NavLink
                 className="brand"
-                to="/"
+                to={role === 'consultant' ? '/consultant-dashboard' : '/'}
                 aria-label="standIQ home"
             >
                 <img src="/logo.jpeg" alt="standIQ logo" />
@@ -102,7 +105,9 @@ function SiteHeader({ onOpenAuth, role, language, onLanguageChange }) {
                 </span>
             </NavLink>
 
-            <nav
+            {role === 'consultant' ? <nav className="main-nav consultant-only-nav" aria-label="Consultant navigation">
+                <NavLink to="/consultant-dashboard">Consultant dashboard</NavLink>
+            </nav> : <nav
                 className="main-nav"
                 aria-label="Main navigation"
             >
@@ -168,7 +173,7 @@ function SiteHeader({ onOpenAuth, role, language, onLanguageChange }) {
                 <NavLink to="/about">
                     About BIS
                 </NavLink>
-            </nav>
+            </nav>}
 
             <div className="header-actions">
                 <div className="language-control">
@@ -211,7 +216,7 @@ function SiteHeader({ onOpenAuth, role, language, onLanguageChange }) {
                     <>
                         <NavLink
                             className={`dashboard-link ${isDashboardActive ? 'is-clicked' : ''}`}
-                            to="/dashboard"
+                            to={role === 'consultant' ? '/consultant-dashboard' : '/dashboard'}
                             onClick={() => setIsDashboardActive(true)}
                         >
                             Dashboard
@@ -257,11 +262,11 @@ function SiteHeader({ onOpenAuth, role, language, onLanguageChange }) {
 }
 
 
-function ChatAssistant() {
+function ChatAssistant({ role }) {
     const navigate = useNavigate()
     const location = useLocation()
 
-    if (location.pathname === '/assistant') {
+    if (role === 'consultant' || location.pathname === '/assistant') {
         return null
     }
 
@@ -278,6 +283,12 @@ function ChatAssistant() {
             </button>
         </div>
     )
+}
+
+
+function ConsultantBlockedRoute({ role, children }) {
+    if (role === 'consultant') return <Navigate to="/consultant-dashboard" replace />
+    return children
 }
 
 
@@ -430,6 +441,7 @@ function AuthModal({ mode, onClose, onSwitch }) {
 function App() {
     const [authMode, setAuthMode] = useState(null)
     const [role, setRole] = useState(null)
+    const [consultantProfileComplete, setConsultantProfileComplete] = useState(null)
     const [language, setLanguage] = useState(() => {
         try {
             const savedLanguage = localStorage.getItem('standiq-language')
@@ -503,6 +515,17 @@ function App() {
 
                         if (profile) {
                             setRole(profile.role)
+                            if (profile.role === 'consultant') {
+                                try {
+                                    const consultantProfile = await getMyConsultantProfile()
+                                    setConsultantProfileComplete(Boolean(consultantProfile.profile_complete))
+                                } catch (profileError) {
+                                    console.error('Failed to load consultant profile:', profileError)
+                                    setConsultantProfileComplete(false)
+                                }
+                            } else {
+                                setConsultantProfileComplete(null)
+                            }
                         }
 
                     } catch (error) {
@@ -575,17 +598,17 @@ function App() {
 
                         <Route
                             path="/"
-                            element={<HomePage />}
+                            element={<ConsultantBlockedRoute role={role}><HomePage /></ConsultantBlockedRoute>}
                         />
 
                         <Route
                             path="/about"
-                            element={<AboutPage />}
+                            element={<ConsultantBlockedRoute role={role}><AboutPage /></ConsultantBlockedRoute>}
                         />
 
                         <Route
                             path="/about-us"
-                            element={<AboutUsPage />}
+                            element={<ConsultantBlockedRoute role={role}><AboutUsPage /></ConsultantBlockedRoute>}
                         />
 
                         <Route
@@ -612,7 +635,7 @@ function App() {
                             path="/services"
                             element={
                                 <ProtectedRoute role={role}>
-                                    <ServicesPage />
+                                    <ConsultantBlockedRoute role={role}><ServicesPage /></ConsultantBlockedRoute>
                                 </ProtectedRoute>
                             }
                         />
@@ -621,7 +644,7 @@ function App() {
                             path="/standards"
                             element={
                                 <ProtectedRoute role={role}>
-                                    <StandardsPage />
+                                    <ConsultantBlockedRoute role={role}><StandardsPage /></ConsultantBlockedRoute>
                                 </ProtectedRoute>
                             }
                         />
@@ -630,23 +653,23 @@ function App() {
                             path="/recommend"
                             element={
                                 <ProtectedRoute role={role}>
-                                    <RecommendationPage />
+                                    <ConsultantBlockedRoute role={role}><RecommendationPage /></ConsultantBlockedRoute>
                                 </ProtectedRoute>
                             }
                         />
 
                         <Route
                             path="/laboratories"
-                            element={<DiscoveryPage type="laboratories" />}
+                            element={<ConsultantBlockedRoute role={role}><DiscoveryPage type="laboratories" /></ConsultantBlockedRoute>}
                         />
 
                         <Route
                             path="/consultants"
                             element={
                                 <ProtectedRoute role={role}>
-                                    <DiscoveryPage
+                                    <ConsultantBlockedRoute role={role}><DiscoveryPage
                                         type="consultants"
-                                    />
+                                    /></ConsultantBlockedRoute>
                                 </ProtectedRoute>
                             }
                         />
@@ -655,10 +678,10 @@ function App() {
                             path="/how-it-works"
                             element={
                                 <ProtectedRoute role={role}>
-                                    <Navigate
+                                    {role === 'consultant' ? <Navigate to="/consultant-dashboard" replace /> : <Navigate
                                         to="/#how-it-works"
                                         replace
-                                    />
+                                    />}
                                 </ProtectedRoute>
                             }
                         />
@@ -667,10 +690,10 @@ function App() {
                             path="/assistant"
                             element={
                                 <ProtectedRoute role={role}>
-                                    <AssistantPage
+                                    <ConsultantBlockedRoute role={role}><AssistantPage
                                         language={language}
                                         onLanguageChange={handleLanguageChange}
-                                    />
+                                    /></ConsultantBlockedRoute>
                                 </ProtectedRoute>
                             }
                         />
@@ -679,9 +702,25 @@ function App() {
                             path="/dashboard"
                             element={
                                 <ProtectedRoute role={role}>
-                                    <DashboardPage
-                                        role={role}
-                                    />
+                                    {role === 'consultant' ? (consultantProfileComplete ? <Navigate to="/consultant-dashboard" replace /> : <Navigate to="/consultant-setup" replace />) : <DashboardPage role={role} />}
+                                </ProtectedRoute>
+                            }
+                        />
+
+                        <Route
+                            path="/consultant-dashboard"
+                            element={
+                                <ProtectedRoute role={role}>
+                                    {role === 'consultant' && consultantProfileComplete ? <ConsultantDashboardPage /> : <Navigate to={role === 'consultant' ? '/consultant-setup' : '/dashboard'} replace />}
+                                </ProtectedRoute>
+                            }
+                        />
+
+                        <Route
+                            path="/consultant-setup"
+                            element={
+                                <ProtectedRoute role={role}>
+                                    {role === 'consultant' && !consultantProfileComplete ? <ConsultantSetupPage onComplete={() => setConsultantProfileComplete(true)} /> : <Navigate to={role === 'consultant' ? '/consultant-dashboard' : '/dashboard'} replace />}
                                 </ProtectedRoute>
                             }
                         />
@@ -690,7 +729,7 @@ function App() {
                             path="/consultations"
                             element={
                                 <ProtectedRoute role={role}>
-                                    <ConsultationsPage role={role} />
+                                    {role === 'consultant' ? <Navigate to="/consultant-dashboard" replace /> : <ConsultationsPage role={role} />}
                                 </ProtectedRoute>
                             }
                         />
@@ -699,7 +738,7 @@ function App() {
                             path="/consultants/:consultantId"
                             element={
                                 <ProtectedRoute role={role}>
-                                    <ConsultantProfilePage />
+                                    <ConsultantBlockedRoute role={role}><ConsultantProfilePage /></ConsultantBlockedRoute>
                                 </ProtectedRoute>
                             }
                         />
@@ -708,7 +747,7 @@ function App() {
                             path="/consultations/:consultationId"
                             element={
                                 <ProtectedRoute role={role}>
-                                    <ConsultationDetailPage role={role} />
+                                    <ConsultantBlockedRoute role={role}><ConsultationDetailPage role={role} /></ConsultantBlockedRoute>
                                 </ProtectedRoute>
                             }
                         />
@@ -717,7 +756,7 @@ function App() {
                             path="/chat/:sessionId"
                             element={
                                 <ProtectedRoute role={role}>
-                                    <ChatPage />
+                                    <ConsultantBlockedRoute role={role}><ChatPage /></ConsultantBlockedRoute>
                                 </ProtectedRoute>
                             }
                         />
@@ -726,7 +765,7 @@ function App() {
                             path="/feedback/:consultationId"
                             element={
                                 <ProtectedRoute role={role}>
-                                    <FeedbackPage />
+                                    <ConsultantBlockedRoute role={role}><FeedbackPage /></ConsultantBlockedRoute>
                                 </ProtectedRoute>
                             }
                         />
@@ -735,7 +774,7 @@ function App() {
                             path="/history"
                             element={
                                 <ProtectedRoute role={role}>
-                                    <HistoryPage />
+                                    <ConsultantBlockedRoute role={role}><HistoryPage /></ConsultantBlockedRoute>
                                 </ProtectedRoute>
                             }
                         />
@@ -786,7 +825,7 @@ function App() {
                     </span>
                 </footer>
 
-                <ChatAssistant />
+                <ChatAssistant role={role} />
 
                 {authMode && (
                     <AuthModal

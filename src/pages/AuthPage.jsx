@@ -57,7 +57,7 @@ function AuthPage({ mode = 'login', onAuthenticated }) {
                 onAuthenticated(role)
 
                 // Return to home only after successful registration.
-                navigate('/', {
+                navigate(role === 'consultant' ? '/consultant-setup' : '/', {
                     state: {
                         authMessage: 'Registration successful. Welcome to standIQ.'
                     }
