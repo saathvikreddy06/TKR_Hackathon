@@ -42,3 +42,7 @@ backend/data/processed/**/*
 
 # Local collector caches
 backend/data/.cache/
+
+# Generated normalized BIS datasets
+backend/data/normalized/**/*
+!backend/data/normalized/**/.gitkeep

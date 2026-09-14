@@ -1,0 +1,4329 @@
+{
+  "source": "BIS_LIMS",
+  "version": "4.0",
+  "generated_at": "2026-09-14T18:06:11.405565+00:00",
+  "statistics": {
+    "labs": 431,
+    "labs_with_html": 431,
+    "labs_without_html": 0,
+    "capability_tables": 430,
+    "capability_rows": 6248,
+    "test_tables": 6248,
+    "test_rows": 378097,
+    "parse_errors": 0,
+    "capabilities": 6236,
+    "tests": 270336
+  },
+  "labs": [
+    {
+      "scope_id": "15",
+      "lab_code": "8102006",
+      "lab_name": "SIIR, Delhi Shriram Institute For Industrial Research",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/15/",
+      "raw_file": "data/raw/labs/scopes/15.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 1095
+    },
+    {
+      "scope_id": "16",
+      "lab_code": "8138306",
+      "lab_name": "Testtex India Laboratories Private Limited, Noida",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/16/",
+      "raw_file": "data/raw/labs/scopes/16.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 2848
+    },
+    {
+      "scope_id": "18",
+      "lab_code": "6126316",
+      "lab_name": "Intertek India Private Limited (Food Services), Hyderabad",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/18/",
+      "raw_file": "data/raw/labs/scopes/18.html",
+      "status": "success",
+      "capabilities": 1,
+      "tests": 154
+    },
+    {
+      "scope_id": "19",
+      "lab_code": "8125636",
+      "lab_name": "Kailtech Test and Research Centre Pvt. Ltd., Indore",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/19/",
+      "raw_file": "data/raw/labs/scopes/19.html",
+      "status": "success",
+      "capabilities": 29,
+      "tests": 1362
+    },
+    {
+      "scope_id": "48",
+      "lab_code": "6130526",
+      "lab_name": "REACT COMPLIANCE AND TESTING LABORATORIES LLP, BENGALURU",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/48/",
+      "raw_file": "data/raw/labs/scopes/48.html",
+      "status": "success",
+      "capabilities": 12,
+      "tests": 373
+    },
+    {
+      "scope_id": "49",
+      "lab_code": "6133516",
+      "lab_name": "CVR LABS PRIVATE LIMITED, CHENNAI",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/49/",
+      "raw_file": "data/raw/labs/scopes/49.html",
+      "status": "success",
+      "capabilities": 2,
+      "tests": 299
+    },
+    {
+      "scope_id": "51",
+      "lab_code": "9139736",
+      "lab_name": "Sleen India Biz venture Private Limited, Agra",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/51/",
+      "raw_file": "data/raw/labs/scopes/51.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 1098
+    },
+    {
+      "scope_id": "53",
+      "lab_code": "7139526",
+      "lab_name": "SUNREN TELECOM LABORATORY, NAVI MUMBAI",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/53/",
+      "raw_file": "data/raw/labs/scopes/53.html",
+      "status": "success",
+      "capabilities": 1,
+      "tests": 33
+    },
+    {
+      "scope_id": "54",
+      "lab_code": "8163826",
+      "lab_name": "SWASTIK ELECTRONICS TESTING CENTRE (OPC) PVT. LTD., GHAZIABAD",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/54/",
+      "raw_file": "data/raw/labs/scopes/54.html",
+      "status": "success",
+      "capabilities": 26,
+      "tests": 2050
+    },
+    {
+      "scope_id": "55",
+      "lab_code": "9136024",
+      "lab_name": "National Research and Technology Consortium (NRTC), Parwanoo",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/55/",
+      "raw_file": "data/raw/labs/scopes/55.html",
+      "status": "success",
+      "capabilities": 24,
+      "tests": 1479
+    },
+    {
+      "scope_id": "58",
+      "lab_code": "8125006",
+      "lab_name": "Ghaziabad Testing Laboratories Pvt Ltd, Ghaziabad",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/58/",
+      "raw_file": "data/raw/labs/scopes/58.html",
+      "status": "success",
+      "capabilities": 27,
+      "tests": 883
+    },
+    {
+      "scope_id": "59",
+      "lab_code": "8112814",
+      "lab_name": "FOOTWEAR DESIGN AND DEVELOPMENT INSTITUTE (FDDI), NOIDA",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/59/",
+      "raw_file": "data/raw/labs/scopes/59.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 1771
+    },
+    {
+      "scope_id": "60",
+      "lab_code": "7136414",
+      "lab_name": "NDDB CALF LIMITED, ANAND",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/60/",
+      "raw_file": "data/raw/labs/scopes/60.html",
+      "status": "success",
+      "capabilities": 9,
+      "tests": 180
+    },
+    {
+      "scope_id": "61",
+      "lab_code": "8135716",
+      "lab_name": "FARE Labs Pvt. Ltd., Gurugram",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/61/",
+      "raw_file": "data/raw/labs/scopes/61.html",
+      "status": "success",
+      "capabilities": 16,
+      "tests": 1318
+    },
+    {
+      "scope_id": "62",
+      "lab_code": "8138426",
+      "lab_name": "Nemko India (Test Lab) Pvt. Ltd., Faridabad",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/62/",
+      "raw_file": "data/raw/labs/scopes/62.html",
+      "status": "success",
+      "capabilities": 12,
+      "tests": 580
+    },
+    {
+      "scope_id": "63",
+      "lab_code": "9135004",
+      "lab_name": "National Institute of secondary steel technology",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/63/",
+      "raw_file": "data/raw/labs/scopes/63.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 309
+    },
+    {
+      "scope_id": "64",
+      "lab_code": "9134536",
+      "lab_name": "Unique Test House LLP",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/64/",
+      "raw_file": "data/raw/labs/scopes/64.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 1734
+    },
+    {
+      "scope_id": "65",
+      "lab_code": "9126034",
+      "lab_name": "Institute for Auto Parts and Hand Tools Technology, Ludhiana",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/65/",
+      "raw_file": "data/raw/labs/scopes/65.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 590
+    },
+    {
+      "scope_id": "67",
+      "lab_code": "8166106",
+      "lab_name": "Cotecna Inspection India Private Limited, Gurugram",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/67/",
+      "raw_file": "data/raw/labs/scopes/67.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 2013
+    },
+    {
+      "scope_id": "69",
+      "lab_code": "5123116",
+      "lab_name": "Modern Test Center, Berhampur",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/69/",
+      "raw_file": "data/raw/labs/scopes/69.html",
+      "status": "success",
+      "capabilities": 3,
+      "tests": 10
+    },
+    {
+      "scope_id": "70",
+      "lab_code": "9164606",
+      "lab_name": "JBS TESTING SOLUTIONS PVT LTD (27), JALANDHAR",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/70/",
+      "raw_file": "data/raw/labs/scopes/70.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 1647
+    },
+    {
+      "scope_id": "71",
+      "lab_code": "9123236",
+      "lab_name": "IDMA LABORATORIES LIMITED, PANCHKULA",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/71/",
+      "raw_file": "data/raw/labs/scopes/71.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 526
+    },
+    {
+      "scope_id": "72",
+      "lab_code": "5137936",
+      "lab_name": "Quality Control Division, S. M. Consultants Private Limited, Bhubaneswar",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/72/",
+      "raw_file": "data/raw/labs/scopes/72.html",
+      "status": "success",
+      "capabilities": 2,
+      "tests": 18
+    },
+    {
+      "scope_id": "73",
+      "lab_code": "9111924",
+      "lab_name": "THE NATIONAL SMALL INDUSTRIES CORPORATION LIMITED, TECHNICAL SERVICES CENTRE - NSIC, Rajpura",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/73/",
+      "raw_file": "data/raw/labs/scopes/73.html",
+      "status": "success",
+      "capabilities": 21,
+      "tests": 1001
+    },
+    {
+      "scope_id": "74",
+      "lab_code": "7126926",
+      "lab_name": "Hi Physix Laboratory India Private Limited, Pune",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/74/",
+      "raw_file": "data/raw/labs/scopes/74.html",
+      "status": "success",
+      "capabilities": 26,
+      "tests": 1060
+    },
+    {
+      "scope_id": "75",
+      "lab_code": "8135126",
+      "lab_name": "Classic Instrumentation Pvt. Ltd. (8135126), Noida",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/75/",
+      "raw_file": "data/raw/labs/scopes/75.html",
+      "status": "success",
+      "capabilities": 29,
+      "tests": 1028
+    },
+    {
+      "scope_id": "76",
+      "lab_code": "5109624",
+      "lab_name": "ELECTRONICS REGIONAL TEST LABORATORY (EAST) - ERTL (STQC), Kolkata",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/76/",
+      "raw_file": "data/raw/labs/scopes/76.html",
+      "status": "success",
+      "capabilities": 11,
+      "tests": 341
+    },
+    {
+      "scope_id": "77",
+      "lab_code": "7131116",
+      "lab_name": "HITECHLAB HEALTHCARE & RESEARCH CENTRE LLP, AHMEDABAD",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/77/",
+      "raw_file": "data/raw/labs/scopes/77.html",
+      "status": "success",
+      "capabilities": 1,
+      "tests": 360
+    },
+    {
+      "scope_id": "78",
+      "lab_code": "7107604",
+      "lab_name": "National Test House (WR) - NTH, Mumbai",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/78/",
+      "raw_file": "data/raw/labs/scopes/78.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 815
+    },
+    {
+      "scope_id": "79",
+      "lab_code": "6130616",
+      "lab_name": "ENVIRONMENTAL LABORATORY (UNIT OF MINERAL ENGINEERING SERVICES LLP), BENGALURU",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/79/",
+      "raw_file": "data/raw/labs/scopes/79.html",
+      "status": "success",
+      "capabilities": 6,
+      "tests": 456
+    },
+    {
+      "scope_id": "80",
+      "lab_code": "7119404",
+      "lab_name": "MSME TESTING CENTRE (WR), MUMBAI",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/80/",
+      "raw_file": "data/raw/labs/scopes/80.html",
+      "status": "success",
+      "capabilities": 13,
+      "tests": 501
+    },
+    {
+      "scope_id": "82",
+      "lab_code": "8131026",
+      "lab_name": "Alpha Test House Private Limited, Delhi",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/82/",
+      "raw_file": "data/raw/labs/scopes/82.html",
+      "status": "success",
+      "capabilities": 28,
+      "tests": 1249
+    },
+    {
+      "scope_id": "84",
+      "lab_code": "9122136",
+      "lab_name": "Hindustaan Testing Solutions LLP, Ambala",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/84/",
+      "raw_file": "data/raw/labs/scopes/84.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 1528
+    },
+    {
+      "scope_id": "85",
+      "lab_code": "8141526",
+      "lab_name": "EMC Testing and Compliance LLP, Gurugram",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/85/",
+      "raw_file": "data/raw/labs/scopes/85.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 1993
+    },
+    {
+      "scope_id": "86",
+      "lab_code": "8127226",
+      "lab_name": "UL India Private limited, Gurgaon",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/86/",
+      "raw_file": "data/raw/labs/scopes/86.html",
+      "status": "success",
+      "capabilities": 28,
+      "tests": 1414
+    },
+    {
+      "scope_id": "88",
+      "lab_code": "9138706",
+      "lab_name": "Alpha Test House Services LLP (160), Sahibzada Ajit Singh Nagar",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/88/",
+      "raw_file": "data/raw/labs/scopes/88.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 1057
+    },
+    {
+      "scope_id": "90",
+      "lab_code": "6131326",
+      "lab_name": "CSA INDIA PRIVATE LIMITED, BENGALURU",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/90/",
+      "raw_file": "data/raw/labs/scopes/90.html",
+      "status": "success",
+      "capabilities": 5,
+      "tests": 104
+    },
+    {
+      "scope_id": "91",
+      "lab_code": "8123835",
+      "lab_name": "Fire Test & Research Laboratory, Sonipat",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/91/",
+      "raw_file": "data/raw/labs/scopes/91.html",
+      "status": "success",
+      "capabilities": 23,
+      "tests": 528
+    },
+    {
+      "scope_id": "92",
+      "lab_code": "8136826",
+      "lab_name": "URS PRODUCTS AND TESTING PVT LTD (F3), NOIDA",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/92/",
+      "raw_file": "data/raw/labs/scopes/92.html",
+      "status": "success",
+      "capabilities": 0,
+      "tests": 0
+    },
+    {
+      "scope_id": "93",
+      "lab_code": "8122336",
+      "lab_name": "Shri Krishna Test House",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/93/",
+      "raw_file": "data/raw/labs/scopes/93.html",
+      "status": "success",
+      "capabilities": 29,
+      "tests": 1746
+    },
+    {
+      "scope_id": "94",
+      "lab_code": "6120526",
+      "lab_name": "UL INDIA PRIVATE LIMITED, BENGALURU",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/94/",
+      "raw_file": "data/raw/labs/scopes/94.html",
+      "status": "success",
+      "capabilities": 14,
+      "tests": 482
+    },
+    {
+      "scope_id": "95",
+      "lab_code": "9137734",
+      "lab_name": "Renewable Energy Test Centre (RTC), Murthal",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/95/",
+      "raw_file": "data/raw/labs/scopes/95.html",
+      "status": "success",
+      "capabilities": 9,
+      "tests": 225
+    },
+    {
+      "scope_id": "98",
+      "lab_code": "8127706",
+      "lab_name": "BUREAU VERITAS CONSUMER PRODUCTS SERVICES INDIA PRIVATE LIMITED, NOIDA",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/98/",
+      "raw_file": "data/raw/labs/scopes/98.html",
+      "status": "success",
+      "capabilities": 29,
+      "tests": 3192
+    },
+    {
+      "scope_id": "99",
+      "lab_code": "8141226",
+      "lab_name": "ACCURATE TEST SOLUTIONS LLP (F21), NOIDA",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/99/",
+      "raw_file": "data/raw/labs/scopes/99.html",
+      "status": "success",
+      "capabilities": 29,
+      "tests": 3399
+    },
+    {
+      "scope_id": "100",
+      "lab_code": "6162524",
+      "lab_name": "CSIR-CECRI, CSIR-Battery Performance Testing & Evalauation Centre, Karaikudi",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/100/",
+      "raw_file": "data/raw/labs/scopes/100.html",
+      "status": "success",
+      "capabilities": 2,
+      "tests": 26
+    },
+    {
+      "scope_id": "101",
+      "lab_code": "6105534",
+      "lab_name": "Br. MSME- DEVELOPMENT INSTITUTE, COIMBATORE",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/101/",
+      "raw_file": "data/raw/labs/scopes/101.html",
+      "status": "success",
+      "capabilities": 13,
+      "tests": 684
+    },
+    {
+      "scope_id": "103",
+      "lab_code": "5141106",
+      "lab_name": "ESKAPS (INDIA) PRIVATE LIMITED, KOLKATA",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/103/",
+      "raw_file": "data/raw/labs/scopes/103.html",
+      "status": "success",
+      "capabilities": 6,
+      "tests": 136
+    },
+    {
+      "scope_id": "104",
+      "lab_code": "6117624",
+      "lab_name": "ELECTRONICS TEST AND DEVELOPMENT CENTRE - ETDC (STQC), BANGALURU (SAFETY LAB))",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/104/",
+      "raw_file": "data/raw/labs/scopes/104.html",
+      "status": "success",
+      "capabilities": 3,
+      "tests": 96
+    },
+    {
+      "scope_id": "105",
+      "lab_code": "6114835",
+      "lab_name": "National Council for Cement and Building Materials (NCCBM), Hyderabad",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/105/",
+      "raw_file": "data/raw/labs/scopes/105.html",
+      "status": "success",
+      "capabilities": 15,
+      "tests": 265
+    },
+    {
+      "scope_id": "106",
+      "lab_code": "6120236",
+      "lab_name": "CHENNAI METTEX LAB PVT LTD, CHENNAI",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/106/",
+      "raw_file": "data/raw/labs/scopes/106.html",
+      "status": "success",
+      "capabilities": 6,
+      "tests": 856
+    },
+    {
+      "scope_id": "107",
+      "lab_code": "7139416",
+      "lab_name": "Bee Pharmo Labs Pvt. Ltd., Thane",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/107/",
+      "raw_file": "data/raw/labs/scopes/107.html",
+      "status": "success",
+      "capabilities": 26,
+      "tests": 1285
+    },
+    {
+      "scope_id": "108",
+      "lab_code": "7139026",
+      "lab_name": "TUV INDIA PVT LTD, PUNE",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/108/",
+      "raw_file": "data/raw/labs/scopes/108.html",
+      "status": "success",
+      "capabilities": 6,
+      "tests": 122
+    },
+    {
+      "scope_id": "109",
+      "lab_code": "6121716",
+      "lab_name": "Shiva Analyticals (India) Private Limited, Bengaluru",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/109/",
+      "raw_file": "data/raw/labs/scopes/109.html",
+      "status": "success",
+      "capabilities": 4,
+      "tests": 342
+    },
+    {
+      "scope_id": "110",
+      "lab_code": "8123735",
+      "lab_name": "International Centre for Automotive Technology, Gurugram",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/110/",
+      "raw_file": "data/raw/labs/scopes/110.html",
+      "status": "success",
+      "capabilities": 10,
+      "tests": 471
+    },
+    {
+      "scope_id": "111",
+      "lab_code": "9140406",
+      "lab_name": "KC INDIA TEST LABORATORIES LLP, GHAZIABAD",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/111/",
+      "raw_file": "data/raw/labs/scopes/111.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 1738
+    },
+    {
+      "scope_id": "112",
+      "lab_code": "8134626",
+      "lab_name": "CONFORMITY TESTING LABS PVT LTD (WH52)",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/112/",
+      "raw_file": "data/raw/labs/scopes/112.html",
+      "status": "success",
+      "capabilities": 26,
+      "tests": 573
+    },
+    {
+      "scope_id": "113",
+      "lab_code": "8141826",
+      "lab_name": "Star Wire (India) Laboratories Private Ltd., Ballabhgarh",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/113/",
+      "raw_file": "data/raw/labs/scopes/113.html",
+      "status": "success",
+      "capabilities": 7,
+      "tests": 171
+    },
+    {
+      "scope_id": "115",
+      "lab_code": "6126416",
+      "lab_name": "NAWaL Analytical Labs India Private Limited, Hosur",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/115/",
+      "raw_file": "data/raw/labs/scopes/115.html",
+      "status": "success",
+      "capabilities": 19,
+      "tests": 1724
+    },
+    {
+      "scope_id": "117",
+      "lab_code": "8139626",
+      "lab_name": "Conformity Testing Labs Pvt. Ltd. Unit 2 (A33)",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/117/",
+      "raw_file": "data/raw/labs/scopes/117.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 748
+    },
+    {
+      "scope_id": "118",
+      "lab_code": "7123316",
+      "lab_name": "MicroChem Silliker Pvt. Ltd, Navi Mumbai",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/118/",
+      "raw_file": "data/raw/labs/scopes/118.html",
+      "status": "success",
+      "capabilities": 23,
+      "tests": 1794
+    },
+    {
+      "scope_id": "120",
+      "lab_code": "8101304",
+      "lab_name": "National Test House (NR) - NTH, Ghaziabad",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/120/",
+      "raw_file": "data/raw/labs/scopes/120.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 2215
+    },
+    {
+      "scope_id": "122",
+      "lab_code": "5126636",
+      "lab_name": "SUNTECH",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/122/",
+      "raw_file": "data/raw/labs/scopes/122.html",
+      "status": "success",
+      "capabilities": 4,
+      "tests": 60
+    },
+    {
+      "scope_id": "123",
+      "lab_code": "6135404",
+      "lab_name": "The National Small Industries Corporation Ltd (NSIC), Chennai",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/123/",
+      "raw_file": "data/raw/labs/scopes/123.html",
+      "status": "success",
+      "capabilities": 13,
+      "tests": 520
+    },
+    {
+      "scope_id": "124",
+      "lab_code": "6126126",
+      "lab_name": "TUV Rheinland (India) Pvt. Ltd (6126126), Bengaluru",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/124/",
+      "raw_file": "data/raw/labs/scopes/124.html",
+      "status": "success",
+      "capabilities": 29,
+      "tests": 1956
+    },
+    {
+      "scope_id": "125",
+      "lab_code": "8116816",
+      "lab_name": "Arbro Pharmaceuticals Private Limited",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/125/",
+      "raw_file": "data/raw/labs/scopes/125.html",
+      "status": "success",
+      "capabilities": 17,
+      "tests": 1214
+    },
+    {
+      "scope_id": "126",
+      "lab_code": "9127026",
+      "lab_name": "DELHI TEST HOUSE (50) KUNDLI SONIPAT",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/126/",
+      "raw_file": "data/raw/labs/scopes/126.html",
+      "status": "success",
+      "capabilities": 25,
+      "tests": 623
+    },
+    {
+      "scope_id": "127",
+      "lab_code": "5135906",
+      "lab_name": "Excel Surveyors Pvt. Ltd., Kolkata",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/127/",
+      "raw_file": "data/raw/labs/scopes/127.html",
+      "status": "success",
+      "capabilities": 23,
+      "tests": 1587
+    },
+    {
+      "scope_id": "128",
+      "lab_code": "6132316",
+      "lab_name": "SMS Labs Services Private Limited, Chennai",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/128/",
+      "raw_file": "data/raw/labs/scopes/128.html",
+      "status": "success",
+      "capabilities": 5,
+      "tests": 396
+    },
+    {
+      "scope_id": "129",
+      "lab_code": "6108016",
+      "lab_name": "Bureau Veritas (India) Pvt Ltd, Chennai",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/129/",
+      "raw_file": "data/raw/labs/scopes/129.html",
+      "status": "success",
+      "capabilities": 7,
+      "tests": 608
+    },
+    {
+      "scope_id": "130",
+      "lab_code": "6108116",
+      "lab_name": "BUREAU VERITAS INDIA TESTING SERVICES PVT LTD, HYDERABAD",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/130/",
+      "raw_file": "data/raw/labs/scopes/130.html",
+      "status": "success",
+      "capabilities": 3,
+      "tests": 345
+    },
+    {
+      "scope_id": "132",
+      "lab_code": "6104634",
+      "lab_name": "CIPET, Chennai",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/132/",
+      "raw_file": "data/raw/labs/scopes/132.html",
+      "status": "success",
+      "capabilities": 28,
+      "tests": 609
+    },
+    {
+      "scope_id": "134",
+      "lab_code": "7124016",
+      "lab_name": "FHHL PRIVATE LIMITED, PUNE",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/134/",
+      "raw_file": "data/raw/labs/scopes/134.html",
+      "status": "success",
+      "capabilities": 8,
+      "tests": 1262
+    },
+    {
+      "scope_id": "135",
+      "lab_code": "5163604",
+      "lab_name": "Central institute of Petrochemicals Engineering & Technology (CIPET), Raipur",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/135/",
+      "raw_file": "data/raw/labs/scopes/135.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 625
+    },
+    {
+      "scope_id": "137",
+      "lab_code": "8165826",
+      "lab_name": "AA Electro Magnetic Laboratory Pvt Ltd, Gurugram",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/137/",
+      "raw_file": "data/raw/labs/scopes/137.html",
+      "status": "success",
+      "capabilities": 27,
+      "tests": 800
+    },
+    {
+      "scope_id": "138",
+      "lab_code": "6139316",
+      "lab_name": "VSIX ANALYTICAL LABS PVT LTD, BENGALURU",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/138/",
+      "raw_file": "data/raw/labs/scopes/138.html",
+      "status": "success",
+      "capabilities": 2,
+      "tests": 291
+    },
+    {
+      "scope_id": "139",
+      "lab_code": "8166516",
+      "lab_name": "FARE Labs Pvt. Ltd. (8166516), Gurugram",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/139/",
+      "raw_file": "data/raw/labs/scopes/139.html",
+      "status": "success",
+      "capabilities": 2,
+      "tests": 6
+    },
+    {
+      "scope_id": "140",
+      "lab_code": "7115716",
+      "lab_name": "Geo-Chem Laboratories Private Limited, Mumbai",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/140/",
+      "raw_file": "data/raw/labs/scopes/140.html",
+      "status": "success",
+      "capabilities": 0,
+      "tests": 0
+    },
+    {
+      "scope_id": "141",
+      "lab_code": "7119116",
+      "lab_name": "Maarc Labs Private Limited, Pune",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/141/",
+      "raw_file": "data/raw/labs/scopes/141.html",
+      "status": "success",
+      "capabilities": 3,
+      "tests": 153
+    },
+    {
+      "scope_id": "142",
+      "lab_code": "6139834",
+      "lab_name": "CIPET, Madurai",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/142/",
+      "raw_file": "data/raw/labs/scopes/142.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 698
+    },
+    {
+      "scope_id": "143",
+      "lab_code": "7106935",
+      "lab_name": "The Automotive Research Association of India (ARAI), Kothrud, Pune",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/143/",
+      "raw_file": "data/raw/labs/scopes/143.html",
+      "status": "success",
+      "capabilities": 15,
+      "tests": 404
+    },
+    {
+      "scope_id": "144",
+      "lab_code": "9102534",
+      "lab_name": "CIPET, Lucknow",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/144/",
+      "raw_file": "data/raw/labs/scopes/144.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 785
+    },
+    {
+      "scope_id": "145",
+      "lab_code": "6141334",
+      "lab_name": "CIPET, Vijayawada",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/145/",
+      "raw_file": "data/raw/labs/scopes/145.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 609
+    },
+    {
+      "scope_id": "147",
+      "lab_code": "8134206",
+      "lab_name": "Atharva Laboratories Pvt. Ltd. (D115A), Noida (8134206)",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/147/",
+      "raw_file": "data/raw/labs/scopes/147.html",
+      "status": "success",
+      "capabilities": 29,
+      "tests": 2131
+    },
+    {
+      "scope_id": "148",
+      "lab_code": "9100634",
+      "lab_name": "Research & Development Centre for Bicycle and Sewing Machine, Ludhiana",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/148/",
+      "raw_file": "data/raw/labs/scopes/148.html",
+      "status": "success",
+      "capabilities": 17,
+      "tests": 256
+    },
+    {
+      "scope_id": "149",
+      "lab_code": "9163904",
+      "lab_name": "Central Institute of Petrochemicals Engineering and Technology (CIPET), BADDI",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/149/",
+      "raw_file": "data/raw/labs/scopes/149.html",
+      "status": "success",
+      "capabilities": 22,
+      "tests": 478
+    },
+    {
+      "scope_id": "150",
+      "lab_code": "7130916",
+      "lab_name": "Ashwamedh Engineers & Consultants Laboratory Services Division, Nashik",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/150/",
+      "raw_file": "data/raw/labs/scopes/150.html",
+      "status": "success",
+      "capabilities": 4,
+      "tests": 232
+    },
+    {
+      "scope_id": "152",
+      "lab_code": "7123534",
+      "lab_name": "CIPET: CSTS, CHHATRAPATI SAMBHAJINAGAR",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/152/",
+      "raw_file": "data/raw/labs/scopes/152.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 548
+    },
+    {
+      "scope_id": "155",
+      "lab_code": "7137016",
+      "lab_name": "Gujarat Testlab Private Limited, Ahmedabad",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/155/",
+      "raw_file": "data/raw/labs/scopes/155.html",
+      "status": "success",
+      "capabilities": 5,
+      "tests": 538
+    },
+    {
+      "scope_id": "156",
+      "lab_code": "8165726",
+      "lab_name": "IEC TEST LABS LLP",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/156/",
+      "raw_file": "data/raw/labs/scopes/156.html",
+      "status": "success",
+      "capabilities": 29,
+      "tests": 3273
+    },
+    {
+      "scope_id": "157",
+      "lab_code": "7124116",
+      "lab_name": "Anacon Laboratories Pvt. Ltd, Nagpur",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/157/",
+      "raw_file": "data/raw/labs/scopes/157.html",
+      "status": "success",
+      "capabilities": 4,
+      "tests": 597
+    },
+    {
+      "scope_id": "159",
+      "lab_code": "6132626",
+      "lab_name": "SGS INDIA PRIVATE LIMITED, BENGALURU",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/159/",
+      "raw_file": "data/raw/labs/scopes/159.html",
+      "status": "success",
+      "capabilities": 5,
+      "tests": 582
+    },
+    {
+      "scope_id": "160",
+      "lab_code": "6102906",
+      "lab_name": "Vimta labs Limited, Hyderabad",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/160/",
+      "raw_file": "data/raw/labs/scopes/160.html",
+      "status": "success",
+      "capabilities": 28,
+      "tests": 2987
+    },
+    {
+      "scope_id": "161",
+      "lab_code": "8141726",
+      "lab_name": "Bharti Automation Pvt. Ltd.(A Testing Division), Gurugram",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/161/",
+      "raw_file": "data/raw/labs/scopes/161.html",
+      "status": "success",
+      "capabilities": 28,
+      "tests": 1597
+    },
+    {
+      "scope_id": "162",
+      "lab_code": "7108424",
+      "lab_name": "Electronics Regional Test Laboratory (West) - ERTL (STQC), Mumbai",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/162/",
+      "raw_file": "data/raw/labs/scopes/162.html",
+      "status": "success",
+      "capabilities": 9,
+      "tests": 280
+    },
+    {
+      "scope_id": "163",
+      "lab_code": "9140626",
+      "lab_name": "Aforeserve Labs Private Limited, Gurugram",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/163/",
+      "raw_file": "data/raw/labs/scopes/163.html",
+      "status": "success",
+      "capabilities": 9,
+      "tests": 263
+    },
+    {
+      "scope_id": "164",
+      "lab_code": "7165436",
+      "lab_name": "DARSHAN ELECTRICAL TESTING AND RESEARCH LABORATORY (DETRL), RAJKOT",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/164/",
+      "raw_file": "data/raw/labs/scopes/164.html",
+      "status": "success",
+      "capabilities": 10,
+      "tests": 625
+    },
+    {
+      "scope_id": "165",
+      "lab_code": "8165026",
+      "lab_name": "Atharva Laboratories Pvt. Ltd. (C-54), Noida",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/165/",
+      "raw_file": "data/raw/labs/scopes/165.html",
+      "status": "success",
+      "capabilities": 27,
+      "tests": 1312
+    },
+    {
+      "scope_id": "166",
+      "lab_code": "6164216",
+      "lab_name": "Vimta Labs Limited, Bengaluru",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/166/",
+      "raw_file": "data/raw/labs/scopes/166.html",
+      "status": "success",
+      "capabilities": 1,
+      "tests": 120
+    },
+    {
+      "scope_id": "168",
+      "lab_code": "7120616",
+      "lab_name": "Envirocare Labs Pvt Ltd, Thane",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/168/",
+      "raw_file": "data/raw/labs/scopes/168.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 1810
+    },
+    {
+      "scope_id": "169",
+      "lab_code": "8118116",
+      "lab_name": "Cali Labs Private Limited, Bhopal",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/169/",
+      "raw_file": "data/raw/labs/scopes/169.html",
+      "status": "success",
+      "capabilities": 4,
+      "tests": 357
+    },
+    {
+      "scope_id": "170",
+      "lab_code": "8100924",
+      "lab_name": "CENTRAL POWER RESEARCH INSTITUTE (CPRI), BHOPAL",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/170/",
+      "raw_file": "data/raw/labs/scopes/170.html",
+      "status": "success",
+      "capabilities": 13,
+      "tests": 1001
+    },
+    {
+      "scope_id": "171",
+      "lab_code": "9134736",
+      "lab_name": "Mananda Test House, Derabassi",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/171/",
+      "raw_file": "data/raw/labs/scopes/171.html",
+      "status": "success",
+      "capabilities": 6,
+      "tests": 210
+    },
+    {
+      "scope_id": "172",
+      "lab_code": "9140226",
+      "lab_name": "Nextron International Lab Private Limited",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/172/",
+      "raw_file": "data/raw/labs/scopes/172.html",
+      "status": "success",
+      "capabilities": 7,
+      "tests": 139
+    },
+    {
+      "scope_id": "173",
+      "lab_code": "8131406",
+      "lab_name": "DELHI TEST HOUSE, Azadhpur",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/173/",
+      "raw_file": "data/raw/labs/scopes/173.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 2097
+    },
+    {
+      "scope_id": "174",
+      "lab_code": "9138006",
+      "lab_name": "DELHI TEST HOUSE (A Unit of Delhii Test House Global LLP) (65) KUNDLI-2 SONIPAT",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/174/",
+      "raw_file": "data/raw/labs/scopes/174.html",
+      "status": "success",
+      "capabilities": 29,
+      "tests": 1606
+    },
+    {
+      "scope_id": "175",
+      "lab_code": "8138626",
+      "lab_name": "Matrix Test Labs",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/175/",
+      "raw_file": "data/raw/labs/scopes/175.html",
+      "status": "success",
+      "capabilities": 29,
+      "tests": 1201
+    },
+    {
+      "scope_id": "176",
+      "lab_code": "5127516",
+      "lab_name": "EDWARD FOOD RESEARCH & ANALYSIS CENTRE LIMITED",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/176/",
+      "raw_file": "data/raw/labs/scopes/176.html",
+      "status": "success",
+      "capabilities": 17,
+      "tests": 999
+    },
+    {
+      "scope_id": "179",
+      "lab_code": "8133016",
+      "lab_name": "Saturn Quality Certifications Pvt.Ltd., Bahadurgarh",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/179/",
+      "raw_file": "data/raw/labs/scopes/179.html",
+      "status": "success",
+      "capabilities": 3,
+      "tests": 17
+    },
+    {
+      "scope_id": "183",
+      "lab_code": "9137826",
+      "lab_name": "Bharat Test House Pvt Ltd 781 Sonipat Haryana",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/183/",
+      "raw_file": "data/raw/labs/scopes/183.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 1574
+    },
+    {
+      "scope_id": "185",
+      "lab_code": "9135626",
+      "lab_name": "Bharat Test House Pvt Ltd 1474 Sonipat Haryana",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/185/",
+      "raw_file": "data/raw/labs/scopes/185.html",
+      "status": "success",
+      "capabilities": 24,
+      "tests": 1167
+    },
+    {
+      "scope_id": "187",
+      "lab_code": "7116134",
+      "lab_name": "CIPET, Ahmedabad",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/187/",
+      "raw_file": "data/raw/labs/scopes/187.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 584
+    },
+    {
+      "scope_id": "189",
+      "lab_code": "9140526",
+      "lab_name": "TUV Rheinland (India) Pvt. Ltd. (417), Gurugram",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/189/",
+      "raw_file": "data/raw/labs/scopes/189.html",
+      "status": "success",
+      "capabilities": 22,
+      "tests": 594
+    },
+    {
+      "scope_id": "190",
+      "lab_code": "9162826",
+      "lab_name": "Ace Test Labs & Metrology Pvt. Ltd., Sonipat",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/190/",
+      "raw_file": "data/raw/labs/scopes/190.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 2240
+    },
+    {
+      "scope_id": "191",
+      "lab_code": "5102634",
+      "lab_name": "CENTRAL INSTITUTE OF PETROCHEMICALS ENGINEERING & TECHNOLOGY (CIPET) : IPT-BHUBANESWAR",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/191/",
+      "raw_file": "data/raw/labs/scopes/191.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 694
+    },
+    {
+      "scope_id": "192",
+      "lab_code": "6164516",
+      "lab_name": "ABC Techno Labs India Private Limited",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/192/",
+      "raw_file": "data/raw/labs/scopes/192.html",
+      "status": "success",
+      "capabilities": 1,
+      "tests": 86
+    },
+    {
+      "scope_id": "193",
+      "lab_code": "8125516",
+      "lab_name": "INTERTEK INDIA PRIVATE LIMITED FOOD SERVICES, GURUGRAM",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/193/",
+      "raw_file": "data/raw/labs/scopes/193.html",
+      "status": "success",
+      "capabilities": 7,
+      "tests": 716
+    },
+    {
+      "scope_id": "196",
+      "lab_code": "8167006",
+      "lab_name": "Cosmo Analytical Lab LLP, Noida",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/196/",
+      "raw_file": "data/raw/labs/scopes/196.html",
+      "status": "success",
+      "capabilities": 2,
+      "tests": 112
+    },
+    {
+      "scope_id": "197",
+      "lab_code": "6111634",
+      "lab_name": "CIPET, Hyderabad",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/197/",
+      "raw_file": "data/raw/labs/scopes/197.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 643
+    },
+    {
+      "scope_id": "198",
+      "lab_code": "7126506",
+      "lab_name": "Testtex India Laboratories Pvt. Ltd., Mumbai",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/198/",
+      "raw_file": "data/raw/labs/scopes/198.html",
+      "status": "success",
+      "capabilities": 28,
+      "tests": 2061
+    },
+    {
+      "scope_id": "199",
+      "lab_code": "8117816",
+      "lab_name": "Avon Food Lab Pvt. Ltd.",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/199/",
+      "raw_file": "data/raw/labs/scopes/199.html",
+      "status": "success",
+      "capabilities": 26,
+      "tests": 1623
+    },
+    {
+      "scope_id": "201",
+      "lab_code": "8122904",
+      "lab_name": "National Test House (NWR) - NTH, Jaipur",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/201/",
+      "raw_file": "data/raw/labs/scopes/201.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 686
+    },
+    {
+      "scope_id": "203",
+      "lab_code": "6113734",
+      "lab_name": "CIPET. MYSURU",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/203/",
+      "raw_file": "data/raw/labs/scopes/203.html",
+      "status": "success",
+      "capabilities": 24,
+      "tests": 490
+    },
+    {
+      "scope_id": "205",
+      "lab_code": "8136626",
+      "lab_name": "Intertek India Private Limited, New Delhi (E-26)",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/205/",
+      "raw_file": "data/raw/labs/scopes/205.html",
+      "status": "success",
+      "capabilities": 28,
+      "tests": 1096
+    },
+    {
+      "scope_id": "213",
+      "lab_code": "8161906",
+      "lab_name": "ACE TEST HOUSE PRIVATE LIMITED (8161906), NEW DELHI",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/213/",
+      "raw_file": "data/raw/labs/scopes/213.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 1198
+    },
+    {
+      "scope_id": "214",
+      "lab_code": "8141606",
+      "lab_name": "AADCO TESTING & RESEARCH LABORATORY PVT LTD (F28), GHAZIABAD",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/214/",
+      "raw_file": "data/raw/labs/scopes/214.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 2059
+    },
+    {
+      "scope_id": "217",
+      "lab_code": "9137406",
+      "lab_name": "HTH Laboratories Private Limited, Panipat",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/217/",
+      "raw_file": "data/raw/labs/scopes/217.html",
+      "status": "success",
+      "capabilities": 7,
+      "tests": 2356
+    },
+    {
+      "scope_id": "218",
+      "lab_code": "8117716",
+      "lab_name": "AES Laboratories Pvt. Ltd., Noida",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/218/",
+      "raw_file": "data/raw/labs/scopes/218.html",
+      "status": "success",
+      "capabilities": 3,
+      "tests": 58
+    },
+    {
+      "scope_id": "219",
+      "lab_code": "7161816",
+      "lab_name": "HPCL, Vashi QC Laboratory, Navi Mumbai",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/219/",
+      "raw_file": "data/raw/labs/scopes/219.html",
+      "status": "success",
+      "capabilities": 3,
+      "tests": 107
+    },
+    {
+      "scope_id": "220",
+      "lab_code": "5108204",
+      "lab_name": "MICRO, SMALL & MEDIUM ENTERPRISES - TESTING CENTRE (MSME), KOLKATA",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/220/",
+      "raw_file": "data/raw/labs/scopes/220.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 961
+    },
+    {
+      "scope_id": "221",
+      "lab_code": "7101125",
+      "lab_name": "Electrical Research and Development Association, gujurat",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/221/",
+      "raw_file": "data/raw/labs/scopes/221.html",
+      "status": "success",
+      "capabilities": 22,
+      "tests": 1103
+    },
+    {
+      "scope_id": "223",
+      "lab_code": "6137634",
+      "lab_name": "CIPET, KOCHI",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/223/",
+      "raw_file": "data/raw/labs/scopes/223.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 1179
+    },
+    {
+      "scope_id": "224",
+      "lab_code": "7118234",
+      "lab_name": "ELECTRONICS AND QUALITY DEVELOPMENT CENTRE - EQDC, GANDHINAGAR",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/224/",
+      "raw_file": "data/raw/labs/scopes/224.html",
+      "status": "success",
+      "capabilities": 6,
+      "tests": 331
+    },
+    {
+      "scope_id": "225",
+      "lab_code": "6114716",
+      "lab_name": "SGS India Private Limited-Multilaboratory, Chennai",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/225/",
+      "raw_file": "data/raw/labs/scopes/225.html",
+      "status": "success",
+      "capabilities": 2,
+      "tests": 273
+    },
+    {
+      "scope_id": "226",
+      "lab_code": "5132706",
+      "lab_name": "SGS INDIA PRIVATE LTD. ( LAB_JOKA), KOLKATA",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/226/",
+      "raw_file": "data/raw/labs/scopes/226.html",
+      "status": "success",
+      "capabilities": 4,
+      "tests": 442
+    },
+    {
+      "scope_id": "227",
+      "lab_code": "6124716",
+      "lab_name": "Interfield Laboratories, Kochi",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/227/",
+      "raw_file": "data/raw/labs/scopes/227.html",
+      "status": "success",
+      "capabilities": 2,
+      "tests": 317
+    },
+    {
+      "scope_id": "232",
+      "lab_code": "5164306",
+      "lab_name": "INSPECTION SYNDICATE OF INDIA PVT. LTD.",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/232/",
+      "raw_file": "data/raw/labs/scopes/232.html",
+      "status": "success",
+      "capabilities": 8,
+      "tests": 883
+    },
+    {
+      "scope_id": "233",
+      "lab_code": "5134116",
+      "lab_name": "KALYANI LABORATORIES PRIVATE LIMITED, BHUBANESWAR",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/233/",
+      "raw_file": "data/raw/labs/scopes/233.html",
+      "status": "success",
+      "capabilities": 3,
+      "tests": 1080
+    },
+    {
+      "scope_id": "236",
+      "lab_code": "8166826",
+      "lab_name": "ACE TEST LAB PRIVATE LIMITED (8166826), DELHI",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/236/",
+      "raw_file": "data/raw/labs/scopes/236.html",
+      "status": "success",
+      "capabilities": 22,
+      "tests": 1203
+    },
+    {
+      "scope_id": "237",
+      "lab_code": "8136216",
+      "lab_name": "SGS India Pvt Ltd, Gurgaon (8136216)",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/237/",
+      "raw_file": "data/raw/labs/scopes/237.html",
+      "status": "success",
+      "capabilities": 10,
+      "tests": 946
+    },
+    {
+      "scope_id": "238",
+      "lab_code": "9108716",
+      "lab_name": "Interstellar Testing Centre Pvt. Ltd. (A group company of Qualitek Labs Limited), Panchkula",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/238/",
+      "raw_file": "data/raw/labs/scopes/238.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 1038
+    },
+    {
+      "scope_id": "239",
+      "lab_code": "8135535",
+      "lab_name": "International Centre for Automotive Technology (Centre-2)",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/239/",
+      "raw_file": "data/raw/labs/scopes/239.html",
+      "status": "success",
+      "capabilities": 6,
+      "tests": 56
+    },
+    {
+      "scope_id": "240",
+      "lab_code": "8163426",
+      "lab_name": "Sierra Aircon Pvt. Ltd., Gurugram",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/240/",
+      "raw_file": "data/raw/labs/scopes/240.html",
+      "status": "success",
+      "capabilities": 4,
+      "tests": 87
+    },
+    {
+      "scope_id": "242",
+      "lab_code": "8119706",
+      "lab_name": "CEG Test House & Research Centre Private Limited, Jaipur",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/242/",
+      "raw_file": "data/raw/labs/scopes/242.html",
+      "status": "success",
+      "capabilities": 14,
+      "tests": 381
+    },
+    {
+      "scope_id": "245",
+      "lab_code": "8136916",
+      "lab_name": "CHOKSI LABORATORIES LIMITED, INDORE",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/245/",
+      "raw_file": "data/raw/labs/scopes/245.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 981
+    },
+    {
+      "scope_id": "246",
+      "lab_code": "8122834",
+      "lab_name": "CIPET, Jaipur",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/246/",
+      "raw_file": "data/raw/labs/scopes/246.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 1128
+    },
+    {
+      "scope_id": "247",
+      "lab_code": "7104734",
+      "lab_name": "NSIC - Technical Services Centre, Rajkot",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/247/",
+      "raw_file": "data/raw/labs/scopes/247.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 826
+    },
+    {
+      "scope_id": "250",
+      "lab_code": "7132925",
+      "lab_name": "Electrical Research and Development Association",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/250/",
+      "raw_file": "data/raw/labs/scopes/250.html",
+      "status": "success",
+      "capabilities": 1,
+      "tests": 33
+    },
+    {
+      "scope_id": "251",
+      "lab_code": "6106704",
+      "lab_name": "MSME TESTING CENTRE, CHENNAI",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/251/",
+      "raw_file": "data/raw/labs/scopes/251.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 1532
+    },
+    {
+      "scope_id": "252",
+      "lab_code": "7134016",
+      "lab_name": "QUALICHEM LABORATORIES, NAGPUR",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/252/",
+      "raw_file": "data/raw/labs/scopes/252.html",
+      "status": "success",
+      "capabilities": 1,
+      "tests": 14
+    },
+    {
+      "scope_id": "253",
+      "lab_code": "7103506",
+      "lab_name": "TCR ENGINEERING SERVICES PVT.LTD., NAVI MUMBAI",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/253/",
+      "raw_file": "data/raw/labs/scopes/253.html",
+      "status": "success",
+      "capabilities": 19,
+      "tests": 964
+    },
+    {
+      "scope_id": "254",
+      "lab_code": "6139136",
+      "lab_name": "TRUSTIN ANALYTICAL SOLUTIONS PRIVATE LIMITED, CHENNAI",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/254/",
+      "raw_file": "data/raw/labs/scopes/254.html",
+      "status": "success",
+      "capabilities": 6,
+      "tests": 101
+    },
+    {
+      "scope_id": "256",
+      "lab_code": "8166916",
+      "lab_name": "AGSS ANALYTICAL AND RESEARCH LAB PVT LTD",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/256/",
+      "raw_file": "data/raw/labs/scopes/256.html",
+      "status": "success",
+      "capabilities": 2,
+      "tests": 36
+    },
+    {
+      "scope_id": "258",
+      "lab_code": "7105101",
+      "lab_name": "CENTRAL INSTITUTE OF ROAD TRANSPORT (CIRT), PUNE",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/258/",
+      "raw_file": "data/raw/labs/scopes/258.html",
+      "status": "success",
+      "capabilities": 14,
+      "tests": 199
+    },
+    {
+      "scope_id": "259",
+      "lab_code": "8138926",
+      "lab_name": "ELMEF TESTING AND CALIBRATION LABORATORIES PRIVATE LIMITED",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/259/",
+      "raw_file": "data/raw/labs/scopes/259.html",
+      "status": "success",
+      "capabilities": 9,
+      "tests": 314
+    },
+    {
+      "scope_id": "266",
+      "lab_code": "5118334",
+      "lab_name": "CIPET, Hajipur",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/266/",
+      "raw_file": "data/raw/labs/scopes/266.html",
+      "status": "success",
+      "capabilities": 16,
+      "tests": 651
+    },
+    {
+      "scope_id": "267",
+      "lab_code": "5135804",
+      "lab_name": "RITES Eastern Region Laboratory, Kolkata",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/267/",
+      "raw_file": "data/raw/labs/scopes/267.html",
+      "status": "success",
+      "capabilities": 7,
+      "tests": 182
+    },
+    {
+      "scope_id": "268",
+      "lab_code": "6122704",
+      "lab_name": "NATIONAL TEST HOUSE-SR (NTH), Chennai",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/268/",
+      "raw_file": "data/raw/labs/scopes/268.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 955
+    },
+    {
+      "scope_id": "269",
+      "lab_code": "7166626",
+      "lab_name": "Intertek India Private Limited (Gujarat)",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/269/",
+      "raw_file": "data/raw/labs/scopes/269.html",
+      "status": "success",
+      "capabilities": 4,
+      "tests": 176
+    },
+    {
+      "scope_id": "270",
+      "lab_code": "6118616",
+      "lab_name": "Monarch Biotech Private Limited, Unit : Monarch Nuclear Counting Laboratory",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/270/",
+      "raw_file": "data/raw/labs/scopes/270.html",
+      "status": "success",
+      "capabilities": 1,
+      "tests": 89
+    },
+    {
+      "scope_id": "271",
+      "lab_code": "7140126",
+      "lab_name": "Electrical Research and Testing Organisation (ERTO), Vadodara",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/271/",
+      "raw_file": "data/raw/labs/scopes/271.html",
+      "status": "success",
+      "capabilities": 2,
+      "tests": 150
+    },
+    {
+      "scope_id": "272",
+      "lab_code": "9102335",
+      "lab_name": "National Council for Cement and Building Materials (testing laboratories), Faridabad",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/272/",
+      "raw_file": "data/raw/labs/scopes/272.html",
+      "status": "success",
+      "capabilities": 19,
+      "tests": 293
+    },
+    {
+      "scope_id": "275",
+      "lab_code": "7167306",
+      "lab_name": "HEXIQON LABORATORY PRIVATE LIMITED, AHMEDABAD",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/275/",
+      "raw_file": "data/raw/labs/scopes/275.html",
+      "status": "success",
+      "capabilities": 23,
+      "tests": 2015
+    },
+    {
+      "scope_id": "277",
+      "lab_code": "8122426",
+      "lab_name": "Intertek India Private Limited, New Delhi (E-20)",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/277/",
+      "raw_file": "data/raw/labs/scopes/277.html",
+      "status": "success",
+      "capabilities": 17,
+      "tests": 2007
+    },
+    {
+      "scope_id": "278",
+      "lab_code": "6139916",
+      "lab_name": "HUBERT ENVIRO CARE SYSTEMS(P)LTD, CHENNAI",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/278/",
+      "raw_file": "data/raw/labs/scopes/278.html",
+      "status": "success",
+      "capabilities": 0,
+      "tests": 0
+    },
+    {
+      "scope_id": "282",
+      "lab_code": "7137216",
+      "lab_name": "LILABA ANALYTICAL LABORATORIES LLP, SURAT",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/282/",
+      "raw_file": "data/raw/labs/scopes/282.html",
+      "status": "success",
+      "capabilities": 6,
+      "tests": 1228
+    },
+    {
+      "scope_id": "286",
+      "lab_code": "6133416",
+      "lab_name": "Eurofins Analytical Services India Private Limited, Bengaluru",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/286/",
+      "raw_file": "data/raw/labs/scopes/286.html",
+      "status": "success",
+      "capabilities": 8,
+      "tests": 1029
+    },
+    {
+      "scope_id": "288",
+      "lab_code": "6104206",
+      "lab_name": "Shriram Research Institute",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/288/",
+      "raw_file": "data/raw/labs/scopes/288.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 389
+    },
+    {
+      "scope_id": "289",
+      "lab_code": "7121526",
+      "lab_name": "Karandikar Laboratories Pvt. Ltd., Boisar",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/289/",
+      "raw_file": "data/raw/labs/scopes/289.html",
+      "status": "success",
+      "capabilities": 2,
+      "tests": 42
+    },
+    {
+      "scope_id": "292",
+      "lab_code": "5116334",
+      "lab_name": "CENTRAL INSTITUTE OF PETROCHEMICALS ENGINEERING & TECHNOLOGY - CIPET, HALDIA",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/292/",
+      "raw_file": "data/raw/labs/scopes/292.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 1226
+    },
+    {
+      "scope_id": "293",
+      "lab_code": "5120906",
+      "lab_name": "S.B.Steels Company, Bally",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/293/",
+      "raw_file": "data/raw/labs/scopes/293.html",
+      "status": "success",
+      "capabilities": 12,
+      "tests": 345
+    },
+    {
+      "scope_id": "294",
+      "lab_code": "6114324",
+      "lab_name": "Fluid Control Research Institute",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/294/",
+      "raw_file": "data/raw/labs/scopes/294.html",
+      "status": "success",
+      "capabilities": 2,
+      "tests": 22
+    },
+    {
+      "scope_id": "296",
+      "lab_code": "7118404",
+      "lab_name": "Indian Institute of Packaging (IIP), Mumbai",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/296/",
+      "raw_file": "data/raw/labs/scopes/296.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 1391
+    },
+    {
+      "scope_id": "297",
+      "lab_code": "7165924",
+      "lab_name": "RTC cum Technology Back up Unit for Solar Thermal Devices (RTC), Pune",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/297/",
+      "raw_file": "data/raw/labs/scopes/297.html",
+      "status": "success",
+      "capabilities": 9,
+      "tests": 135
+    },
+    {
+      "scope_id": "302",
+      "lab_code": "9125906",
+      "lab_name": "PLANET ANALYSIS PRIVATE LIMITED, KANPUR",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/302/",
+      "raw_file": "data/raw/labs/scopes/302.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 1593
+    },
+    {
+      "scope_id": "303",
+      "lab_code": "6138806",
+      "lab_name": "TAG Corporation, Chennai",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/303/",
+      "raw_file": "data/raw/labs/scopes/303.html",
+      "status": "success",
+      "capabilities": 6,
+      "tests": 204
+    },
+    {
+      "scope_id": "304",
+      "lab_code": "9133933",
+      "lab_name": "Pump Testing Laboratory",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/304/",
+      "raw_file": "data/raw/labs/scopes/304.html",
+      "status": "success",
+      "capabilities": 2,
+      "tests": 34
+    },
+    {
+      "scope_id": "308",
+      "lab_code": "6121636",
+      "lab_name": "LUCID LABORATORIES PRIVATE LIMITED, HYDERABAD",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/308/",
+      "raw_file": "data/raw/labs/scopes/308.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 949
+    },
+    {
+      "scope_id": "311",
+      "lab_code": "6104524",
+      "lab_name": "CENTRAL ELECTRICAL TESTING LABORATORY (CETL), KAKKALUR",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/311/",
+      "raw_file": "data/raw/labs/scopes/311.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 2310
+    },
+    {
+      "scope_id": "312",
+      "lab_code": "6132436",
+      "lab_name": "Vimta Labs Limited (6132436), Hyderabad",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/312/",
+      "raw_file": "data/raw/labs/scopes/312.html",
+      "status": "success",
+      "capabilities": 12,
+      "tests": 530
+    },
+    {
+      "scope_id": "313",
+      "lab_code": "9134816",
+      "lab_name": "ECO Laboratories & Consultants Pvt Ltd",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/313/",
+      "raw_file": "data/raw/labs/scopes/313.html",
+      "status": "success",
+      "capabilities": 2,
+      "tests": 2
+    },
+    {
+      "scope_id": "314",
+      "lab_code": "8167436",
+      "lab_name": "SGS India Pvt Ltd, Gurgaon",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/314/",
+      "raw_file": "data/raw/labs/scopes/314.html",
+      "status": "success",
+      "capabilities": 7,
+      "tests": 1661
+    },
+    {
+      "scope_id": "315",
+      "lab_code": "8131215",
+      "lab_name": "FICCI Research & Analysis Centre",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/315/",
+      "raw_file": "data/raw/labs/scopes/315.html",
+      "status": "success",
+      "capabilities": 9,
+      "tests": 492
+    },
+    {
+      "scope_id": "317",
+      "lab_code": "7119305",
+      "lab_name": "INDIAN RUBBER MATERIALS RESEARCH INSTITUTE (IRMRI)",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/317/",
+      "raw_file": "data/raw/labs/scopes/317.html",
+      "status": "success",
+      "capabilities": 25,
+      "tests": 721
+    },
+    {
+      "scope_id": "318",
+      "lab_code": "8163116",
+      "lab_name": "Institute for Industrial Research & Toxicology, Dhaulana",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/318/",
+      "raw_file": "data/raw/labs/scopes/318.html",
+      "status": "success",
+      "capabilities": 4,
+      "tests": 22
+    },
+    {
+      "scope_id": "319",
+      "lab_code": "8101204",
+      "lab_name": "MSME Testing Centre, New Delhi",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/319/",
+      "raw_file": "data/raw/labs/scopes/319.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 859
+    },
+    {
+      "scope_id": "321",
+      "lab_code": "9120034",
+      "lab_name": "CIPET:CSTS Amritsar",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/321/",
+      "raw_file": "data/raw/labs/scopes/321.html",
+      "status": "success",
+      "capabilities": 16,
+      "tests": 498
+    },
+    {
+      "scope_id": "322",
+      "lab_code": "5131716",
+      "lab_name": "Mitra S.K. Private Limited, Kolkata",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/322/",
+      "raw_file": "data/raw/labs/scopes/322.html",
+      "status": "success",
+      "capabilities": 1,
+      "tests": 17
+    },
+    {
+      "scope_id": "328",
+      "lab_code": "6101024",
+      "lab_name": "Central Power Research Institute (CPRI), Bangalore",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/328/",
+      "raw_file": "data/raw/labs/scopes/328.html",
+      "status": "success",
+      "capabilities": 24,
+      "tests": 1229
+    },
+    {
+      "scope_id": "329",
+      "lab_code": "6117916",
+      "lab_name": "Sipra labs Ltd., Hyderabad",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/329/",
+      "raw_file": "data/raw/labs/scopes/329.html",
+      "status": "success",
+      "capabilities": 1,
+      "tests": 242
+    },
+    {
+      "scope_id": "330",
+      "lab_code": "8137526",
+      "lab_name": "C and I Calibrations Pvt. Ltd., Jaipur",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/330/",
+      "raw_file": "data/raw/labs/scopes/330.html",
+      "status": "success",
+      "capabilities": 1,
+      "tests": 88
+    },
+    {
+      "scope_id": "331",
+      "lab_code": "8130426",
+      "lab_name": "Spectro Analytical Labs Private Limited, Gautam Buddha Nagar",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/331/",
+      "raw_file": "data/raw/labs/scopes/331.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 1269
+    },
+    {
+      "scope_id": "333",
+      "lab_code": "6138124",
+      "lab_name": "Central Electronics Centre, Indian Institute of Technology, Chennai",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/333/",
+      "raw_file": "data/raw/labs/scopes/333.html",
+      "status": "success",
+      "capabilities": 2,
+      "tests": 359
+    },
+    {
+      "scope_id": "336",
+      "lab_code": "6162436",
+      "lab_name": "SGS India Private Limited, Thiruvallur",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/336/",
+      "raw_file": "data/raw/labs/scopes/336.html",
+      "status": "success",
+      "capabilities": 22,
+      "tests": 2015
+    },
+    {
+      "scope_id": "337",
+      "lab_code": "7133816",
+      "lab_name": "TUV India Private Limited (7133816), Pune",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/337/",
+      "raw_file": "data/raw/labs/scopes/337.html",
+      "status": "success",
+      "capabilities": 9,
+      "tests": 1407
+    },
+    {
+      "scope_id": "340",
+      "lab_code": "8116426",
+      "lab_name": "Yadav Measurements Pvt Ltd, Udaipur",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/340/",
+      "raw_file": "data/raw/labs/scopes/340.html",
+      "status": "success",
+      "capabilities": 12,
+      "tests": 452
+    },
+    {
+      "scope_id": "342",
+      "lab_code": "8101924",
+      "lab_name": "Electronic Regional Test Laboratory (North) - ERTL (STQC), Delhi",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/342/",
+      "raw_file": "data/raw/labs/scopes/342.html",
+      "status": "success",
+      "capabilities": 14,
+      "tests": 393
+    },
+    {
+      "scope_id": "355",
+      "lab_code": "7109836",
+      "lab_name": "GUJARAT TEST HOUSE, AHMEDABAD",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/355/",
+      "raw_file": "data/raw/labs/scopes/355.html",
+      "status": "success",
+      "capabilities": 16,
+      "tests": 731
+    },
+    {
+      "scope_id": "394",
+      "lab_code": "8166336",
+      "lab_name": "Intertek India Private Limited (289-290), Gurugram",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/394/",
+      "raw_file": "data/raw/labs/scopes/394.html",
+      "status": "success",
+      "capabilities": 28,
+      "tests": 4624
+    },
+    {
+      "scope_id": "399",
+      "lab_code": "5140804",
+      "lab_name": "NATIONAL TEST HOUSE-ER (NTH), KOLKATA",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/399/",
+      "raw_file": "data/raw/labs/scopes/399.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 545
+    },
+    {
+      "scope_id": "401",
+      "lab_code": "7167626",
+      "lab_name": "RAJKOT ENGINEERING TESTING AND RESEARCH CENTRE, RAJKOT",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/401/",
+      "raw_file": "data/raw/labs/scopes/401.html",
+      "status": "success",
+      "capabilities": 6,
+      "tests": 459
+    },
+    {
+      "scope_id": "405",
+      "lab_code": "9167906",
+      "lab_name": "Arihant Analytical Laboratory Pvt. Ltd., Sonipat",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/405/",
+      "raw_file": "data/raw/labs/scopes/405.html",
+      "status": "success",
+      "capabilities": 28,
+      "tests": 1764
+    },
+    {
+      "scope_id": "416",
+      "lab_code": "8167106",
+      "lab_name": "Softlines and Electrical Safety Testing Laboratory TUV Rheinland India Pvt Ltd., Gurgaon (8167106)",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/416/",
+      "raw_file": "data/raw/labs/scopes/416.html",
+      "status": "success",
+      "capabilities": 14,
+      "tests": 1320
+    },
+    {
+      "scope_id": "419",
+      "lab_code": "5123904",
+      "lab_name": "National Test House (NTH), Alipore, Kolkata-700027",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/419/",
+      "raw_file": "data/raw/labs/scopes/419.html",
+      "status": "success",
+      "capabilities": 27,
+      "tests": 851
+    },
+    {
+      "scope_id": "423",
+      "lab_code": "6167704",
+      "lab_name": "CENTRAL LEATHER RESEARCH INSTITUTE (CSIR-CLRI), CHENNAI",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/423/",
+      "raw_file": "data/raw/labs/scopes/423.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 2045
+    },
+    {
+      "scope_id": "425",
+      "lab_code": "7170010",
+      "lab_name": "Chem-Tech Laboratories Private Limited, Pune",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/425/",
+      "raw_file": "data/raw/labs/scopes/425.html",
+      "status": "success",
+      "capabilities": 1,
+      "tests": 17
+    },
+    {
+      "scope_id": "429",
+      "lab_code": "9121314",
+      "lab_name": "Punjab Biotechnology Incubator",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/429/",
+      "raw_file": "data/raw/labs/scopes/429.html",
+      "status": "success",
+      "capabilities": 24,
+      "tests": 589
+    },
+    {
+      "scope_id": "437",
+      "lab_code": "6167206",
+      "lab_name": "TUV Rheinland (India) Pvt. Ltd., Visakhapatnam",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/437/",
+      "raw_file": "data/raw/labs/scopes/437.html",
+      "status": "success",
+      "capabilities": 4,
+      "tests": 229
+    },
+    {
+      "scope_id": "438",
+      "lab_code": "5117534",
+      "lab_name": "Central Institute of Petrochemical Engineering and Technology (CIPET), Guwahati",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/438/",
+      "raw_file": "data/raw/labs/scopes/438.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 784
+    },
+    {
+      "scope_id": "441",
+      "lab_code": "8170106",
+      "lab_name": "Standard Testing Laboratory Private Limited",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/441/",
+      "raw_file": "data/raw/labs/scopes/441.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 1715
+    },
+    {
+      "scope_id": "445",
+      "lab_code": "6168016",
+      "lab_name": "Mats India Private Limited, Chennai",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/445/",
+      "raw_file": "data/raw/labs/scopes/445.html",
+      "status": "success",
+      "capabilities": 1,
+      "tests": 276
+    },
+    {
+      "scope_id": "453",
+      "lab_code": "9168306",
+      "lab_name": "Bharat Test House Pvt. Ltd. 1668 Sonipat",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/453/",
+      "raw_file": "data/raw/labs/scopes/453.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 1871
+    },
+    {
+      "scope_id": "455",
+      "lab_code": "8169616",
+      "lab_name": "VARDAN ENVIROLAB, GURUGRAM",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/455/",
+      "raw_file": "data/raw/labs/scopes/455.html",
+      "status": "success",
+      "capabilities": 23,
+      "tests": 3580
+    },
+    {
+      "scope_id": "463",
+      "lab_code": "8169106",
+      "lab_name": "Delhi Analytical Research Laboratory",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/463/",
+      "raw_file": "data/raw/labs/scopes/463.html",
+      "status": "success",
+      "capabilities": 24,
+      "tests": 815
+    },
+    {
+      "scope_id": "464",
+      "lab_code": "6168516",
+      "lab_name": "Accurate Labs, Vijayawada",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/464/",
+      "raw_file": "data/raw/labs/scopes/464.html",
+      "status": "success",
+      "capabilities": 0,
+      "tests": 0
+    },
+    {
+      "scope_id": "472",
+      "lab_code": "8170306",
+      "lab_name": "BLUESKY LAB LLP, GHAZIABAD",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/472/",
+      "raw_file": "data/raw/labs/scopes/472.html",
+      "status": "success",
+      "capabilities": 29,
+      "tests": 2168
+    },
+    {
+      "scope_id": "475",
+      "lab_code": "8175206",
+      "lab_name": "Allumera Engineering Solutions Pvt ltd",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/475/",
+      "raw_file": "data/raw/labs/scopes/475.html",
+      "status": "success",
+      "capabilities": 6,
+      "tests": 102
+    },
+    {
+      "scope_id": "476",
+      "lab_code": "6162126",
+      "lab_name": "TUV Rheinland (India) Pvt., Ltd., Bengaluru (6162126)",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/476/",
+      "raw_file": "data/raw/labs/scopes/476.html",
+      "status": "success",
+      "capabilities": 5,
+      "tests": 113
+    },
+    {
+      "scope_id": "493",
+      "lab_code": "8183516",
+      "lab_name": "Pious laboratories Pvt. Ltd., Indore",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/493/",
+      "raw_file": "data/raw/labs/scopes/493.html",
+      "status": "success",
+      "capabilities": 1,
+      "tests": 15
+    },
+    {
+      "scope_id": "499",
+      "lab_code": "8168706",
+      "lab_name": "KRISHNA DIGITAL MATERIAL TESTING LABORATORY LLP, BHOPAL",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/499/",
+      "raw_file": "data/raw/labs/scopes/499.html",
+      "status": "success",
+      "capabilities": 14,
+      "tests": 480
+    },
+    {
+      "scope_id": "507",
+      "lab_code": "6170406",
+      "lab_name": "SKC COMPLIANCE LAB PRIVATE LIMITED, MAHADEVPURA",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/507/",
+      "raw_file": "data/raw/labs/scopes/507.html",
+      "status": "success",
+      "capabilities": 9,
+      "tests": 849
+    },
+    {
+      "scope_id": "509",
+      "lab_code": "7119516",
+      "lab_name": "KONARK RESEARCH FOUNDATION (A DIVISION OF SAGA RESEARCH LABORATORIES PVT.LTD), DAMAN",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/509/",
+      "raw_file": "data/raw/labs/scopes/509.html",
+      "status": "success",
+      "capabilities": 1,
+      "tests": 87
+    },
+    {
+      "scope_id": "511",
+      "lab_code": "6169806",
+      "lab_name": "VIRIDIAN TESTING LABORATORIES LLP, TIRUPUR",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/511/",
+      "raw_file": "data/raw/labs/scopes/511.html",
+      "status": "success",
+      "capabilities": 8,
+      "tests": 166
+    },
+    {
+      "scope_id": "513",
+      "lab_code": "5169204",
+      "lab_name": "National Test House (NER) - NTH, Guwahati",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/513/",
+      "raw_file": "data/raw/labs/scopes/513.html",
+      "status": "success",
+      "capabilities": 14,
+      "tests": 593
+    },
+    {
+      "scope_id": "516",
+      "lab_code": "8171826",
+      "lab_name": "TVS LABS",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/516/",
+      "raw_file": "data/raw/labs/scopes/516.html",
+      "status": "success",
+      "capabilities": 16,
+      "tests": 2215
+    },
+    {
+      "scope_id": "518",
+      "lab_code": "8176306",
+      "lab_name": "MATERIAL TESTING LABORATORY LLP",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/518/",
+      "raw_file": "data/raw/labs/scopes/518.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 1012
+    },
+    {
+      "scope_id": "527",
+      "lab_code": "7169416",
+      "lab_name": "JUBILANT PHARMA AND CHEMICAL LAB (OPC) PVT.LTD, NAVI MUMBAI",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/527/",
+      "raw_file": "data/raw/labs/scopes/527.html",
+      "status": "success",
+      "capabilities": 3,
+      "tests": 225
+    },
+    {
+      "scope_id": "537",
+      "lab_code": "8168906",
+      "lab_name": "URS PRODUCTS AND TESTING PVT. LTD. (A29), NOIDA",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/537/",
+      "raw_file": "data/raw/labs/scopes/537.html",
+      "status": "success",
+      "capabilities": 28,
+      "tests": 3177
+    },
+    {
+      "scope_id": "541",
+      "lab_code": "5169006",
+      "lab_name": "Pulp and Paper Research Institute (PAPRI), Rayagada",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/541/",
+      "raw_file": "data/raw/labs/scopes/541.html",
+      "status": "success",
+      "capabilities": 10,
+      "tests": 234
+    },
+    {
+      "scope_id": "545",
+      "lab_code": "8170206",
+      "lab_name": "POWERONIC TEST & RESEARCH CENTRE PRIVATE LIMITED, GREATER NOIDA",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/545/",
+      "raw_file": "data/raw/labs/scopes/545.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 2493
+    },
+    {
+      "scope_id": "546",
+      "lab_code": "7169736",
+      "lab_name": "ELCA Laboratories, Navi Mumbai",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/546/",
+      "raw_file": "data/raw/labs/scopes/546.html",
+      "status": "success",
+      "capabilities": 2,
+      "tests": 227
+    },
+    {
+      "scope_id": "553",
+      "lab_code": "6173106",
+      "lab_name": "INTERSTELLAR TESTING CENTRE PRIVATE LIMITED, CHENNAI",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/553/",
+      "raw_file": "data/raw/labs/scopes/553.html",
+      "status": "success",
+      "capabilities": 0,
+      "tests": 0
+    },
+    {
+      "scope_id": "562",
+      "lab_code": "6171206",
+      "lab_name": "Eureka Analytical Services Private Limited, Bengaluru",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/562/",
+      "raw_file": "data/raw/labs/scopes/562.html",
+      "status": "success",
+      "capabilities": 12,
+      "tests": 1283
+    },
+    {
+      "scope_id": "573",
+      "lab_code": "8169906",
+      "lab_name": "QA TESTING LABORATORIES PRIVATE LIMITED, NOIDA",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/573/",
+      "raw_file": "data/raw/labs/scopes/573.html",
+      "status": "success",
+      "capabilities": 13,
+      "tests": 374
+    },
+    {
+      "scope_id": "583",
+      "lab_code": "9178004",
+      "lab_name": "Central Institute of Petrochemicals Engineering & Technology (CIPET), CSTS - Dehradun",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/583/",
+      "raw_file": "data/raw/labs/scopes/583.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 1476
+    },
+    {
+      "scope_id": "586",
+      "lab_code": "6170916",
+      "lab_name": "GLOBAL LAB AND CONSULTANCY SERVICES LLP, SALEM",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/586/",
+      "raw_file": "data/raw/labs/scopes/586.html",
+      "status": "success",
+      "capabilities": 5,
+      "tests": 35
+    },
+    {
+      "scope_id": "587",
+      "lab_code": "8168806",
+      "lab_name": "Bahadurgarh Footwear Development Services (BFDS), Bahadurgarh",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/587/",
+      "raw_file": "data/raw/labs/scopes/587.html",
+      "status": "success",
+      "capabilities": 9,
+      "tests": 1223
+    },
+    {
+      "scope_id": "588",
+      "lab_code": "8171606",
+      "lab_name": "Stellar Test House, Noida",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/588/",
+      "raw_file": "data/raw/labs/scopes/588.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 3406
+    },
+    {
+      "scope_id": "591",
+      "lab_code": "8169306",
+      "lab_name": "Universal Testing and Research Centre (Division of Sustainable Stewardship Private Limited)",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/591/",
+      "raw_file": "data/raw/labs/scopes/591.html",
+      "status": "success",
+      "capabilities": 22,
+      "tests": 594
+    },
+    {
+      "scope_id": "592",
+      "lab_code": "8171106",
+      "lab_name": "Customer Services & Development Center, HPCL-Mittal Energy Limited, Noida",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/592/",
+      "raw_file": "data/raw/labs/scopes/592.html",
+      "status": "success",
+      "capabilities": 3,
+      "tests": 324
+    },
+    {
+      "scope_id": "596",
+      "lab_code": "8170806",
+      "lab_name": "COTERD SOLUTIONS (OPC) PRIVATE LIMITED, AC TEST LAB, GREATER NOIDA",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/596/",
+      "raw_file": "data/raw/labs/scopes/596.html",
+      "status": "success",
+      "capabilities": 12,
+      "tests": 735
+    },
+    {
+      "scope_id": "607",
+      "lab_code": "5172106",
+      "lab_name": "ANALYTICAL DEVELOPMENT- R & D, EMAMI LTD., Kolkata",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/607/",
+      "raw_file": "data/raw/labs/scopes/607.html",
+      "status": "success",
+      "capabilities": 1,
+      "tests": 4
+    },
+    {
+      "scope_id": "614",
+      "lab_code": "6169526",
+      "lab_name": "TUV INDIA PVT LTD, PEENYA, BENGALURU",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/614/",
+      "raw_file": "data/raw/labs/scopes/614.html",
+      "status": "success",
+      "capabilities": 12,
+      "tests": 273
+    },
+    {
+      "scope_id": "637",
+      "lab_code": "9121934",
+      "lab_name": "Central Institute of Petrochemicals Engineering & Technology (CIPET), Murthal",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/637/",
+      "raw_file": "data/raw/labs/scopes/637.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 383
+    },
+    {
+      "scope_id": "646",
+      "lab_code": "5171706",
+      "lab_name": "NBML Building Materials Testing Lab LLP, Raipur",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/646/",
+      "raw_file": "data/raw/labs/scopes/646.html",
+      "status": "success",
+      "capabilities": 12,
+      "tests": 160
+    },
+    {
+      "scope_id": "659",
+      "lab_code": "9171906",
+      "lab_name": "QVC Certification Services Pvt. Ltd., Ambala",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/659/",
+      "raw_file": "data/raw/labs/scopes/659.html",
+      "status": "success",
+      "capabilities": 3,
+      "tests": 399
+    },
+    {
+      "scope_id": "661",
+      "lab_code": "8176726",
+      "lab_name": "ABSOLUTE EXPERTISE TESTING LABORATORY LLP",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/661/",
+      "raw_file": "data/raw/labs/scopes/661.html",
+      "status": "success",
+      "capabilities": 29,
+      "tests": 3219
+    },
+    {
+      "scope_id": "674",
+      "lab_code": "7171406",
+      "lab_name": "Precise Analytics Lab. (A Div of Meyer Organics Pvt.Ltd.)",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/674/",
+      "raw_file": "data/raw/labs/scopes/674.html",
+      "status": "success",
+      "capabilities": 2,
+      "tests": 199
+    },
+    {
+      "scope_id": "680",
+      "lab_code": "7171526",
+      "lab_name": "EAMP Laboratories LLP, Palghar",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/680/",
+      "raw_file": "data/raw/labs/scopes/680.html",
+      "status": "success",
+      "capabilities": 27,
+      "tests": 765
+    },
+    {
+      "scope_id": "684",
+      "lab_code": "9171026",
+      "lab_name": "Vijai Electricals Ltd., Transformer Testing Laboratory, Haridwar",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/684/",
+      "raw_file": "data/raw/labs/scopes/684.html",
+      "status": "success",
+      "capabilities": 1,
+      "tests": 49
+    },
+    {
+      "scope_id": "693",
+      "lab_code": "8164006",
+      "lab_name": "EKO PRO ENGINEERS PRIVATE LIMITED (32/37) GHAZIABAD",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/693/",
+      "raw_file": "data/raw/labs/scopes/693.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 2187
+    },
+    {
+      "scope_id": "699",
+      "lab_code": "8171306",
+      "lab_name": "INDIAN TESTING LABORATORY PRIVATE LIMITED, GREATER NOIDA",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/699/",
+      "raw_file": "data/raw/labs/scopes/699.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 1690
+    },
+    {
+      "scope_id": "711",
+      "lab_code": "7171806",
+      "lab_name": "Enviro Remediation & Research Laboratory LLP, Thane",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/711/",
+      "raw_file": "data/raw/labs/scopes/711.html",
+      "status": "success",
+      "capabilities": 0,
+      "tests": 0
+    },
+    {
+      "scope_id": "714",
+      "lab_code": "7170706",
+      "lab_name": "Intertek India Pvt Ltd, Chandivali, Mumbai",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/714/",
+      "raw_file": "data/raw/labs/scopes/714.html",
+      "status": "success",
+      "capabilities": 0,
+      "tests": 0
+    },
+    {
+      "scope_id": "727",
+      "lab_code": "8173526",
+      "lab_name": "Robust Testing Solutions Private Limited, Alwar",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/727/",
+      "raw_file": "data/raw/labs/scopes/727.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 2071
+    },
+    {
+      "scope_id": "729",
+      "lab_code": "8174526",
+      "lab_name": "ABSOLUTE TESTING SERVICES, FARIDABAD",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/729/",
+      "raw_file": "data/raw/labs/scopes/729.html",
+      "status": "success",
+      "capabilities": 15,
+      "tests": 1206
+    },
+    {
+      "scope_id": "730",
+      "lab_code": "7173406",
+      "lab_name": "GODREJ - NASHIK",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/730/",
+      "raw_file": "data/raw/labs/scopes/730.html",
+      "status": "success",
+      "capabilities": 1,
+      "tests": 76
+    },
+    {
+      "scope_id": "745",
+      "lab_code": "5174906",
+      "lab_name": "Applications Research and Development Centre, Haldia Petrochemicals Limited, Kolkata",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/745/",
+      "raw_file": "data/raw/labs/scopes/745.html",
+      "status": "success",
+      "capabilities": 2,
+      "tests": 69
+    },
+    {
+      "scope_id": "746",
+      "lab_code": "8172006",
+      "lab_name": "Amit Test and Calibration Centre (8172006)",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/746/",
+      "raw_file": "data/raw/labs/scopes/746.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 3648
+    },
+    {
+      "scope_id": "752",
+      "lab_code": "6172206",
+      "lab_name": "AIC-AMTZ Medivalley Incubation Council (Medivalley laboratory), Visakhapatnam",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/752/",
+      "raw_file": "data/raw/labs/scopes/752.html",
+      "status": "success",
+      "capabilities": 1,
+      "tests": 34
+    },
+    {
+      "scope_id": "761",
+      "lab_code": "7176516",
+      "lab_name": "Accuprec Research Labs. Pvt. Ltd., Ahmedabad",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/761/",
+      "raw_file": "data/raw/labs/scopes/761.html",
+      "status": "success",
+      "capabilities": 0,
+      "tests": 0
+    },
+    {
+      "scope_id": "763",
+      "lab_code": "8178326",
+      "lab_name": "ADS LABTECH, GHAZIABAD",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/763/",
+      "raw_file": "data/raw/labs/scopes/763.html",
+      "status": "success",
+      "capabilities": 29,
+      "tests": 2574
+    },
+    {
+      "scope_id": "781",
+      "lab_code": "7173706",
+      "lab_name": "Hasti Engineers LLP, Rajkot",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/781/",
+      "raw_file": "data/raw/labs/scopes/781.html",
+      "status": "success",
+      "capabilities": 2,
+      "tests": 206
+    },
+    {
+      "scope_id": "784",
+      "lab_code": "6171906",
+      "lab_name": "Winwall Technology India Private Limited,Thiruvallur",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/784/",
+      "raw_file": "data/raw/labs/scopes/784.html",
+      "status": "success",
+      "capabilities": 8,
+      "tests": 162
+    },
+    {
+      "scope_id": "785",
+      "lab_code": "7173804",
+      "lab_name": "Central Institute of Petrochemicals Engineering & Technology (CIPET), Chandrapur",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/785/",
+      "raw_file": "data/raw/labs/scopes/785.html",
+      "status": "success",
+      "capabilities": 19,
+      "tests": 1019
+    },
+    {
+      "scope_id": "792",
+      "lab_code": "5173304",
+      "lab_name": "CIPET : CSTS - AGARTALA PLASTICS TESTING LABORATORY, (CIPET, AGARTALA)",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/792/",
+      "raw_file": "data/raw/labs/scopes/792.html",
+      "status": "success",
+      "capabilities": 11,
+      "tests": 416
+    },
+    {
+      "scope_id": "798",
+      "lab_code": "9173226",
+      "lab_name": "TECHVISION TESTING LAB PRIVATE LIMITED",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/798/",
+      "raw_file": "data/raw/labs/scopes/798.html",
+      "status": "success",
+      "capabilities": 6,
+      "tests": 201
+    },
+    {
+      "scope_id": "806",
+      "lab_code": "7175806",
+      "lab_name": "ADARSH SCIENTIFIC RESEARCH CENTER AND TESTING LABORATORY PVT. LTD., PANVEL",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/806/",
+      "raw_file": "data/raw/labs/scopes/806.html",
+      "status": "success",
+      "capabilities": 3,
+      "tests": 500
+    },
+    {
+      "scope_id": "807",
+      "lab_code": "8183216",
+      "lab_name": "Jagdamba Laboratories (OPC) Pvt Ltd, Jaipur",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/807/",
+      "raw_file": "data/raw/labs/scopes/807.html",
+      "status": "success",
+      "capabilities": 3,
+      "tests": 76
+    },
+    {
+      "scope_id": "820",
+      "lab_code": "8178226",
+      "lab_name": "Vardhamana Testing Laboratory OPC Pvt. Ltd.",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/820/",
+      "raw_file": "data/raw/labs/scopes/820.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 3454
+    },
+    {
+      "scope_id": "825",
+      "lab_code": "5173614",
+      "lab_name": "CENTRAL INSTITUTE OF PETROCHEMICALS ENGINEERING & TECHNOLOGY (CIPET), RANCHI",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/825/",
+      "raw_file": "data/raw/labs/scopes/825.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 1447
+    },
+    {
+      "scope_id": "835",
+      "lab_code": "6107716",
+      "lab_name": "IAPMO INDIA PVT LTD, BENGALURU",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/835/",
+      "raw_file": "data/raw/labs/scopes/835.html",
+      "status": "success",
+      "capabilities": 1,
+      "tests": 16
+    },
+    {
+      "scope_id": "836",
+      "lab_code": "8182036",
+      "lab_name": "LANDMARK MATERIAL TESTING AND RESEARCH LABORATORY PVT LTD, JAIPUR",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/836/",
+      "raw_file": "data/raw/labs/scopes/836.html",
+      "status": "success",
+      "capabilities": 8,
+      "tests": 318
+    },
+    {
+      "scope_id": "840",
+      "lab_code": "8172626",
+      "lab_name": "ATCC TEST LABS LLP",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/840/",
+      "raw_file": "data/raw/labs/scopes/840.html",
+      "status": "success",
+      "capabilities": 29,
+      "tests": 2008
+    },
+    {
+      "scope_id": "850",
+      "lab_code": "6174606",
+      "lab_name": "BANGALORE ANALYTICAL RESEARCH CENTER (P) LTD, BENGALURU",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/850/",
+      "raw_file": "data/raw/labs/scopes/850.html",
+      "status": "success",
+      "capabilities": 1,
+      "tests": 119
+    },
+    {
+      "scope_id": "869",
+      "lab_code": "9172306",
+      "lab_name": "JBS TESTING SOLUTIONS (Unit-2) (24), Jalandhar",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/869/",
+      "raw_file": "data/raw/labs/scopes/869.html",
+      "status": "success",
+      "capabilities": 25,
+      "tests": 2349
+    },
+    {
+      "scope_id": "875",
+      "lab_code": "7172436",
+      "lab_name": "Perficio Testing and Research Centre, Vadodara",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/875/",
+      "raw_file": "data/raw/labs/scopes/875.html",
+      "status": "success",
+      "capabilities": 10,
+      "tests": 112
+    },
+    {
+      "scope_id": "879",
+      "lab_code": "5172706",
+      "lab_name": "GLOBAL COMPLIANCE LABORATORY INDIA, GHAZIABAD",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/879/",
+      "raw_file": "data/raw/labs/scopes/879.html",
+      "status": "success",
+      "capabilities": 29,
+      "tests": 2289
+    },
+    {
+      "scope_id": "905",
+      "lab_code": "8179206",
+      "lab_name": "ISSPL Limited",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/905/",
+      "raw_file": "data/raw/labs/scopes/905.html",
+      "status": "success",
+      "capabilities": 4,
+      "tests": 100
+    },
+    {
+      "scope_id": "916",
+      "lab_code": "6175936",
+      "lab_name": "BISS LABS -DIVISION OF ITW INDIA PRIVATE LIMITED. BENGALURU",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/916/",
+      "raw_file": "data/raw/labs/scopes/916.html",
+      "status": "success",
+      "capabilities": 3,
+      "tests": 163
+    },
+    {
+      "scope_id": "927",
+      "lab_code": "8175126",
+      "lab_name": "MARQUIS TECHNOLOGIES PRIVATE LIMITED, NOIDA",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/927/",
+      "raw_file": "data/raw/labs/scopes/927.html",
+      "status": "success",
+      "capabilities": 18,
+      "tests": 794
+    },
+    {
+      "scope_id": "950",
+      "lab_code": "7174006",
+      "lab_name": "Accurate Universal Laboratoies Private Limited, Ahmedabad",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/950/",
+      "raw_file": "data/raw/labs/scopes/950.html",
+      "status": "success",
+      "capabilities": 9,
+      "tests": 1218
+    },
+    {
+      "scope_id": "951",
+      "lab_code": "7174106",
+      "lab_name": "Precision Laboratories LLP, Ahmedabad",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/951/",
+      "raw_file": "data/raw/labs/scopes/951.html",
+      "status": "success",
+      "capabilities": 15,
+      "tests": 2147
+    },
+    {
+      "scope_id": "952",
+      "lab_code": "7175516",
+      "lab_name": "Umwelt Research Lab Private Limited, Pune",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/952/",
+      "raw_file": "data/raw/labs/scopes/952.html",
+      "status": "success",
+      "capabilities": 10,
+      "tests": 1536
+    },
+    {
+      "scope_id": "957",
+      "lab_code": "7174706",
+      "lab_name": "COTTON ASSOCIATION OF INDIA COTTON TESTING AND RESEARCH LABORATORY, MUMBAI",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/957/",
+      "raw_file": "data/raw/labs/scopes/957.html",
+      "status": "success",
+      "capabilities": 0,
+      "tests": 0
+    },
+    {
+      "scope_id": "960",
+      "lab_code": "6175606",
+      "lab_name": "ALS Testing Services India Pvt. Ltd., Bengaluru",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/960/",
+      "raw_file": "data/raw/labs/scopes/960.html",
+      "status": "success",
+      "capabilities": 8,
+      "tests": 1040
+    },
+    {
+      "scope_id": "987",
+      "lab_code": "8175706",
+      "lab_name": "ARDM Labs Pvt Ltd",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/987/",
+      "raw_file": "data/raw/labs/scopes/987.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 1273
+    },
+    {
+      "scope_id": "1013",
+      "lab_code": "8177224",
+      "lab_name": "CENTRAL POWER RESEARCH INSTITUTE (CPRI),NOIDA",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1013/",
+      "raw_file": "data/raw/labs/scopes/1013.html",
+      "status": "success",
+      "capabilities": 9,
+      "tests": 793
+    },
+    {
+      "scope_id": "1014",
+      "lab_code": "7174321",
+      "lab_name": "Astute Labs Pvt Ltd, Pune",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1014/",
+      "raw_file": "data/raw/labs/scopes/1014.html",
+      "status": "success",
+      "capabilities": 15,
+      "tests": 1449
+    },
+    {
+      "scope_id": "1029",
+      "lab_code": "6179035",
+      "lab_name": "Indian Rubber Materials Research Institute (IRMRI), Tirupati",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1029/",
+      "raw_file": "data/raw/labs/scopes/1029.html",
+      "status": "success",
+      "capabilities": 3,
+      "tests": 22
+    },
+    {
+      "scope_id": "1039",
+      "lab_code": "8178406",
+      "lab_name": "NATIONAL COMMODITIES MANAGEMENT SERVICES LIMITED, GURUGRAM",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1039/",
+      "raw_file": "data/raw/labs/scopes/1039.html",
+      "status": "success",
+      "capabilities": 0,
+      "tests": 0
+    },
+    {
+      "scope_id": "1048",
+      "lab_code": "8174226",
+      "lab_name": "Planet Electro Labs Private Limited (407)",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1048/",
+      "raw_file": "data/raw/labs/scopes/1048.html",
+      "status": "success",
+      "capabilities": 21,
+      "tests": 987
+    },
+    {
+      "scope_id": "1049",
+      "lab_code": "8177706",
+      "lab_name": "SHIVA TEST HOUSE PRIVATE LIMITED, Ghaziabad",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1049/",
+      "raw_file": "data/raw/labs/scopes/1049.html",
+      "status": "success",
+      "capabilities": 7,
+      "tests": 145
+    },
+    {
+      "scope_id": "1057",
+      "lab_code": "8176806",
+      "lab_name": "PIONEER TESTING LABORATORY PRIVATE LIMITED",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1057/",
+      "raw_file": "data/raw/labs/scopes/1057.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 2870
+    },
+    {
+      "scope_id": "1084",
+      "lab_code": "7175321",
+      "lab_name": "ELECTRICAL POWER RESEARCH LABORATORY, VADODARA",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1084/",
+      "raw_file": "data/raw/labs/scopes/1084.html",
+      "status": "success",
+      "capabilities": 2,
+      "tests": 31
+    },
+    {
+      "scope_id": "1086",
+      "lab_code": "7192524",
+      "lab_name": "Electronic Safety Test Laboratory, EMC Division, SAMEER-Centre for Microwave Research",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1086/",
+      "raw_file": "data/raw/labs/scopes/1086.html",
+      "status": "success",
+      "capabilities": 3,
+      "tests": 388
+    },
+    {
+      "scope_id": "1091",
+      "lab_code": "8180636",
+      "lab_name": "Test Master",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1091/",
+      "raw_file": "data/raw/labs/scopes/1091.html",
+      "status": "success",
+      "capabilities": 1,
+      "tests": 4
+    },
+    {
+      "scope_id": "1099",
+      "lab_code": "8179926",
+      "lab_name": "Aaditech Test and Calibration Lab LLP",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1099/",
+      "raw_file": "data/raw/labs/scopes/1099.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 4430
+    },
+    {
+      "scope_id": "1102",
+      "lab_code": "7174421",
+      "lab_name": "TYPE TEST CENTER SIEMENS LIMITED KALWA, NAVI MUMBAI",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1102/",
+      "raw_file": "data/raw/labs/scopes/1102.html",
+      "status": "success",
+      "capabilities": 0,
+      "tests": 0
+    },
+    {
+      "scope_id": "1110",
+      "lab_code": "7175421",
+      "lab_name": "Baroda Calibration Services LLP, Vadodara",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1110/",
+      "raw_file": "data/raw/labs/scopes/1110.html",
+      "status": "success",
+      "capabilities": 1,
+      "tests": 20
+    },
+    {
+      "scope_id": "1112",
+      "lab_code": "9176026",
+      "lab_name": "NIIRT - Calibration and Testing Private Limited, Panchkula",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1112/",
+      "raw_file": "data/raw/labs/scopes/1112.html",
+      "status": "success",
+      "capabilities": 1,
+      "tests": 76
+    },
+    {
+      "scope_id": "1142",
+      "lab_code": "8177804",
+      "lab_name": "International Testing Centre, MSME Technology Development Centre, Meerut",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1142/",
+      "raw_file": "data/raw/labs/scopes/1142.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 2949
+    },
+    {
+      "scope_id": "1195",
+      "lab_code": "6177526",
+      "lab_name": "GIGA LABS, BENGALURU",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1195/",
+      "raw_file": "data/raw/labs/scopes/1195.html",
+      "status": "success",
+      "capabilities": 0,
+      "tests": 0
+    },
+    {
+      "scope_id": "1202",
+      "lab_code": "9177306",
+      "lab_name": "WELL TECH TEST AND RESEARCH CENTER, DERABASSI",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1202/",
+      "raw_file": "data/raw/labs/scopes/1202.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 1240
+    },
+    {
+      "scope_id": "1217",
+      "lab_code": "7177626",
+      "lab_name": "Lauritz Knudsen Switchgear Testing Laboratories, MSW, SEIPL, Mumbai",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1217/",
+      "raw_file": "data/raw/labs/scopes/1217.html",
+      "status": "success",
+      "capabilities": 2,
+      "tests": 308
+    },
+    {
+      "scope_id": "1218",
+      "lab_code": "7176426",
+      "lab_name": "Novateur Electrical and Digital Systems Pvt Ltd, Sinnar, Nasik",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1218/",
+      "raw_file": "data/raw/labs/scopes/1218.html",
+      "status": "success",
+      "capabilities": 0,
+      "tests": 0
+    },
+    {
+      "scope_id": "1219",
+      "lab_code": "6177006",
+      "lab_name": "Tentamus India Pvt. Ltd. (Formerly Megsan Labs Pvt. Ltd.), Hyderabad",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1219/",
+      "raw_file": "data/raw/labs/scopes/1219.html",
+      "status": "success",
+      "capabilities": 0,
+      "tests": 0
+    },
+    {
+      "scope_id": "1228",
+      "lab_code": "8184006",
+      "lab_name": "Quality Testing & Research Lab, Gautam Buddha Nagar",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1228/",
+      "raw_file": "data/raw/labs/scopes/1228.html",
+      "status": "success",
+      "capabilities": 26,
+      "tests": 1806
+    },
+    {
+      "scope_id": "1241",
+      "lab_code": "8175006",
+      "lab_name": "HT Product Services Private Limited, Noida",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1241/",
+      "raw_file": "data/raw/labs/scopes/1241.html",
+      "status": "success",
+      "capabilities": 29,
+      "tests": 1777
+    },
+    {
+      "scope_id": "1242",
+      "lab_code": "9182336",
+      "lab_name": "(Deferred)COTTON ASSOCIATION OF INDIA, COTTON TESTING AND RESEARCH LABORATORY, BATHINDA",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1242/",
+      "raw_file": "data/raw/labs/scopes/1242.html",
+      "status": "success",
+      "capabilities": 0,
+      "tests": 0
+    },
+    {
+      "scope_id": "1254",
+      "lab_code": "8180036",
+      "lab_name": "(Deferred)COTTON ASSOCIATION OF INDIA, COTTON TESTING AND RESEARCH LABORATORY, KHARGONE",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1254/",
+      "raw_file": "data/raw/labs/scopes/1254.html",
+      "status": "success",
+      "capabilities": 0,
+      "tests": 0
+    },
+    {
+      "scope_id": "1258",
+      "lab_code": "7178936",
+      "lab_name": "(Deferred)COTTON ASSOCIATION OF INDIA, COTTON TESTING AND RESEARCH LABORATORY, AHMEDABAD",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1258/",
+      "raw_file": "data/raw/labs/scopes/1258.html",
+      "status": "success",
+      "capabilities": 0,
+      "tests": 0
+    },
+    {
+      "scope_id": "1265",
+      "lab_code": "6176216",
+      "lab_name": "Hubert Enviro Care Systems Limited",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1265/",
+      "raw_file": "data/raw/labs/scopes/1265.html",
+      "status": "success",
+      "capabilities": 1,
+      "tests": 714
+    },
+    {
+      "scope_id": "1276",
+      "lab_code": "9179606",
+      "lab_name": "SHRIRAM FOOD AND PHARMA RESEARCH CENTRE, GHAZIABAD",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1276/",
+      "raw_file": "data/raw/labs/scopes/1276.html",
+      "status": "success",
+      "capabilities": 14,
+      "tests": 570
+    },
+    {
+      "scope_id": "1303",
+      "lab_code": "8176106",
+      "lab_name": "Atmy Analytical Labs Private Limited (Unit-2), Greater Noida",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1303/",
+      "raw_file": "data/raw/labs/scopes/1303.html",
+      "status": "success",
+      "capabilities": 29,
+      "tests": 1923
+    },
+    {
+      "scope_id": "1318",
+      "lab_code": "9186006",
+      "lab_name": "MICRO ENGINEERING AND TESTING LABORATORY OPC PRIVATE LIMITED, SONIPAT",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1318/",
+      "raw_file": "data/raw/labs/scopes/1318.html",
+      "status": "success",
+      "capabilities": 10,
+      "tests": 1076
+    },
+    {
+      "scope_id": "1319",
+      "lab_code": "7186336",
+      "lab_name": "COTTON ASSOCIATION OF INDIA, COTTON TESTING AND RESEARCH LABORATORY, RAJKOT",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1319/",
+      "raw_file": "data/raw/labs/scopes/1319.html",
+      "status": "success",
+      "capabilities": 1,
+      "tests": 7
+    },
+    {
+      "scope_id": "1320",
+      "lab_code": "7182136",
+      "lab_name": "(Deferred)Wakefield Inspection Services India Pvt. Ltd, Mumbai",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1320/",
+      "raw_file": "data/raw/labs/scopes/1320.html",
+      "status": "success",
+      "capabilities": 1,
+      "tests": 14
+    },
+    {
+      "scope_id": "1321",
+      "lab_code": "7195836",
+      "lab_name": "COTTON ASSOCIATION OF INDIA, COTTON TESTING AND RESEARCH LABORATORY, JALGAON",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1321/",
+      "raw_file": "data/raw/labs/scopes/1321.html",
+      "status": "success",
+      "capabilities": 1,
+      "tests": 8
+    },
+    {
+      "scope_id": "1330",
+      "lab_code": "7183416",
+      "lab_name": "Rohan Energy Solutions Pvt Ltd ( Testing Laboratory Division), Nashik",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1330/",
+      "raw_file": "data/raw/labs/scopes/1330.html",
+      "status": "success",
+      "capabilities": 1,
+      "tests": 68
+    },
+    {
+      "scope_id": "1344",
+      "lab_code": "8176906",
+      "lab_name": "AADCO TESTING & RESEACH LABORATORY PVT LTD (UNIT-2) (E37), Ghaziabad",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1344/",
+      "raw_file": "data/raw/labs/scopes/1344.html",
+      "status": "success",
+      "capabilities": 4,
+      "tests": 35
+    },
+    {
+      "scope_id": "1345",
+      "lab_code": "6187504",
+      "lab_name": "POLYMER TESTING LABORATORY, CIPET:SARP-APDDRL",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1345/",
+      "raw_file": "data/raw/labs/scopes/1345.html",
+      "status": "success",
+      "capabilities": 10,
+      "tests": 518
+    },
+    {
+      "scope_id": "1346",
+      "lab_code": "9182936",
+      "lab_name": "National Soil Testing and Research Laboratories, Panchkula",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1346/",
+      "raw_file": "data/raw/labs/scopes/1346.html",
+      "status": "success",
+      "capabilities": 8,
+      "tests": 1293
+    },
+    {
+      "scope_id": "1348",
+      "lab_code": "8176606",
+      "lab_name": "Advance Firetec and Research Lab Pvt. Ltd",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1348/",
+      "raw_file": "data/raw/labs/scopes/1348.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 835
+    },
+    {
+      "scope_id": "1349",
+      "lab_code": "6184126",
+      "lab_name": "ABB ELSP LAB, Bengaluru",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1349/",
+      "raw_file": "data/raw/labs/scopes/1349.html",
+      "status": "success",
+      "capabilities": 0,
+      "tests": 0
+    },
+    {
+      "scope_id": "1351",
+      "lab_code": "8188316",
+      "lab_name": "Global Technical Services (Central Oil Testing Laboratory)",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1351/",
+      "raw_file": "data/raw/labs/scopes/1351.html",
+      "status": "success",
+      "capabilities": 3,
+      "tests": 21
+    },
+    {
+      "scope_id": "1380",
+      "lab_code": "8186026",
+      "lab_name": "BCH Electric Limited, Faridabad",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1380/",
+      "raw_file": "data/raw/labs/scopes/1380.html",
+      "status": "success",
+      "capabilities": 0,
+      "tests": 0
+    },
+    {
+      "scope_id": "1389",
+      "lab_code": "9177406",
+      "lab_name": "RTRC LIMITED, GURUGRAM",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1389/",
+      "raw_file": "data/raw/labs/scopes/1389.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 1947
+    },
+    {
+      "scope_id": "1394",
+      "lab_code": "8178606",
+      "lab_name": "AJEO TESTING LABS PVT LTD, GHAZIABAD",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1394/",
+      "raw_file": "data/raw/labs/scopes/1394.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 3610
+    },
+    {
+      "scope_id": "1396",
+      "lab_code": "7184626",
+      "lab_name": "Switchgear Testing Laboratories, Schneider Electric India Private Limited, Ahmednagar",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1396/",
+      "raw_file": "data/raw/labs/scopes/1396.html",
+      "status": "success",
+      "capabilities": 0,
+      "tests": 0
+    },
+    {
+      "scope_id": "1401",
+      "lab_code": "5178506",
+      "lab_name": "Adityapur Auto Cluster, Adityapur",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1401/",
+      "raw_file": "data/raw/labs/scopes/1401.html",
+      "status": "success",
+      "capabilities": 7,
+      "tests": 708
+    },
+    {
+      "scope_id": "1408",
+      "lab_code": "7188606",
+      "lab_name": "YORLAB LLP",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1408/",
+      "raw_file": "data/raw/labs/scopes/1408.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 2479
+    },
+    {
+      "scope_id": "1411",
+      "lab_code": "7186736",
+      "lab_name": "CEPT Advisory Foundation",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1411/",
+      "raw_file": "data/raw/labs/scopes/1411.html",
+      "status": "success",
+      "capabilities": 2,
+      "tests": 12
+    },
+    {
+      "scope_id": "1413",
+      "lab_code": "8187716",
+      "lab_name": "MS TESTING LABORATORY LLP",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1413/",
+      "raw_file": "data/raw/labs/scopes/1413.html",
+      "status": "success",
+      "capabilities": 8,
+      "tests": 337
+    },
+    {
+      "scope_id": "1431",
+      "lab_code": "9187136",
+      "lab_name": "Plastics Woven Bag Testing Lab-Technical Training & Research Centre - TTRC",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1431/",
+      "raw_file": "data/raw/labs/scopes/1431.html",
+      "status": "success",
+      "capabilities": 5,
+      "tests": 436
+    },
+    {
+      "scope_id": "1435",
+      "lab_code": "9179506",
+      "lab_name": "Delta Testing and Research Laboratories Private Limited (C5)",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1435/",
+      "raw_file": "data/raw/labs/scopes/1435.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 2370
+    },
+    {
+      "scope_id": "1460",
+      "lab_code": "5182706",
+      "lab_name": "TATA STEEL, Jamshedpur",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1460/",
+      "raw_file": "data/raw/labs/scopes/1460.html",
+      "status": "success",
+      "capabilities": 8,
+      "tests": 534
+    },
+    {
+      "scope_id": "1487",
+      "lab_code": "6183136",
+      "lab_name": "Hari Shankar Singhania Elastomer and Tyre Research Institute, HASETRI, Mysuru",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1487/",
+      "raw_file": "data/raw/labs/scopes/1487.html",
+      "status": "success",
+      "capabilities": 10,
+      "tests": 218
+    },
+    {
+      "scope_id": "1491",
+      "lab_code": "7183706",
+      "lab_name": "Rajkot Metlab Services LLP, Rajkot",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1491/",
+      "raw_file": "data/raw/labs/scopes/1491.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 1211
+    },
+    {
+      "scope_id": "1505",
+      "lab_code": "8183336",
+      "lab_name": "INDIAN TEST HOUSE PRIVATE LIMITED, MURADNAGAR",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1505/",
+      "raw_file": "data/raw/labs/scopes/1505.html",
+      "status": "success",
+      "capabilities": 18,
+      "tests": 685
+    },
+    {
+      "scope_id": "1510",
+      "lab_code": "8197526",
+      "lab_name": "TERAWATT TESTING AND RESEARCH INSTITUTE PRIVATE LIMITED",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1510/",
+      "raw_file": "data/raw/labs/scopes/1510.html",
+      "status": "success",
+      "capabilities": 5,
+      "tests": 420
+    },
+    {
+      "scope_id": "1528",
+      "lab_code": "6183606",
+      "lab_name": "RAMCO RESEARCH AND DEVOLPMENT CENTRE, CHENNAI",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1528/",
+      "raw_file": "data/raw/labs/scopes/1528.html",
+      "status": "success",
+      "capabilities": 7,
+      "tests": 297
+    },
+    {
+      "scope_id": "1529",
+      "lab_code": "8195606",
+      "lab_name": "CIMEC Infralabs Private Limited",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1529/",
+      "raw_file": "data/raw/labs/scopes/1529.html",
+      "status": "success",
+      "capabilities": 28,
+      "tests": 1610
+    },
+    {
+      "scope_id": "1534",
+      "lab_code": "6178726",
+      "lab_name": "Standard Testing and Compliance Private Limited",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1534/",
+      "raw_file": "data/raw/labs/scopes/1534.html",
+      "status": "success",
+      "capabilities": 29,
+      "tests": 1255
+    },
+    {
+      "scope_id": "1538",
+      "lab_code": "6180126",
+      "lab_name": "TUV SUD SOUTH ASIA PRIVATE LIMITED, BENGALURU",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1538/",
+      "raw_file": "data/raw/labs/scopes/1538.html",
+      "status": "success",
+      "capabilities": 13,
+      "tests": 1809
+    },
+    {
+      "scope_id": "1542",
+      "lab_code": "6180226",
+      "lab_name": "CRITERION NETWORK LABS, CRITERION NETWORKS INDIA PRIVATE LIMITED, BENGALURU",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1542/",
+      "raw_file": "data/raw/labs/scopes/1542.html",
+      "status": "success",
+      "capabilities": 0,
+      "tests": 0
+    },
+    {
+      "scope_id": "1543",
+      "lab_code": "7182426",
+      "lab_name": "Advance Electrical Testing And Calibration Lab LLP, Vadodara",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1543/",
+      "raw_file": "data/raw/labs/scopes/1543.html",
+      "status": "success",
+      "capabilities": 2,
+      "tests": 142
+    },
+    {
+      "scope_id": "1546",
+      "lab_code": "8193306",
+      "lab_name": "DVG Laboratories & Consultants Pvt Ltd",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1546/",
+      "raw_file": "data/raw/labs/scopes/1546.html",
+      "status": "success",
+      "capabilities": 6,
+      "tests": 346
+    },
+    {
+      "scope_id": "1548",
+      "lab_code": "7190106",
+      "lab_name": "Spectro SSA Labs Private Limited",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1548/",
+      "raw_file": "data/raw/labs/scopes/1548.html",
+      "status": "success",
+      "capabilities": 7,
+      "tests": 293
+    },
+    {
+      "scope_id": "1551",
+      "lab_code": "6184216",
+      "lab_name": "SNEHA TEST HOUSE PRIVATE LIMITED, BENGALURU",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1551/",
+      "raw_file": "data/raw/labs/scopes/1551.html",
+      "status": "success",
+      "capabilities": 1,
+      "tests": 120
+    },
+    {
+      "scope_id": "1556",
+      "lab_code": "9182206",
+      "lab_name": "NDL POWER LIMITED, ROHTAK",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1556/",
+      "raw_file": "data/raw/labs/scopes/1556.html",
+      "status": "success",
+      "capabilities": 3,
+      "tests": 102
+    },
+    {
+      "scope_id": "1568",
+      "lab_code": "8186836",
+      "lab_name": "Delta Testing and Research Laboratories Private Limited (Unit II)",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1568/",
+      "raw_file": "data/raw/labs/scopes/1568.html",
+      "status": "success",
+      "capabilities": 10,
+      "tests": 607
+    },
+    {
+      "scope_id": "1581",
+      "lab_code": "9179806",
+      "lab_name": "Elutech Laboratory and Calibration Services, Jaipur",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1581/",
+      "raw_file": "data/raw/labs/scopes/1581.html",
+      "status": "success",
+      "capabilities": 29,
+      "tests": 1590
+    },
+    {
+      "scope_id": "1584",
+      "lab_code": "6180326",
+      "lab_name": "Granite River Labs India Services Private Limited, Bengaluru",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1584/",
+      "raw_file": "data/raw/labs/scopes/1584.html",
+      "status": "success",
+      "capabilities": 0,
+      "tests": 0
+    },
+    {
+      "scope_id": "1587",
+      "lab_code": "8180426",
+      "lab_name": "ALAIPURIA TEST HOUSE PRIVATE LIMITED, GHAZIABAD",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1587/",
+      "raw_file": "data/raw/labs/scopes/1587.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 3013
+    },
+    {
+      "scope_id": "1589",
+      "lab_code": "8180306",
+      "lab_name": "CTL TESTING LABORATORY PRIVATE LIMITED, JAIPUR",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1589/",
+      "raw_file": "data/raw/labs/scopes/1589.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 3279
+    },
+    {
+      "scope_id": "1597",
+      "lab_code": "9179706",
+      "lab_name": "EKO PRO ENGINEERS PRIVATE LIMITED (32/41), GHAZIABAD",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1597/",
+      "raw_file": "data/raw/labs/scopes/1597.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 3240
+    },
+    {
+      "scope_id": "1610",
+      "lab_code": "6198036",
+      "lab_name": "RAMCO INDUSTRIES LIMITED (MATERIAL TESTING LABORATORY)",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1610/",
+      "raw_file": "data/raw/labs/scopes/1610.html",
+      "status": "success",
+      "capabilities": 4,
+      "tests": 39
+    },
+    {
+      "scope_id": "1611",
+      "lab_code": "8180826",
+      "lab_name": "Classic Testing & Research Centre (B17), Noida",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1611/",
+      "raw_file": "data/raw/labs/scopes/1611.html",
+      "status": "success",
+      "capabilities": 29,
+      "tests": 3748
+    },
+    {
+      "scope_id": "1614",
+      "lab_code": "7196806",
+      "lab_name": "UNITECH LABORATORIES SERVICES",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1614/",
+      "raw_file": "data/raw/labs/scopes/1614.html",
+      "status": "success",
+      "capabilities": 5,
+      "tests": 96
+    },
+    {
+      "scope_id": "1616",
+      "lab_code": "8182606",
+      "lab_name": "Gravitas Laboratories Private Limited, Greater Noida",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1616/",
+      "raw_file": "data/raw/labs/scopes/1616.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 1797
+    },
+    {
+      "scope_id": "1619",
+      "lab_code": "8180526",
+      "lab_name": "STAR LABS TEST CENTRE LLP, JAIPUR",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1619/",
+      "raw_file": "data/raw/labs/scopes/1619.html",
+      "status": "success",
+      "capabilities": 2,
+      "tests": 239
+    },
+    {
+      "scope_id": "1620",
+      "lab_code": "8186526",
+      "lab_name": "Akshat Test Lab & Calibration Services, Ghaziabad",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1620/",
+      "raw_file": "data/raw/labs/scopes/1620.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 2615
+    },
+    {
+      "scope_id": "1624",
+      "lab_code": "7184406",
+      "lab_name": "AANKAN CALIBRATION AND TESTING CENTRE LLP, DANTLI",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1624/",
+      "raw_file": "data/raw/labs/scopes/1624.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 1419
+    },
+    {
+      "scope_id": "1633",
+      "lab_code": "6182836",
+      "lab_name": "Aadit Fire Testing Laboratory Private Limited, Gummidipoondi",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1633/",
+      "raw_file": "data/raw/labs/scopes/1633.html",
+      "status": "success",
+      "capabilities": 6,
+      "tests": 34
+    },
+    {
+      "scope_id": "1638",
+      "lab_code": "8189106",
+      "lab_name": "RAHUL ENGINEERS LABORATORY PRIVATE LIMITED",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1638/",
+      "raw_file": "data/raw/labs/scopes/1638.html",
+      "status": "success",
+      "capabilities": 3,
+      "tests": 206
+    },
+    {
+      "scope_id": "1640",
+      "lab_code": "8187006",
+      "lab_name": "Eurofins Consumer Product Testing India Private Limited",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1640/",
+      "raw_file": "data/raw/labs/scopes/1640.html",
+      "status": "success",
+      "capabilities": 6,
+      "tests": 509
+    },
+    {
+      "scope_id": "1643",
+      "lab_code": "9184906",
+      "lab_name": "ALPHA TEST HOUSE SERVICES LLP (Unit-1), MOHALI",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1643/",
+      "raw_file": "data/raw/labs/scopes/1643.html",
+      "status": "success",
+      "capabilities": 24,
+      "tests": 632
+    },
+    {
+      "scope_id": "1659",
+      "lab_code": "6183816",
+      "lab_name": "COCHIN TEST HOUSE, KOCHI",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1659/",
+      "raw_file": "data/raw/labs/scopes/1659.html",
+      "status": "success",
+      "capabilities": 1,
+      "tests": 17
+    },
+    {
+      "scope_id": "1662",
+      "lab_code": "6185426",
+      "lab_name": "Elenergy Lab Research Pvt. Ltd., Bengaluru",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1662/",
+      "raw_file": "data/raw/labs/scopes/1662.html",
+      "status": "success",
+      "capabilities": 5,
+      "tests": 781
+    },
+    {
+      "scope_id": "1665",
+      "lab_code": "8184306",
+      "lab_name": "Global Testing Laboratory Private limited, Ghaziabad",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1665/",
+      "raw_file": "data/raw/labs/scopes/1665.html",
+      "status": "success",
+      "capabilities": 17,
+      "tests": 1182
+    },
+    {
+      "scope_id": "1680",
+      "lab_code": "8184706",
+      "lab_name": "Samridhi Test House Pvt. Ltd.",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1680/",
+      "raw_file": "data/raw/labs/scopes/1680.html",
+      "status": "success",
+      "capabilities": 28,
+      "tests": 2234
+    },
+    {
+      "scope_id": "1698",
+      "lab_code": "7185816",
+      "lab_name": "Ultra Plus Lubes Pvt. Ltd, Navi Mumbai",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1698/",
+      "raw_file": "data/raw/labs/scopes/1698.html",
+      "status": "success",
+      "capabilities": 1,
+      "tests": 68
+    },
+    {
+      "scope_id": "1724",
+      "lab_code": "9188536",
+      "lab_name": "GECS LAB PRIVATE LIMITED",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1724/",
+      "raw_file": "data/raw/labs/scopes/1724.html",
+      "status": "success",
+      "capabilities": 1,
+      "tests": 58
+    },
+    {
+      "scope_id": "1770",
+      "lab_code": "8185026",
+      "lab_name": "AADHAR TESTING SOLUTIONS LLP, GHAZIABAD",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1770/",
+      "raw_file": "data/raw/labs/scopes/1770.html",
+      "status": "success",
+      "capabilities": 10,
+      "tests": 877
+    },
+    {
+      "scope_id": "1788",
+      "lab_code": "8187826",
+      "lab_name": "Perfect International Testing Lab",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1788/",
+      "raw_file": "data/raw/labs/scopes/1788.html",
+      "status": "success",
+      "capabilities": 29,
+      "tests": 3280
+    },
+    {
+      "scope_id": "1810",
+      "lab_code": "5197006",
+      "lab_name": "QUALITY INTERNATIONAL RESEARCH & LABORATORIES PRIVATE LIMITED",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1810/",
+      "raw_file": "data/raw/labs/scopes/1810.html",
+      "status": "success",
+      "capabilities": 0,
+      "tests": 0
+    },
+    {
+      "scope_id": "1820",
+      "lab_code": "8185126",
+      "lab_name": "MIGHTY TESTING PRIVATE LIMITED, GHAZIABAD",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1820/",
+      "raw_file": "data/raw/labs/scopes/1820.html",
+      "status": "success",
+      "capabilities": 10,
+      "tests": 878
+    },
+    {
+      "scope_id": "1837",
+      "lab_code": "8186926",
+      "lab_name": "Dashmesh Test Lab Private Limited",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1837/",
+      "raw_file": "data/raw/labs/scopes/1837.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 4705
+    },
+    {
+      "scope_id": "1841",
+      "lab_code": "8185906",
+      "lab_name": "VERTEX TESTING LABORATORY PRIVATE LIMITED, GHAZIABAD",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1841/",
+      "raw_file": "data/raw/labs/scopes/1841.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 1615
+    },
+    {
+      "scope_id": "1842",
+      "lab_code": "8184506",
+      "lab_name": "PIBCO LIMITED R&D CENTRE",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1842/",
+      "raw_file": "data/raw/labs/scopes/1842.html",
+      "status": "success",
+      "capabilities": 2,
+      "tests": 88
+    },
+    {
+      "scope_id": "1845",
+      "lab_code": "8187316",
+      "lab_name": "Vimta labs limited, Noida",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1845/",
+      "raw_file": "data/raw/labs/scopes/1845.html",
+      "status": "success",
+      "capabilities": 1,
+      "tests": 122
+    },
+    {
+      "scope_id": "1851",
+      "lab_code": "7189336",
+      "lab_name": "Winwall Technology India Private Limited",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1851/",
+      "raw_file": "data/raw/labs/scopes/1851.html",
+      "status": "success",
+      "capabilities": 1,
+      "tests": 7
+    },
+    {
+      "scope_id": "1853",
+      "lab_code": "8185306",
+      "lab_name": "ALPHA TEST HOUSE PVT LTD, BAHADURGARH",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1853/",
+      "raw_file": "data/raw/labs/scopes/1853.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 1225
+    },
+    {
+      "scope_id": "1856",
+      "lab_code": "8195736",
+      "lab_name": "Basil Quality Testing lab Private Limited",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1856/",
+      "raw_file": "data/raw/labs/scopes/1856.html",
+      "status": "success",
+      "capabilities": 4,
+      "tests": 367
+    },
+    {
+      "scope_id": "1859",
+      "lab_code": "8185226",
+      "lab_name": "Planet Electro Labs Private Limited, Wazirpur",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1859/",
+      "raw_file": "data/raw/labs/scopes/1859.html",
+      "status": "success",
+      "capabilities": 17,
+      "tests": 1552
+    },
+    {
+      "scope_id": "1874",
+      "lab_code": "8185506",
+      "lab_name": "PAAM Testing Labs Private Limited, Greater Noida",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1874/",
+      "raw_file": "data/raw/labs/scopes/1874.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 2283
+    },
+    {
+      "scope_id": "1876",
+      "lab_code": "9192006",
+      "lab_name": "QA TESTING LABORATORIES PRIVATE LIMITED LUCKNOW",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1876/",
+      "raw_file": "data/raw/labs/scopes/1876.html",
+      "status": "success",
+      "capabilities": 3,
+      "tests": 66
+    },
+    {
+      "scope_id": "1879",
+      "lab_code": "8187926",
+      "lab_name": "ACE TEST HOUSE PVT. LTD.",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1879/",
+      "raw_file": "data/raw/labs/scopes/1879.html",
+      "status": "success",
+      "capabilities": 14,
+      "tests": 1756
+    },
+    {
+      "scope_id": "1880",
+      "lab_code": "7187406",
+      "lab_name": "OPTIMAS TESTING SERVICES, OPTIMAS OE SOLUTIONS INDIA PRIVATE LIMITED",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1880/",
+      "raw_file": "data/raw/labs/scopes/1880.html",
+      "status": "success",
+      "capabilities": 10,
+      "tests": 118
+    },
+    {
+      "scope_id": "1881",
+      "lab_code": "8185606",
+      "lab_name": "SHRI KRISHNA TEST HOUSE PVT LTD (142)",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1881/",
+      "raw_file": "data/raw/labs/scopes/1881.html",
+      "status": "success",
+      "capabilities": 28,
+      "tests": 2513
+    },
+    {
+      "scope_id": "1887",
+      "lab_code": "8194926",
+      "lab_name": "AADIDEV TEST & RESEARCH CENTRE LLP",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1887/",
+      "raw_file": "data/raw/labs/scopes/1887.html",
+      "status": "success",
+      "capabilities": 10,
+      "tests": 890
+    },
+    {
+      "scope_id": "1891",
+      "lab_code": "7187626",
+      "lab_name": "KPML Low Voltage Rotating Machine and Hydraulic Laboratory Karad Projects and motors Limited",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1891/",
+      "raw_file": "data/raw/labs/scopes/1891.html",
+      "status": "success",
+      "capabilities": 5,
+      "tests": 421
+    },
+    {
+      "scope_id": "1904",
+      "lab_code": "7188906",
+      "lab_name": "BUNITECH METALLURGICAL SERVICES PRIVATE LIMITED",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1904/",
+      "raw_file": "data/raw/labs/scopes/1904.html",
+      "status": "success",
+      "capabilities": 13,
+      "tests": 987
+    },
+    {
+      "scope_id": "1905",
+      "lab_code": "8187126",
+      "lab_name": "TECHNOPOWER TECH SOLUTIONS LLP",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1905/",
+      "raw_file": "data/raw/labs/scopes/1905.html",
+      "status": "success",
+      "capabilities": 1,
+      "tests": 67
+    },
+    {
+      "scope_id": "1908",
+      "lab_code": "9188436",
+      "lab_name": "Accumetrix Testing Solutions Pvt. Ltd.",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1908/",
+      "raw_file": "data/raw/labs/scopes/1908.html",
+      "status": "success",
+      "capabilities": 5,
+      "tests": 205
+    },
+    {
+      "scope_id": "1910",
+      "lab_code": "6188826",
+      "lab_name": "Mysore ESDM Cluster",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1910/",
+      "raw_file": "data/raw/labs/scopes/1910.html",
+      "status": "success",
+      "capabilities": 1,
+      "tests": 82
+    },
+    {
+      "scope_id": "1913",
+      "lab_code": "8189526",
+      "lab_name": "Global Scientific Solution (P) Ltd.",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1913/",
+      "raw_file": "data/raw/labs/scopes/1913.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 3595
+    },
+    {
+      "scope_id": "1917",
+      "lab_code": "8188216",
+      "lab_name": "EKO PRO ENGINEERS PVT LTD",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1917/",
+      "raw_file": "data/raw/labs/scopes/1917.html",
+      "status": "success",
+      "capabilities": 4,
+      "tests": 54
+    },
+    {
+      "scope_id": "1929",
+      "lab_code": "8186436",
+      "lab_name": "Atckon Laboratories LLP, Bahadurgarh",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1929/",
+      "raw_file": "data/raw/labs/scopes/1929.html",
+      "status": "success",
+      "capabilities": 29,
+      "tests": 821
+    },
+    {
+      "scope_id": "1931",
+      "lab_code": "7186606",
+      "lab_name": "KSA LABS LLP, Vadodara",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1931/",
+      "raw_file": "data/raw/labs/scopes/1931.html",
+      "status": "success",
+      "capabilities": 21,
+      "tests": 802
+    },
+    {
+      "scope_id": "1941",
+      "lab_code": "6197936",
+      "lab_name": "TUV Rheinland (India) Private limited, Material Testing Laboratory",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1941/",
+      "raw_file": "data/raw/labs/scopes/1941.html",
+      "status": "success",
+      "capabilities": 1,
+      "tests": 23
+    },
+    {
+      "scope_id": "1955",
+      "lab_code": "8189436",
+      "lab_name": "Byte Scientific Research Lab Private Limited",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1955/",
+      "raw_file": "data/raw/labs/scopes/1955.html",
+      "status": "success",
+      "capabilities": 1,
+      "tests": 34
+    },
+    {
+      "scope_id": "1957",
+      "lab_code": "8188136",
+      "lab_name": "NAYRA LABORATORIES (INDIA) LLP",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1957/",
+      "raw_file": "data/raw/labs/scopes/1957.html",
+      "status": "success",
+      "capabilities": 4,
+      "tests": 355
+    },
+    {
+      "scope_id": "1961",
+      "lab_code": "8188026",
+      "lab_name": "INTERNATIONAL TESTING AND COMPLIANCE (OPC) PRIVATE LIMITED",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1961/",
+      "raw_file": "data/raw/labs/scopes/1961.html",
+      "status": "success",
+      "capabilities": 27,
+      "tests": 4706
+    },
+    {
+      "scope_id": "1981",
+      "lab_code": "8187226",
+      "lab_name": "Havells India Limited (Havells Research & Development Laboratory)",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1981/",
+      "raw_file": "data/raw/labs/scopes/1981.html",
+      "status": "success",
+      "capabilities": 0,
+      "tests": 0
+    },
+    {
+      "scope_id": "1989",
+      "lab_code": "-",
+      "lab_name": "(Arohatech) Logiclink",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/1989/",
+      "raw_file": "data/raw/labs/scopes/1989.html",
+      "status": "success",
+      "capabilities": 2,
+      "tests": 11
+    },
+    {
+      "scope_id": "2029",
+      "lab_code": "7197106",
+      "lab_name": "PADKONDE M S TESTING LABORATORY LLP",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/2029/",
+      "raw_file": "data/raw/labs/scopes/2029.html",
+      "status": "success",
+      "capabilities": 2,
+      "tests": 96
+    },
+    {
+      "scope_id": "2033",
+      "lab_code": "5191706",
+      "lab_name": "ARYAVRAT TEST HOUSE PRIVATE LIMITED",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/2033/",
+      "raw_file": "data/raw/labs/scopes/2033.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 3442
+    },
+    {
+      "scope_id": "2041",
+      "lab_code": "6191806",
+      "lab_name": "TUV SUD SOUTH ASIA PRIVATE LIMITED RANIPET",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/2041/",
+      "raw_file": "data/raw/labs/scopes/2041.html",
+      "status": "success",
+      "capabilities": 10,
+      "tests": 864
+    },
+    {
+      "scope_id": "2046",
+      "lab_code": "7194806",
+      "lab_name": "Urja Metallurgical Services LLP",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/2046/",
+      "raw_file": "data/raw/labs/scopes/2046.html",
+      "status": "success",
+      "capabilities": 18,
+      "tests": 797
+    },
+    {
+      "scope_id": "2054",
+      "lab_code": "6190736",
+      "lab_name": "Eminent International Testing Center Private Limited",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/2054/",
+      "raw_file": "data/raw/labs/scopes/2054.html",
+      "status": "success",
+      "capabilities": 6,
+      "tests": 49
+    },
+    {
+      "scope_id": "2075",
+      "lab_code": "6189206",
+      "lab_name": "SCIENTIFIC AND INDUSTRIAL TESTING AND RESEARCH CENTRE (SITARC)",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/2075/",
+      "raw_file": "data/raw/labs/scopes/2075.html",
+      "status": "success",
+      "capabilities": 14,
+      "tests": 1284
+    },
+    {
+      "scope_id": "2090",
+      "lab_code": "7196526",
+      "lab_name": "PUMP TEST LAB KSB LIMITED",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/2090/",
+      "raw_file": "data/raw/labs/scopes/2090.html",
+      "status": "success",
+      "capabilities": 3,
+      "tests": 298
+    },
+    {
+      "scope_id": "2095",
+      "lab_code": "8192806",
+      "lab_name": "ACCURATE TEST SOLUTIONS LLP",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/2095/",
+      "raw_file": "data/raw/labs/scopes/2095.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 730
+    },
+    {
+      "scope_id": "2127",
+      "lab_code": "9198806",
+      "lab_name": "AADISHAKTI TESTING &RESEARCH LABORATORIES LLP",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/2127/",
+      "raw_file": "data/raw/labs/scopes/2127.html",
+      "status": "success",
+      "capabilities": 6,
+      "tests": 218
+    },
+    {
+      "scope_id": "2142",
+      "lab_code": "9198106",
+      "lab_name": "Agro Tech Aromatics Pvt Ltd",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/2142/",
+      "raw_file": "data/raw/labs/scopes/2142.html",
+      "status": "success",
+      "capabilities": 7,
+      "tests": 109
+    },
+    {
+      "scope_id": "2177",
+      "lab_code": "8191236",
+      "lab_name": "MEKANIKA TESTING LABS LLP",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/2177/",
+      "raw_file": "data/raw/labs/scopes/2177.html",
+      "status": "success",
+      "capabilities": 3,
+      "tests": 308
+    },
+    {
+      "scope_id": "2179",
+      "lab_code": "8190506",
+      "lab_name": "Mbis Tescon Private Limited",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/2179/",
+      "raw_file": "data/raw/labs/scopes/2179.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 575
+    },
+    {
+      "scope_id": "2204",
+      "lab_code": "7198436",
+      "lab_name": "Alpit Metal Works Laboratory",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/2204/",
+      "raw_file": "data/raw/labs/scopes/2204.html",
+      "status": "success",
+      "capabilities": 2,
+      "tests": 104
+    },
+    {
+      "scope_id": "2207",
+      "lab_code": "8196926",
+      "lab_name": "TEKNOLAB QUALITY SERVICES PRIVATE LIMITED",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/2207/",
+      "raw_file": "data/raw/labs/scopes/2207.html",
+      "status": "success",
+      "capabilities": 25,
+      "tests": 1994
+    },
+    {
+      "scope_id": "2213",
+      "lab_code": "9194336",
+      "lab_name": "Samtek Testing Laboratory LLP",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/2213/",
+      "raw_file": "data/raw/labs/scopes/2213.html",
+      "status": "success",
+      "capabilities": 6,
+      "tests": 1029
+    },
+    {
+      "scope_id": "2214",
+      "lab_code": "8197426",
+      "lab_name": "ELECTROEDGE LABORATORY LLP",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/2214/",
+      "raw_file": "data/raw/labs/scopes/2214.html",
+      "status": "success",
+      "capabilities": 14,
+      "tests": 574
+    },
+    {
+      "scope_id": "2225",
+      "lab_code": "8198324",
+      "lab_name": "EMC EMI TESTING LAB- HLL LIFECARE LIMITED",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/2225/",
+      "raw_file": "data/raw/labs/scopes/2225.html",
+      "status": "success",
+      "capabilities": 1,
+      "tests": 54
+    },
+    {
+      "scope_id": "2227",
+      "lab_code": "5197706",
+      "lab_name": "OMRESEARCH & TESTING LABORATORY PRIVATE LIMITED",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/2227/",
+      "raw_file": "data/raw/labs/scopes/2227.html",
+      "status": "success",
+      "capabilities": 30,
+      "tests": 579
+    },
+    {
+      "scope_id": "2237",
+      "lab_code": "7195306",
+      "lab_name": "MORBI TEST HOUSE LLP",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/2237/",
+      "raw_file": "data/raw/labs/scopes/2237.html",
+      "status": "success",
+      "capabilities": 20,
+      "tests": 1014
+    },
+    {
+      "scope_id": "2254",
+      "lab_code": "9197626",
+      "lab_name": "DYNAMIC TEST LABORATORIES LLP",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/2254/",
+      "raw_file": "data/raw/labs/scopes/2254.html",
+      "status": "success",
+      "capabilities": 7,
+      "tests": 2270
+    },
+    {
+      "scope_id": "2298",
+      "lab_code": "9197206",
+      "lab_name": "Standard Testing and Research Lab",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/2298/",
+      "raw_file": "data/raw/labs/scopes/2298.html",
+      "status": "success",
+      "capabilities": 11,
+      "tests": 418
+    },
+    {
+      "scope_id": "2299",
+      "lab_code": "6198536",
+      "lab_name": "D.Banerjee Centre of Excellence (DBCOE)",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/2299/",
+      "raw_file": "data/raw/labs/scopes/2299.html",
+      "status": "success",
+      "capabilities": 5,
+      "tests": 81
+    },
+    {
+      "scope_id": "2329",
+      "lab_code": "9198906",
+      "lab_name": "Eco Paryavaran Laboratories and Consultants Pvt. Ltd.",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/2329/",
+      "raw_file": "data/raw/labs/scopes/2329.html",
+      "status": "success",
+      "capabilities": 10,
+      "tests": 533
+    },
+    {
+      "scope_id": "2334",
+      "lab_code": "8198616",
+      "lab_name": "AUMNAMAH RADIOANALYTICAL LABORATORY LLP",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/2334/",
+      "raw_file": "data/raw/labs/scopes/2334.html",
+      "status": "success",
+      "capabilities": 3,
+      "tests": 10
+    },
+    {
+      "scope_id": "2342",
+      "lab_code": "8199006",
+      "lab_name": "PRESTO LABORATORIES PRIVATE LIMITED",
+      "scope_url": "https://lims.bis.gov.in/home_lab_scope/2342/",
+      "raw_file": "data/raw/labs/scopes/2342.html",
+      "status": "success",
+      "capabilities": 10,
+      "tests": 526
+    }
+  ]
+}

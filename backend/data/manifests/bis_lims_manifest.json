@@ -1,0 +1,125 @@
+{
+  "document_id": "BIS_LIMS_RECOGNIZED_LABS",
+  "source_id": "bis_lims",
+  "source_url": "https://lims.bis.gov.in/home/labs/",
+  "source_type": "BIS_OFFICIAL",
+  "document_type": "LABORATORIES",
+  "lab_category": "RECOGNIZED",
+  "retrieved_at": "2026-09-14T15:11:09.958907+00:00",
+  "status": "downloaded",
+  "record_count": 431,
+  "page_count": 22,
+  "parser_version": "2.0",
+  "pages": [
+    {
+      "page": 1,
+      "path": "D:\\Chinna\\CODING\\SIH 2026\\backend\\data\\raw\\labs\\bis_lims_labs_page_1.html",
+      "sha256": "96656a2288c2815b0d386f389bb250e0c3541902fdc9c2746eac5fcf66d1b59a"
+    },
+    {
+      "page": 2,
+      "path": "D:\\Chinna\\CODING\\SIH 2026\\backend\\data\\raw\\labs\\bis_lims_labs_page_2.html",
+      "sha256": "02791d071a414863ee96dba871d917f26ecd38445241ef3558cec63c12ca4c35"
+    },
+    {
+      "page": 3,
+      "path": "D:\\Chinna\\CODING\\SIH 2026\\backend\\data\\raw\\labs\\bis_lims_labs_page_3.html",
+      "sha256": "3de8366190b5318638e3dcb1dfa207256c425b609bde4b2499290f78bbbc4100"
+    },
+    {
+      "page": 4,
+      "path": "D:\\Chinna\\CODING\\SIH 2026\\backend\\data\\raw\\labs\\bis_lims_labs_page_4.html",
+      "sha256": "f5bf1ffe280284b3b0f42454a32bace0e83a253cd5e66424690539f93d887b88"
+    },
+    {
+      "page": 5,
+      "path": "D:\\Chinna\\CODING\\SIH 2026\\backend\\data\\raw\\labs\\bis_lims_labs_page_5.html",
+      "sha256": "c23408def3e6f429fc5d0ac0abb6d34600d5d780f7bc3c16db2ab2f870465155"
+    },
+    {
+      "page": 6,
+      "path": "D:\\Chinna\\CODING\\SIH 2026\\backend\\data\\raw\\labs\\bis_lims_labs_page_6.html",
+      "sha256": "7502d79d74e394b9e62ff2c4b2ea9fd313ebdf17a7f28291b5ee247eccef9dfc"
+    },
+    {
+      "page": 7,
+      "path": "D:\\Chinna\\CODING\\SIH 2026\\backend\\data\\raw\\labs\\bis_lims_labs_page_7.html",
+      "sha256": "ee66b155976c56a07c7d647c015a1adfd664218319335d0f453981125b9e6d14"
+    },
+    {
+      "page": 8,
+      "path": "D:\\Chinna\\CODING\\SIH 2026\\backend\\data\\raw\\labs\\bis_lims_labs_page_8.html",
+      "sha256": "2232d3b3c9d4b77b1e81c78683acd4539d065b230cf044f5c73e5b4511ca8014"
+    },
+    {
+      "page": 9,
+      "path": "D:\\Chinna\\CODING\\SIH 2026\\backend\\data\\raw\\labs\\bis_lims_labs_page_9.html",
+      "sha256": "0343d23375713299620e4d7f0be136e0286b50e4c13a09999a84fce25bc715ed"
+    },
+    {
+      "page": 10,
+      "path": "D:\\Chinna\\CODING\\SIH 2026\\backend\\data\\raw\\labs\\bis_lims_labs_page_10.html",
+      "sha256": "fccad8bfe0fa845a7ac4b728bead56b56b502adf8b7c977d32f2568dae44db73"
+    },
+    {
+      "page": 11,
+      "path": "D:\\Chinna\\CODING\\SIH 2026\\backend\\data\\raw\\labs\\bis_lims_labs_page_11.html",
+      "sha256": "255b8baed8c89ab33aa6aa65ca41f2dd5cfed1cc8c61c060ff14c576994e9378"
+    },
+    {
+      "page": 12,
+      "path": "D:\\Chinna\\CODING\\SIH 2026\\backend\\data\\raw\\labs\\bis_lims_labs_page_12.html",
+      "sha256": "0c0a254f1e1e000e5d378b91589680869430433f574d76e2d29bbb31d497a870"
+    },
+    {
+      "page": 13,
+      "path": "D:\\Chinna\\CODING\\SIH 2026\\backend\\data\\raw\\labs\\bis_lims_labs_page_13.html",
+      "sha256": "fdac09793cf853a38c1adad3ae442a66d6de01c31f46d221b57f6f1e5cabafb1"
+    },
+    {
+      "page": 14,
+      "path": "D:\\Chinna\\CODING\\SIH 2026\\backend\\data\\raw\\labs\\bis_lims_labs_page_14.html",
+      "sha256": "8f8088846857daba3097cb35002942e73213bbb012ad25c4561d9d3278e1d181"
+    },
+    {
+      "page": 15,
+      "path": "D:\\Chinna\\CODING\\SIH 2026\\backend\\data\\raw\\labs\\bis_lims_labs_page_15.html",
+      "sha256": "23268c8173ee85316c614311dbbdf3a5c5f40cc3595fc381bcf1a93821911d39"
+    },
+    {
+      "page": 16,
+      "path": "D:\\Chinna\\CODING\\SIH 2026\\backend\\data\\raw\\labs\\bis_lims_labs_page_16.html",
+      "sha256": "11b00004be9441e811c0aa16491ece5c66f288b0fb7a4a5ff4a5c597116c2237"
+    },
+    {
+      "page": 17,
+      "path": "D:\\Chinna\\CODING\\SIH 2026\\backend\\data\\raw\\labs\\bis_lims_labs_page_17.html",
+      "sha256": "c5ef0e77a14cc64a8085b33cda2bfa77eb475949b731cad5a8ab884e75cdc410"
+    },
+    {
+      "page": 18,
+      "path": "D:\\Chinna\\CODING\\SIH 2026\\backend\\data\\raw\\labs\\bis_lims_labs_page_18.html",
+      "sha256": "1108dbc6b6aa0d5931703798e465118d17eb86edf9863bc613483cd9f2b1e8fb"
+    },
+    {
+      "page": 19,
+      "path": "D:\\Chinna\\CODING\\SIH 2026\\backend\\data\\raw\\labs\\bis_lims_labs_page_19.html",
+      "sha256": "d275b331321e65a40c4f779e015f50ed250a58010b102291be1dde4d8a67b210"
+    },
+    {
+      "page": 20,
+      "path": "D:\\Chinna\\CODING\\SIH 2026\\backend\\data\\raw\\labs\\bis_lims_labs_page_20.html",
+      "sha256": "097e69ae53382e244680d4dc4ddd33235ed67bfb3af8c92b621fc3f25f23aeaa"
+    },
+    {
+      "page": 21,
+      "path": "D:\\Chinna\\CODING\\SIH 2026\\backend\\data\\raw\\labs\\bis_lims_labs_page_21.html",
+      "sha256": "34ae392c9647d50aedb2b911e18cc83f8d0e1fbd259dcff498475ccc369273c8"
+    },
+    {
+      "page": 22,
+      "path": "D:\\Chinna\\CODING\\SIH 2026\\backend\\data\\raw\\labs\\bis_lims_labs_page_22.html",
+      "sha256": "c2ff784c24f62626a0b2b6f6cf8e6918c34b9049cf43a7b2a243d56d14fe0445"
+    }
+  ]
+}
