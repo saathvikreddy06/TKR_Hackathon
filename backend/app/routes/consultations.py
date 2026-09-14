@@ -48,8 +48,8 @@ def attach_consultant_details(data: dict):
     consultant_id = data.get("consultant_id")
     if not consultant_id:
         return data
-    consultant = db.collection("consultancies").document(consultant_id).get()
-    if not consultant.exists:
+    consultant = db.collection("users").document(consultant_id).get()
+    if not consultant.exists or consultant.to_dict().get("role") != "consultant":
         return data
     consultant_data = consultant.to_dict() or {}
     data["consultant"] = {
@@ -94,8 +94,10 @@ def create_consultation(
     current_user=Depends(get_current_user),
 ):
     uid = current_user["uid"]
-    consultant = get_document("consultancies", payload.consultant_id)
+    consultant = get_document("users", payload.consultant_id)
     consultant_data = consultant.to_dict() or {}
+    if consultant_data.get("role") != "consultant":
+        raise HTTPException(status_code=404, detail="Consultant not found")
     if consultant_data.get("active", True) is False:
         raise HTTPException(status_code=409, detail="Consultant is inactive")
     existing_requests = db.collection("consultation_requests").where("user_id", "==", uid).stream()

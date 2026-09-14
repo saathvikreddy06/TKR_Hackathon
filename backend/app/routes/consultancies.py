@@ -6,7 +6,26 @@ from google.cloud.firestore_v1 import SERVER_TIMESTAMP
 
 from app.auth.dependencies import get_current_user
 from app.firebase import db
-from app.services.common import document_data, owns_or_admin, user_role
+from app.services.common import document_data, owns_or_admin
+
+
+def safe_consultant_data(data: dict) -> dict:
+    return {
+        "id": data.get("id"),
+        "name": data.get("name"),
+        "email": data.get("email"),
+        "phone": data.get("phone"),
+        "consultancy_name": data.get("consultancy_name"),
+        "consultancy_area": data.get("consultancy_area"),
+        "place": data.get("place"),
+        "bio": data.get("bio"),
+        "expertise": data.get("expertise", []),
+        "standards_handled": data.get("standards_handled", []),
+        "categories": data.get("categories", []),
+        "availability": data.get("availability", True),
+        "profile_complete": data.get("profile_complete", False),
+        "active": data.get("active", True),
+    }
 
 
 router = APIRouter(prefix="/api/consultants", tags=["consultants"])
@@ -59,10 +78,8 @@ def list_consultants(
     search: Annotated[str | None, Query(max_length=120)] = None,
 ):
     consultants = []
-    for document in db.collection("consultancies").stream():
+    for document in db.collection("users").where("role", "==", "consultant").stream():
         data = document_data(document)
-        data["profile_complete"] = profile_is_complete(data)
-        data.pop("phone", None)
         if data.get("active", True) is False:
             continue
         if available is not None and data.get("availability", False) != available:
@@ -83,29 +100,34 @@ def list_consultants(
             ]).lower()
             if search.lower() not in haystack:
                 continue
-        consultants.append(data)
+        data["profile_complete"] = profile_is_complete(data)
+        safe_data = safe_consultant_data(data)
+        safe_data.pop("phone", None)
+        consultants.append(safe_data)
     return {"consultants": consultants}
 
 
 @router.get("/me/profile")
 def get_my_consultant_profile(current_user=Depends(get_current_user)):
-    document = db.collection("consultancies").document(current_user["uid"]).get()
-    if not document.exists:
+    document = db.collection("users").document(current_user["uid"]).get()
+    if not document.exists or document.to_dict().get("role") != "consultant":
         return {"profile": None, "profile_complete": False}
     data = document_data(document)
     data["profile_complete"] = profile_is_complete(data)
-    return {"profile": data, "profile_complete": data["profile_complete"]}
+    safe_data = safe_consultant_data(data)
+    return {"profile": safe_data, "profile_complete": data["profile_complete"]}
 
 
 @router.get("/{consultant_id}")
 def get_consultant(consultant_id: str):
-    document = db.collection("consultancies").document(consultant_id).get()
-    if not document.exists or document.to_dict().get("active", True) is False:
+    document = db.collection("users").document(consultant_id).get()
+    if not document.exists or document.to_dict().get("role") != "consultant" or document.to_dict().get("active", True) is False:
         raise HTTPException(status_code=404, detail="Consultant not found")
     data = document_data(document)
     data["profile_complete"] = profile_is_complete(data)
-    data.pop("phone", None)
-    return data
+    safe_data = safe_consultant_data(data)
+    safe_data.pop("phone", None)
+    return safe_data
 
 
 @router.post("", status_code=status.HTTP_201_CREATED)
@@ -114,21 +136,30 @@ def create_consultant(
     current_user=Depends(get_current_user),
 ):
     uid = current_user["uid"]
-    if user_role(uid) not in {"consultant", "admin"}:
+    reference = db.collection("users").document(uid)
+    document = reference.get()
+
+    if not document.exists:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    user_data = document.to_dict() or {}
+    if user_data.get("role") not in {"consultant", "admin"}:
         raise HTTPException(status_code=403, detail="Consultant profile access required")
-    reference = db.collection("consultancies").document(uid)
-    if reference.get().exists:
-        raise HTTPException(status_code=409, detail="Consultant profile already exists")
+
     data = payload.model_dump()
     data["email"] = data.get("email") or current_user.get("email")
+    data["profile_complete"] = profile_is_complete(data)
+    data["role"] = "consultant"
     data.update({
-        "user_id": uid,
         "active": True,
-        "created_at": SERVER_TIMESTAMP,
         "updated_at": SERVER_TIMESTAMP,
     })
-    reference.set(data)
-    return document_data(reference.get())
+
+    reference.set(data, merge=True)
+    updated_doc = reference.get()
+    updated_data = document_data(updated_doc)
+    updated_data["profile_complete"] = profile_is_complete(updated_data)
+    return safe_consultant_data(updated_data)
 
 
 @router.put("/{consultant_id}")
@@ -137,17 +168,33 @@ def update_consultant(
     payload: ConsultantUpdate,
     current_user=Depends(get_current_user),
 ):
-    document = db.collection("consultancies").document(consultant_id).get()
-    if not document.exists:
+    document = db.collection("users").document(consultant_id).get()
+    if not document.exists or document.to_dict().get("role") != "consultant":
         raise HTTPException(status_code=404, detail="Consultant not found")
     if not can_manage(current_user["uid"], consultant_id):
         raise HTTPException(status_code=403, detail="You cannot modify this consultant")
+
     updates = {key: value for key, value in payload.model_dump().items() if value is not None}
     if not updates:
-        return document_data(document)
+        data = document_data(document)
+        data["profile_complete"] = profile_is_complete(data)
+        return safe_consultant_data(data)
+
+    updates.pop("role", None)
     updates["updated_at"] = SERVER_TIMESTAMP
-    db.collection("consultancies").document(consultant_id).update(updates)
-    return document_data(db.collection("consultancies").document(consultant_id).get())
+
+    existing_data = document.to_dict() or {}
+    for k, v in updates.items():
+        if k != "updated_at":
+            existing_data[k] = v
+    updates["profile_complete"] = profile_is_complete(existing_data)
+
+    db.collection("users").document(consultant_id).update(updates)
+
+    updated_doc = db.collection("users").document(consultant_id).get()
+    updated_data = document_data(updated_doc)
+    updated_data["profile_complete"] = updates["profile_complete"]
+    return safe_consultant_data(updated_data)
 
 
 @router.delete("/{consultant_id}")
@@ -155,12 +202,12 @@ def deactivate_consultant(
     consultant_id: str,
     current_user=Depends(get_current_user),
 ):
-    document = db.collection("consultancies").document(consultant_id).get()
-    if not document.exists:
+    document = db.collection("users").document(consultant_id).get()
+    if not document.exists or document.to_dict().get("role") != "consultant":
         raise HTTPException(status_code=404, detail="Consultant not found")
     if not can_manage(current_user["uid"], consultant_id):
         raise HTTPException(status_code=403, detail="You cannot deactivate this consultant")
-    db.collection("consultancies").document(consultant_id).update({
+    db.collection("users").document(consultant_id).update({
         "active": False,
         "updated_at": SERVER_TIMESTAMP,
     })
