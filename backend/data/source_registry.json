@@ -1,0 +1,59 @@
+{
+    "sources": [
+        {
+            "source_id": "bis_lims",
+            "source_name": "BIS Laboratory Information Management System",
+            "source_type": "BIS_OFFICIAL",
+            "official_domain": "lims.bis.gov.in",
+            "data_type": "LABORATORIES",
+            "access_method": "PUBLIC_WEB",
+            "update_frequency": "WEEKLY",
+            "enabled": true,
+            "collector": "lims"
+        },
+        {
+            "source_id": "bis_know_your_standard",
+            "source_name": "BIS Know Your Standard",
+            "source_type": "BIS_OFFICIAL",
+            "official_domain": "bis.gov.in",
+            "data_type": "STANDARD_METADATA",
+            "access_method": "PUBLIC_WEB",
+            "update_frequency": "WEEKLY",
+            "enabled": true,
+            "collector": "know_your_standard"
+        },
+        {
+            "source_id": "bis_qco",
+            "source_name": "BIS Quality Control Orders",
+            "source_type": "GOVERNMENT_OFFICIAL",
+            "official_domain": "bis.gov.in",
+            "data_type": "QCO",
+            "access_method": "PUBLIC_WEB",
+            "update_frequency": "WEEKLY",
+            "enabled": true,
+            "collector": "qco"
+        },
+        {
+            "source_id": "bis_hallmarking",
+            "source_name": "BIS Hallmarking",
+            "source_type": "BIS_OFFICIAL",
+            "official_domain": "bis.gov.in",
+            "data_type": "HALLMARKING",
+            "access_method": "PUBLIC_WEB",
+            "update_frequency": "WEEKLY",
+            "enabled": true,
+            "collector": "hallmarking"
+        },
+        {
+            "source_id": "bis_certification",
+            "source_name": "BIS Product Certification",
+            "source_type": "BIS_OFFICIAL",
+            "official_domain": "bis.gov.in",
+            "data_type": "CERTIFICATION",
+            "access_method": "PUBLIC_WEB",
+            "update_frequency": "WEEKLY",
+            "enabled": true,
+            "collector": "certification"
+        }
+    ]
+}

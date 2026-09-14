@@ -32,3 +32,13 @@ backend/credentials
 backend/data/real_bis_standards.json
 __pycache__/
 *.pyc
+
+# BIS collected raw data
+backend/data/raw/**/*
+!backend/data/raw/**/.gitkeep
+
+# Generated processed data
+backend/data/processed/**/*
+
+# Local collector caches
+backend/data/.cache/
