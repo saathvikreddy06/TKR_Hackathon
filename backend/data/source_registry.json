@@ -25,13 +25,17 @@
         {
             "source_id": "bis_qco",
             "source_name": "BIS Quality Control Orders",
-            "source_type": "GOVERNMENT_OFFICIAL",
+            "source_type": "BIS_OFFICIAL",
             "official_domain": "bis.gov.in",
+            "url": "https://www.bis.gov.in/product-certification/products-under-compulsory-certification/?lang=en",
             "data_type": "QCO",
             "access_method": "PUBLIC_WEB",
             "update_frequency": "WEEKLY",
             "enabled": true,
-            "collector": "qco"
+            "collector": "qco",
+            "parser": "backend/scripts/collectors/qco.py",
+            "last_success": null,
+            "last_checked": null
         },
         {
             "source_id": "bis_hallmarking",
