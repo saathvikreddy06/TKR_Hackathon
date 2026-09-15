@@ -1,0 +1,15 @@
+{
+  "generated_at": "2026-09-15T15:16:20.708057+00:00",
+  "standards": 1463,
+  "qco_events": 489,
+  "links": 107,
+  "standards_with_qco": 74,
+  "standards_without_qco": 1389,
+  "relationships": {
+    "AMENDMENT": 52,
+    "CORRIGENDUM": 1,
+    "EXEMPTION": 9,
+    "EXTENSION": 45
+  },
+  "status": "completed"
+}

@@ -1,0 +1,12 @@
+{
+  "source": "BIS Standards Portal",
+  "search_url": "https://standardsadmin.bis.gov.in/review-service/searchKnowStandards",
+  "detail_url": "https://standardsadmin.bis.gov.in/proposal-service/getStandardsWithDeptAndCommittee",
+  "retrieved_at": "2026-09-15T15:04:24.348755+00:00",
+  "lims_unique_references": 1446,
+  "resolved": 1496,
+  "unresolved": 0,
+  "resolution_failed": 0,
+  "detail_success": 1463,
+  "status": "completed"
+}

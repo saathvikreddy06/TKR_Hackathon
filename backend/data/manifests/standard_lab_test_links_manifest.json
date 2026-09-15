@@ -1,0 +1,14 @@
+{
+  "generated_at": "2026-09-15T15:18:36.223161+00:00",
+  "standards": 1463,
+  "labs": 431,
+  "capabilities": 6236,
+  "tests": 270336,
+  "links": 2344090,
+  "standards_with_tests": 1460,
+  "standards_with_labs": 1460,
+  "labs_with_tests": 407,
+  "tests_without_capability": 0,
+  "tests_without_standard": 0,
+  "status": "completed"
+}

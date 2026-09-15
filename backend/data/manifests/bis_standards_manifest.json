@@ -1,0 +1,10 @@
+{
+  "source": "BIS Standards Portal",
+  "catalogue_url": "https://standardsadmin.bis.gov.in/proposal-service/getWebsiteIndianStandardsList",
+  "detail_url": "https://standardsadmin.bis.gov.in/proposal-service/getStandardsWithDeptAndCommittee",
+  "retrieved_at": "2026-09-15T13:58:08.817376+00:00",
+  "catalogue_records": 20,
+  "detail_success": 20,
+  "detail_failed": 0,
+  "status": "completed"
+}
