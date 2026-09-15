@@ -1,0 +1,48 @@
+{
+  "discovered_at": "2026-09-15T15:23:59.164090+00:00",
+  "source_url": "https://standards.bis.gov.in/website/published-standards/department-wise",
+  "bundle_url": "https://standards.bis.gov.in/main.f7e76eff3af0f234.js",
+  "script_urls": [
+    "https://standards.bis.gov.in/assets/js/seo-head.js",
+    "https://standards.bis.gov.in/runtime.80a097032193d463.js",
+    "https://standards.bis.gov.in/polyfills.55d4c5f200113cc4.js",
+    "https://standards.bis.gov.in/scripts.e2bfe9b974b5a2a5.js",
+    "https://standards.bis.gov.in/main.f7e76eff3af0f234.js"
+  ],
+  "bundle_inspection": {
+    "published-standards": [
+      1367378,
+      1367547,
+      1367690,
+      1367829,
+      1367974,
+      1367994,
+      1368610,
+      1369844,
+      1369915,
+      1369987
+    ],
+    "getWebsiteIndianStandardsList": [
+      1393751,
+      1393830
+    ],
+    "searchStandardsByNumberOrTitle": [
+      1407412
+    ],
+    "searchKnowStandards": [
+      1407494
+    ],
+    "standard-details": [
+      1369538
+    ],
+    "getStandardDetailsById": [
+      1395537
+    ],
+    "department-wise": [
+      1367398,
+      1368630,
+      1369864
+    ]
+  },
+  "bundle_inspected_at": "2026-09-15T15:24:01.770928+00:00"
+}
