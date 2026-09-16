@@ -1,0 +1,11 @@
+{
+  "source": "BIS Standards Portal",
+  "source_type": "BIS_OFFICIAL",
+  "endpoint": "https://standardsadmin.bis.gov.in/proposal-service/getStandardsWithDeptAndCommittee",
+  "master_records": 24130,
+  "completed": 24130,
+  "failed": 0,
+  "output": "D:\\Chinna\\CODING\\SIH 2026\\backend\\data\\normalized\\standards\\bis_standards_details.json",
+  "checkpoint": "D:\\Chinna\\CODING\\SIH 2026\\backend\\data\\manifests\\bis_standards_details_checkpoint.json",
+  "retrieved_at": "2026-09-15T19:12:47.070653+00:00"
+}

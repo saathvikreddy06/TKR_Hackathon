@@ -1,0 +1,15 @@
+{
+  "generated_at": "2026-09-15T16:08:09.216076+00:00",
+  "catalogue_records": 24130,
+  "unique_catalogue_ids": 24130,
+  "enriched_records": 1463,
+  "unique_enriched_ids": 1463,
+  "master_records": 24130,
+  "exact_standard_id_matches": 1182,
+  "is_number_matches": 178,
+  "ambiguous_is_matches": 82,
+  "unmatched_enriched": 21,
+  "catalogue_only": 22948,
+  "duplicate_catalogue_ids": 0,
+  "status": "completed"
+}

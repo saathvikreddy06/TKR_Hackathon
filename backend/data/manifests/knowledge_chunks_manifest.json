@@ -1,0 +1,8 @@
+{
+  "generated_at": "2026-09-16T05:23:54.422164+00:00",
+  "source_documents": 68744,
+  "chunks": 160026,
+  "chunk_size": 3000,
+  "overlap": 400,
+  "sha256": "38b87ad3be68ff77bd661ebfabe79f493c8a91855d25a8bbeabe668ef56dcb52"
+}

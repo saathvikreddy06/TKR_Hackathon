@@ -71,15 +71,35 @@ function getOfficialSourceUrl(source) {
 
 function AnswerEvidence({ message, language }) {
     if (!message.confidence) return null
+
     const t = UI_TRANSLATIONS[language] || UI_TRANSLATIONS.en
+
+    const uniqueSources = []
+    const seen = new Set()
+
+    for (const source of message.sources || []) {
+        const key = [
+            source.standard_number || source.number || source.id || '',
+            source.part || '',
+            source.year || '',
+            source.lab_code || '',
+            source.qco_document_id || '',
+            source.source_url || source.document_url || ''
+        ].join('|')
+
+        if (seen.has(key)) continue
+
+        seen.add(key)
+        uniqueSources.push(source)
+    }
 
     return (
         <>
             <div className="answer-meta">
                 <span
                     className={`confidence-badge ${message.confidence === 'High'
-                        ? 'confidence-high'
-                        : 'confidence-low'
+                            ? 'confidence-high'
+                            : 'confidence-low'
                         }`}
                 >
                     {message.confidence}
@@ -98,53 +118,113 @@ function AnswerEvidence({ message, language }) {
                 )}
             </div>
 
-            {message.sources?.length > 0 && (
+            {uniqueSources.length > 0 && (
                 <details className="source-panel">
                     <summary>
-                        {t.sources} ({message.sources.length})
+                        {t.sources} ({uniqueSources.length})
                     </summary>
 
-                    {message.sources.map((source, index) => (
-                        <div
-                            className="source-item"
-                            key={`${source.standard_number}-${source.year}-${index}`}
-                        >
-                            <strong>
-                                {source.standard_number || source.number || source.id}
-                                {source.part
-                                    ? ` (${source.part})`
-                                    : ''}
-                                {source.year
-                                    ? `:${source.year}`
-                                    : ''}
-                            </strong>
+                    {uniqueSources.map((source, index) => {
+                        const standardNumber =
+                            source.standard_number ||
+                            source.number ||
+                            source.id
 
-                            <span>
-                                {language === 'en' && source.title && <span>{source.title}</span>}
+                        const standardLabel = [
+                            standardNumber,
+                            source.part
+                                ? `(${source.part})`
+                                : '',
+                            source.year
+                                ? `:${source.year}`
+                                : ''
+                        ]
+                            .filter(Boolean)
+                            .join(' ')
 
-                                <small>
-                                    {source.scheme
-                                        ? `${t.certification}: ${source.scheme}`
-                                        : ''}
+                        const hasQCOStatus =
+                            typeof source.mandatory_qco === 'boolean'
 
-                                    {source.mandatory_qco !== undefined
-                                        ? ` • ${t.qco}: ${source.mandatory_qco ? t.yes : t.no}`
-                                        : ''}
-                                </small>
-                            </span>
+                        return (
+                            <div
+                                className="source-item"
+                                key={`${standardLabel}-${source.lab_code || ''}-${source.qco_document_id || ''}-${index}`}
+                            >
+                                <strong>
+                                    {standardLabel}
+                                </strong>
 
-                            {getOfficialSourceUrl(source) && (
-                                <a
-                                    href={getOfficialSourceUrl(source)}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    aria-label={`${t.viewSource}: ${source.standard_number || 'BIS'}`}
-                                >
-                                    {t.viewSource}
-                                </a>
-                            )}
-                        </div>
-                    ))}
+                                <span>
+                                    {language === 'en' &&
+                                        source.title && (
+                                            <span>
+                                                {source.title}
+                                            </span>
+                                        )}
+
+                                    <small>
+                                        {source.scheme && (
+                                            <>
+                                                {t.certification}:{' '}
+                                                {source.scheme}
+                                            </>
+                                        )}
+
+                                        {hasQCOStatus && (
+                                            <>
+                                                {source.scheme
+                                                    ? ' • '
+                                                    : ''}
+                                                {t.qco}:{' '}
+                                                {source.mandatory_qco
+                                                    ? t.yes
+                                                    : t.no}
+                                            </>
+                                        )}
+
+                                        {!hasQCOStatus &&
+                                            source.qco_document_id && (
+                                                <>
+                                                    {source.scheme
+                                                        ? ' • '
+                                                        : ''}
+                                                    {t.qco}:{' '}
+                                                    {source.qco_document_id}
+                                                </>
+                                            )}
+
+                                        {source.relationship && (
+                                            <>
+                                                {' • '}
+                                                {source.relationship}
+                                            </>
+                                        )}
+
+                                        {source.lab_name && (
+                                            <>
+                                                {' • '}
+                                                {source.lab_name}
+                                                {source.lab_code
+                                                    ? ` (${source.lab_code})`
+                                                    : ''}
+                                            </>
+                                        )}
+                                    </small>
+                                </span>
+
+                                {getOfficialSourceUrl(source) && (
+                                    <a
+                                        href={getOfficialSourceUrl(source)}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        aria-label={`${t.viewSource}: ${standardNumber || 'BIS'}`}
+                                    >
+                                        {t.viewSource}
+                                    </a>
+                                )}
+                            </div>
+                        )
+                    })}
                 </details>
             )}
 

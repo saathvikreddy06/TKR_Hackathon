@@ -1,478 +1,983 @@
-from groq import Groq
-import logging
 import os
 import re
 
 from dotenv import load_dotenv
-from app.language import get_language_instruction, get_semantic_translation_guidance
+from groq import Groq
 
 
 load_dotenv()
 
-GENERATION_MODEL = "openai/gpt-oss-120b"
 
-api_key = os.getenv("GROQ_API_KEY") or os.getenv("API_KEY")
-client = Groq(api_key=api_key) if api_key else None
-logger = logging.getLogger(__name__)
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+GROQ_MODEL = "openai/gpt-oss-120b"
+
+client = Groq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
 
 
 OFFICIAL_IDENTIFIER_RE = re.compile(
-    r"(?:https?://\S+|\b(?:IS|BIS|ISI|QCO)(?:[-/()\w.:]*)|"
-    r"\bScheme[- ]?(?:I|II|[0-9]+)\b|\b[A-Z]{2,}[A-Z0-9-]*\b|\b\d[\w./:-]*\b)"
+    r'\b(?:IS|ISO|IEC|BIS|QCO|LAB|LIMS)[\s\-:/]*[A-Z0-9()./\-]+\b',
+    re.IGNORECASE
 )
 
-TRANSLITERATION_PATTERNS = {
-    "te": re.compile(
-        r"(?:హై\s+స్ట్రెంగ్త్|స్ట్రెంగ్త్|డీఫార్మ్డ్|బార్స్|వైర్స్|"
-        r"రీ.?ఇన్ఫోర్స్|రీఇన్ఫోర్స్|స్పెసిఫికేషన్|సర్టిఫికేషన్|"
-        r"కన్స్ట్రక్షన్|ఇన్.?ఫ్రాస్ట్రక్చర్|మాండేటరీ|టెన్సైల్\s+స్ట్రెంగ్త్|"
-        r"ఫ్రాక్చర్|ఎలాంగేషన్|రేషియో|ప్రూఫ్\s+స్ట్రెస్|యీల్డ్\s+స్ట్రెంగ్త్)",
-        re.IGNORECASE,
-    ),
-    "hi": re.compile(
-        r"(?:हाई\s+स्ट्रेंथ|स्ट्रेंथ|डीफॉर्म्ड|बार्स|वायर्स|"
-        r"री.?इन्फोर्स|रीइन्फोर्स|स्पेसिफिकेशन|सर्टिफिकेशन|"
-        r"कंस्ट्रक्शन|इन्फ्रास्ट्रक्चर|मैंडेटरी|टेनसाइल\s+स्ट्रेंथ|"
-        r"फ्रैक्चर|एलोंगेशन|रेशियो|प्रूफ\s+स्ट्रेस|यील्ड\s+स्ट्रेंथ)",
-        re.IGNORECASE,
-    ),
-}
 
-SEMANTIC_TERM_REPLACEMENTS = {
-    "te": (
-        (r"రీ.?ఇన్ఫోర్స్‌?మెంట్", "ఉపబలం"),
-        (r"రీఇన్ఫోర్స్‌?మెంట్", "ఉపబలం"),
-        (r"సర్టిఫికేషన్", "ధృవీకరణ"),
-        (r"కన్స్ట్రక్షన్", "నిర్మాణం"),
-        (r"ఇన్.?ఫ్రాస్ట్రక్చర్", "మౌలిక సదుపాయాలు"),
-        (r"మాండేటరీ", "తప్పనిసరి"),
-        (r"టెన్సైల్\s+స్ట్రెంగ్త్", "తన్యతా బలం"),
-        (r"యీల్డ్\s+స్ట్రెంగ్త్", "యీల్డ్ బలం"),
-        (r"ప్రూఫ్\s+స్ట్రెస్", "నిరూపిత ఒత్తిడి"),
-        (r"డీఫార్మ్డ్", "వికృత"),
-        (r"స్టీల్", "ఉక్కు"),
-    ),
-    "hi": (
-        (r"री.?इन्फोर्समेंट", "सुदृढ़ीकरण"),
-        (r"सर्टिफिकेशन", "प्रमाणन"),
-        (r"कंस्ट्रक्शन", "निर्माण"),
-        (r"इन्फ्रास्ट्रक्चर", "बुनियादी ढाँचा"),
-        (r"मैंडेटरी", "अनिवार्य"),
-        (r"टेनसाइल\s+स्ट्रेंथ", "तन्यता शक्ति"),
-        (r"यील्ड\s+स्ट्रेंथ", "उपज शक्ति"),
-        (r"प्रूफ\s+स्ट्रेस", "प्रूफ तनाव"),
-        (r"डीफॉर्म्ड", "विकृत"),
-        (r"स्टील", "इस्पात"),
-    ),
-}
+def result_type(item):
+    match_type = item.get("match_type", "")
+
+    if match_type == "lims_test":
+        return "testing"
+
+    if match_type == "lims_lab":
+        return "laboratory"
+
+    if match_type == "qco_relationship":
+        return "qco"
+
+    return item.get("document_type") or "standard"
+
+def normalize_text(text):
+    if not text:
+        return ""
+
+    text = str(text)
+
+    replacements = {
+        "â¯": " ",
+        "Â±": "±",
+        "â€“": "–",
+        "â€”": "—",
+        "â€˜": "'",
+        "â€™": "'",
+        "â€œ": '"',
+        "â€�": '"',
+        "â€¦": "...",
+        "â†’": "→",
+        "â†": "←",
+        "Ã—": "×",
+        "Ã·": "÷",
+        "Ã©": "é",
+        "Ã¨": "è",
+        "Ã¢": "â",
+        "Ã¤": "ä",
+        "Ã¶": "ö",
+        "Ã¼": "ü",
+        "Â": "",
+    }
+
+    for old, new in replacements.items():
+        text = text.replace(old, new)
+
+    # Common BIS/OCR mojibake patterns
+    text = text.replace("â Chemical", "– Chemical")
+    text = text.replace("â Physical", "– Physical")
+    text = text.replace("â Requirements", "– Requirements")
+    text = text.replace("â requirement", "– requirement")
+    text = text.replace("â Table", " – Table")
+    text = text.replace("â Clause", " – Clause")
+    text = text.replace("â IS", " – IS")
+
+    # Standalone mojibake caused by corrupted non-breaking spaces/dashes
+    text = re.sub(r'â(?=\d)', ' ', text)
+    text = re.sub(r'(?<=\d)â(?=\s)', ' ', text)
+    text = re.sub(r'â(?=\()', ' ', text)
+    text = re.sub(r'â(?=\|)', ' ', text)
+    text = re.sub(r'â(?=\n)', ' ', text)
+
+    # Chemical formulas
+    text = re.sub(
+        r'\bSOâ\b',
+        'SO₃',
+        text
+    )
+
+    # Remove remaining UTF-8 mojibake prefixes when safe
+    text = re.sub(
+        r'[\u00c2\u00c3][\u0080-\u00bf]',
+        '',
+        text
+    )
+
+    # Clean repeated whitespace
+    text = re.sub(
+        r'[ \t]+',
+        ' ',
+        text
+    )
+
+    text = re.sub(
+        r'\n{3,}',
+        '\n\n',
+        text
+    )
+
+    return text.strip()
 
 
-def normalize_semantic_terms(answer: str, language: str) -> str:
-    """Replace recurring phonetic technical terms with semantic equivalents."""
+def extract_clause_number(query):
+    match = re.search(
+        r'\bclause\s*(?:no\.?|number)?\s*(\d+(?:\.\d+)?)',
+        query,
+        re.IGNORECASE
+    )
 
-    for pattern, replacement in SEMANTIC_TERM_REPLACEMENTS.get(language, ()):
-        answer = re.sub(pattern, replacement, answer, flags=re.IGNORECASE)
-    return answer
+    return match.group(1) if match else None
 
 
-def answer_matches_language(answer: str, language: str) -> bool:
+def build_standard_context(standards):
+    if not standards:
+        return ""
+
+    lines = ["STANDARD INFORMATION:"]
+
+    for item in standards[:8]:
+        standard_number = normalize_text(
+            item.get("standard_number")
+            or item.get("is_number")
+            or ""
+        )
+
+        title = normalize_text(
+            item.get("title")
+            or item.get("name")
+            or item.get("product")
+            or ""
+        )
+
+        description = normalize_text(
+            item.get("description")
+            or ""
+        )
+
+        status = normalize_text(
+            item.get("status")
+            or ""
+        )
+
+        parts = []
+
+        if standard_number:
+            parts.append(
+                f"Standard: {standard_number}"
+            )
+
+        if title:
+            parts.append(
+                f"Title: {title}"
+            )
+
+        if description:
+            parts.append(
+                f"Description: {description[:1000]}"
+            )
+
+        if status:
+            parts.append(
+                f"Status: {status}"
+            )
+
+        if parts:
+            lines.append(" | ".join(parts))
+
+    return "\n".join(lines)
+
+
+def build_testing_context(tests, query=""):
+    if not tests:
+        return ""
+
+    lines = ["BIS LIMS TESTING INFORMATION:"]
+
+    requested_clause = extract_clause_number(query)
+
+    added = 0
+
+    for item in tests:
+        if added >= 8:
+            break
+
+        standard_number = normalize_text(
+            item.get("standard_number")
+            or item.get("indian_standard_no")
+            or item.get("is_number")
+            or ""
+        )
+
+        product = normalize_text(
+            item.get("product")
+            or ""
+        )
+
+        designation = normalize_text(
+            item.get("designation")
+            or ""
+        )
+
+        lab_name = normalize_text(
+            item.get("lab_name")
+            or ""
+        )
+
+        lab_code = normalize_text(
+            item.get("lab_code")
+            or ""
+        )
+
+        charge = item.get("testing_charge")
+
+        raw = normalize_text(
+            item.get("testing_charge_raw")
+            or item.get("test_method")
+            or item.get("description")
+            or ""
+        )
+
+        if requested_clause:
+            clause_text = raw.lower()
+            clause_number = requested_clause.lower()
+
+            if (
+                clause_number not in clause_text
+                and f"clause {clause_number}" not in clause_text
+                and f"cl. {clause_number}" not in clause_text
+            ):
+                continue
+
+        parts = []
+
+        if standard_number:
+            parts.append(
+                f"Standard: {standard_number}"
+            )
+
+        if product:
+            parts.append(
+                f"Product: {product}"
+            )
+
+        if designation:
+            parts.append(
+                f"Designation: {designation}"
+            )
+
+        if lab_name:
+            parts.append(
+                f"Laboratory: {lab_name}"
+            )
+
+        if lab_code:
+            parts.append(
+                f"Lab code: {lab_code}"
+            )
+
+        if charge is not None:
+            parts.append(
+                f"Testing charge: ₹{charge}"
+            )
+
+        if raw:
+            parts.append(
+                f"Testing details: {raw[:1600]}"
+            )
+
+        if parts:
+            lines.append(
+                " | ".join(parts)
+            )
+
+            added += 1
+
+    return "\n".join(lines)
+
+
+def build_lab_context(tests):
+    if not tests:
+        return ""
+
+    lines = ["BIS LABORATORY INFORMATION:"]
+
+    seen = set()
+
+    for item in tests[:8]:
+        lab_code = normalize_text(
+            item.get("lab_code") or ""
+        )
+
+        lab_name = normalize_text(
+            item.get("lab_name") or ""
+        )
+
+        if not lab_name:
+            continue
+
+        key = (
+            lab_code,
+            lab_name
+        )
+
+        if key in seen:
+            continue
+
+        seen.add(key)
+
+        if lab_code:
+            lines.append(
+                f"Laboratory: {lab_name} | "
+                f"Lab code: {lab_code}"
+            )
+        else:
+            lines.append(
+                f"Laboratory: {lab_name}"
+            )
+
+    return "\n".join(lines)
+
+
+def build_qco_context(qcos):
+    if not qcos:
+        return ""
+
+    lines = ["BIS QCO INFORMATION:"]
+
+    for item in qcos[:8]:
+        standard_number = normalize_text(
+            item.get("standard_number")
+            or ""
+        )
+
+        qco_document_id = normalize_text(
+            item.get("qco_document_id")
+            or ""
+        )
+
+        relationship = normalize_text(
+            item.get("relationship")
+            or ""
+        )
+
+        evidence = normalize_text(
+            item.get("evidence")
+            or ""
+        )
+
+        confidence = normalize_text(
+            item.get("confidence")
+            or ""
+        )
+
+        matched = item.get(
+            "matched_is_numbers"
+        ) or []
+
+        matched_text = ", ".join(
+            normalize_text(str(x))
+            for x in matched
+        )
+
+        parts = []
+
+        if standard_number:
+            parts.append(
+                f"Standard: {standard_number}"
+            )
+
+        if qco_document_id:
+            parts.append(
+                f"QCO document: {qco_document_id}"
+            )
+
+        if relationship:
+            parts.append(
+                f"Relationship: {relationship}"
+            )
+
+        if matched_text:
+            parts.append(
+                f"Matched IS numbers: {matched_text}"
+            )
+
+        if confidence:
+            parts.append(
+                f"Confidence: {confidence}"
+            )
+
+        if evidence:
+            parts.append(
+                f"Evidence: {evidence[:1200]}"
+            )
+
+        if parts:
+            lines.append(
+                " | ".join(parts)
+            )
+
+    return "\n".join(lines)
+
+
+def build_context(hybrid_results, query=""):
+    intent = hybrid_results.get("intent")
+
+    sections = []
+
+    if intent == "testing":
+        testing = build_testing_context(
+            hybrid_results.get("tests", []),
+            query
+        )
+
+        if testing:
+            sections.append(testing)
+
+        standards = build_standard_context(
+            hybrid_results.get(
+                "exact_standards",
+                []
+            )
+        )
+
+        if standards:
+            sections.append(
+                "BIS STANDARD METADATA:\n"
+                + standards
+            )
+
+    elif intent == "laboratory":
+        labs = build_lab_context(
+            hybrid_results.get("labs", [])
+        )
+
+        if labs:
+            sections.append(labs)
+
+        standards = build_standard_context(
+            hybrid_results.get(
+                "exact_standards",
+                []
+            )
+        )
+
+        if standards:
+            sections.append(
+                "BIS STANDARD METADATA:\n"
+                + standards
+            )
+
+    elif intent == "qco":
+        qco = build_qco_context(
+            hybrid_results.get("qco", [])
+        )
+
+        if qco:
+            sections.append(qco)
+
+        standards = build_standard_context(
+            hybrid_results.get(
+                "exact_standards",
+                []
+            )
+        )
+
+        if standards:
+            sections.append(
+                "BIS STANDARD METADATA:\n"
+                + standards
+            )
+
+    else:
+        semantic = hybrid_results.get(
+            "semantic",
+            []
+        )
+
+        if semantic:
+            semantic_lines = []
+
+            for item in semantic[:5]:
+                number = normalize_text(
+                    item.get(
+                        "standard_number"
+                    ) or ""
+                )
+
+                title = normalize_text(
+                    item.get(
+                        "title"
+                    ) or ""
+                )
+
+                text = normalize_text(
+                    item.get(
+                        "text"
+                    ) or ""
+                )
+
+                text = text[:1800]
+
+                parts = []
+
+                if number:
+                    parts.append(
+                        f"Standard: {number}"
+                    )
+
+                if title:
+                    parts.append(
+                        f"Title: {title}"
+                    )
+
+                if text:
+                    parts.append(
+                        f"Content: {text}"
+                    )
+
+                if parts:
+                    semantic_lines.append(
+                        "\n".join(parts)
+                    )
+
+            if semantic_lines:
+                sections.append(
+                    "BIS SEMANTIC DATA:\n"
+                    + "\n\n".join(
+                        semantic_lines
+                    )
+                )
+
+        standards = build_standard_context(
+            hybrid_results.get(
+                "exact_standards",
+                []
+            )
+        )
+
+        if standards:
+            sections.append(
+                "BIS STANDARD METADATA:\n"
+                + standards
+            )
+
+        qco = build_qco_context(
+            hybrid_results.get(
+                "qco",
+                []
+            )
+        )
+
+        if qco:
+            sections.append(
+                "BIS QCO DATA:\n"
+                + qco
+            )
+
+    return "\n\n".join(sections)
+
+
+def answer_matches_language(answer, language):
+    if not answer:
+        return False
+
     if language == "en":
         return True
 
-    script_pattern = r"[\u0c00-\u0c7f]" if language == "te" else r"[\u0900-\u097f]"
-    if not re.search(script_pattern, answer):
-        return False
+    if language == "te":
+        return bool(
+            re.search(
+                r'[\u0C00-\u0C7F]',
+                answer
+            )
+        )
 
-    transliterated_terms = TRANSLITERATION_PATTERNS.get(language)
-    if transliterated_terms and len(transliterated_terms.findall(answer)) >= 2:
-        return False
+    if language == "hi":
+        return bool(
+            re.search(
+                r'[\u0900-\u097F]',
+                answer
+            )
+        )
 
-    content = OFFICIAL_IDENTIFIER_RE.sub(" ", answer)
-    script_count = len(re.findall(script_pattern, content))
-    latin_count = len(re.findall(r"[A-Za-z]", content))
-    total_letters = script_count + latin_count
-
-    if total_letters == 0:
-        return False
-
-    return script_count / total_letters >= 0.6
+    return True
 
 
 def generate_answer(
-    query: str,
-    retrieved_results: list,
-    language: str = "en"
+    query,
+    retrieved_results,
+    language="en"
 ):
-    """
-    Generate a BIS-grounded answer using retrieved standards.
-    """
-
     if not client:
         return {
-            "answer": "GROQ_API_KEY is not configured on backend server.",
+            "answer": (
+                "The answer generation service "
+                "is not configured."
+            ),
             "sources": []
         }
 
-    fallback_messages = {
-        "te": "సమాధానాన్ని రూపొందించలేకపోయాము. దయచేసి మళ్లీ ప్రయత్నించండి.",
-        "hi": "उत्तर तैयार नहीं किया जा सका। कृपया फिर से प्रयास करें।",
-        "en": "I could not generate an answer. Please try again.",
-    }
+    hybrid_results = retrieved_results
 
-    if not retrieved_results:
-        no_evidence_messages = {
-            "te": (
-                "అందుబాటులో ఉన్న BIS జ్ఞాన ఆధారంలో ఈ ప్రశ్నకు ఖచ్చితమైన "
-                "సమాధానం ఇవ్వడానికి సరిపడ సమాచారం లేదు."
-            ),
-            "hi": (
-                "उपलब्ध BIS ज्ञान आधार में इस प्रश्न का सही उत्तर देने के लिए "
-                "पर्याप्त जानकारी नहीं है।"
-            ),
-        }
+    context = build_context(
+        hybrid_results,
+        query
+    )
 
+    if not context:
         return {
-            "answer": no_evidence_messages.get(
-                language,
-                (
-                    "I could not find a relevant BIS standard in the "
-                    "available knowledge base."
-                )
+            "answer": (
+                "I could not find sufficient BIS "
+                "information in the retrieved data "
+                "to answer this question."
             ),
             "sources": []
         }
 
-    context_parts = []
+    intent = hybrid_results.get(
+        "intent"
+    )
 
-    for i, result in enumerate(retrieved_results, start=1):
-        context_parts.append(
-            f"""
-SOURCE {i}
+    system_prompt = """
+You are StandIQ, an AI assistant for BIS Indian Standards and BIS services.
 
-Standard Number: {result.get("standard_number")}
-Part: {result.get("part")}
-Section: {result.get("section")}
-Year: {result.get("year")}
-Title: {result.get("title")}
-Product Category: {result.get("product_category")}
-Industry: {result.get("industry")}
-Certification Scheme: {result.get("scheme")}
-Mandatory QCO: {result.get("mandatory_qco")}
-Status: {result.get("status")}
+Answer ONLY from the supplied BIS retrieval context.
 
-Details:
-{result.get("text")}
-
-BIS Document:
-{result.get("document_url")}
-
-Source:
-{result.get("source_url")}
-"""
-        )
-
-    context = "\n".join(context_parts)
-
-    language_name = {
-        "en": "English",
-        "te": "Telugu",
-        "hi": "Hindi",
-    }.get(language, "English")
-
-    system_prompt = f"""
-You are StandIQ, an intelligent assistant for Indian Standards
-published by the Bureau of Indian Standards (BIS).
-
-{get_language_instruction(language)}
-
-SEMANTIC TRANSLATION POLICY:
-{get_semantic_translation_guidance(language)}
-
-FINAL LANGUAGE RULE (HIGHEST PRIORITY):
-
-The user's language is {language_name} ({language}).
-
-The selected output language controls the ENTIRE response. Write the complete
-final answer in {language_name}, regardless of the language used in the user
-question.
-
-Do not answer in English when the language is Telugu or Hindi.
-
-Translate every explanatory sentence, heading, bullet point, standard title,
-and description naturally even though the retrieved BIS evidence may be in
-English. Do not copy English explanatory text from the sources.
-
-Keep standard numbers, years, URLs, and technical identifiers
-in their original form.
-
-Only preserve official identifiers such as IS standard numbers, BIS, ISI, QCO,
-Scheme-I, Scheme-II, URLs, and official codes. Standard titles are not
-identifiers and must be translated.
-
-For Telugu, a valid answer style is:
-"ఈ ఉత్పత్తికి సంబంధించిన BIS ప్రమాణం IS 2347:2017."
-
-For Hindi, a valid answer style is:
-"इस उत्पाद से संबंधित BIS मानक IS 2347:2017 है।"
-
-Supported languages are English, Telugu, and Hindi.
-
-Your task is to answer the user's question using ONLY the BIS
-information retrieved and supplied by the application.
-
-The following context comes from authoritative BIS records. Titles and
-descriptions may be in English because that is how they are stored. Do not
-copy those English titles into a Telugu or Hindi answer. Translate their
-meaning naturally and preserve only official identifiers.
-
-========================
-CORE RULES
-========================
-
-1. Answer the user's exact question directly.
-
-2. Do NOT answer unrelated questions using general knowledge.
-
-3. Do NOT invent or assume:
-   - IS numbers
-   - standard titles
-   - years
-   - certification schemes
-   - QCO status
-   - testing requirements
-   - technical specifications
-   - applicability
-   - dates
-   - legal or regulatory status
-
-4. Every factual BIS claim must be supported by the retrieved
-   information.
-
-5. If the retrieved information is insufficient, say this clearly
-   in the user's language.
-
-6. Prefer the most relevant retrieved standard.
-
-7. If multiple standards are genuinely relevant, mention only
-   the standards that help answer the user's question.
-
-========================
-ANSWER STYLE
-========================
-
-8. Start with a direct answer.
-
-9. Keep answers concise and easy to scan.
-
-10. Prefer short paragraphs and bullet points.
-
-11. Use Markdown headings only when they improve readability.
-
-12. Do NOT use Markdown tables unless the user explicitly asks
-    for a table or comparison.
-
-13. Do NOT create large tables containing many columns.
-
-14. Do NOT repeat the same information in multiple formats.
-
-15. Do NOT include unnecessary explanations about the RAG system,
-    retrieved documents, embeddings, or internal processing.
-
-========================
-STANDARD IDENTIFICATION
-========================
-
-16. When identifying a standard, write the exact IS number and
-    year when available.
-
-17. If a Part or Section is available, include it.
-
-Example:
-IS 15298 (Part 2):2016
-
-18. If certification scheme information is available and relevant
-    to the question, mention it.
-
-19. If QCO information is available and relevant to the question,
-    mention it.
-
-20. Do not state that a product MUST have certification or a QCO
-    unless the retrieved information explicitly supports that claim.
-
-========================
-MULTIPLE STANDARDS
-========================
-
-When the question is broad, such as:
-
-"What BIS standards cover steel?"
-
-give a concise categorized list.
-
-Example format:
-
-Several BIS standards cover different steel products:
-
-- **TMT reinforcement bars:** IS 1786:2008
-- **Structural steel:** IS 2062:2011
-- **Structural steel tubes:** IS 1161:2014
-
-Then ask the user to specify the product if necessary.
-
-========================
-TECHNICAL QUESTIONS
-========================
-
-For technical questions, answer only with parameters explicitly
-present in the retrieved information.
-
-Do not infer missing technical requirements.
-
-========================
-OUT-OF-SCOPE QUESTIONS
-========================
-
-StandIQ is focused on:
-
-- BIS standards
-- Indian Standards
-- BIS certification
-- ISI
-- CRS
-- Hallmarking
-- HUID
-- Quality Control Orders
-- BIS-related product requirements
-
-If the question is outside this scope, do not answer it using
-general knowledge.
+BIS Answering Rules:
+1. Never invent BIS requirements, numerical limits, clauses, dates, fees, laboratories, QCO status, or test methods.
+2. For testing questions, prioritize BIS LIMS TESTING DATA.
+3. If the user asks about a specific clause, answer specifically from records belonging to that clause.
+4. If the retrieved data gives test names or test methods but not permissible numerical limits, explicitly say that the numerical limits are not present in the retrieved data.
+5. Do not claim that a QCO is mandatory unless the retrieved evidence explicitly supports that claim.
+6. For laboratory questions, provide laboratory name and lab code when available.
+7. For QCO questions, provide relationship and evidence when available.
+8. Keep answers concise but complete.
+9. Use official identifiers exactly as provided.
+10. Do not reproduce raw database noise or duplicate records.
+11. Do not treat laboratory testing charges as the chemical or physical limits of the standard.
+12. If the retrieved data does not contain enough evidence to answer the question, clearly state that the retrieved BIS data is insufficient rather than guessing.
+13. When answering clause-specific questions, do not substitute information from another clause merely because it concerns the same standard.
+14. Distinguish clearly between:
+   - requirements/limits stated in the standard,
+   - tests available at BIS-recognized laboratories,
+   - laboratory testing charges,
+   - QCO relationships/evidence.
+15. Prefer the most specific retrieved record over broad standard-level context.
 """
 
     user_prompt = f"""
-USER QUESTION:
+USER QUERY:
 {query}
 
-RETRIEVED BIS INFORMATION:
+INTENT:
+{intent}
+
+RETRIEVED BIS CONTEXT:
 {context}
 
-INSTRUCTIONS:
-
-Answer the user's question directly using only the retrieved
-information above.
-
-If one standard clearly answers the question, lead with that
-standard.
-
-If several standards are relevant, give a short bullet list.
-
-Do not use a table unless the user explicitly requested one.
-
-Do not add information that is not supported by the retrieved
-information.
-
-Do not make broad claims about certification, QCOs, legal
-requirements, or technical specifications unless the retrieved
-information explicitly supports them.
-
-STRICT ANSWER-LANGUAGE REQUIREMENT:
-
-{get_language_instruction(language)}
-
-Return only the answer in {language_name}.
-
-Do not add an English translation or language explanation. Do not leave English
-headings, standard titles, descriptions, recommendations, or conclusions.
-
-Keep standard numbers, years, official BIS names, source URLs,
-and technical identifiers exactly as provided in the retrieved
-information.
+Answer the user's question using only the retrieved BIS context.
 """
 
-    messages = [
-        {
-            "role": "system",
-            "content": system_prompt
-        },
-        {
-            "role": "user",
-            "content": user_prompt
-        }
-    ]
-
-    response = client.chat.completions.create(
-        model=GENERATION_MODEL,
-        messages=messages,
-        temperature=0.1,
-        max_tokens=800
-    )
-
-    answer = (response.choices[0].message.content or "").strip()
-
-    # Verify that Telugu/Hindi responses actually contain
-    # characters from the requested script.
-    if not answer_matches_language(answer, language):
-        retry_messages = messages + [
-            {
-                "role": "user",
-                "content": (
-                    f"The previous response violated the selected language "
-                    f"requirement. Rewrite the entire answer in {language_name}. "
-                    "Translate all English explanatory text, BIS titles, "
-                    "descriptions, headings, bullets, and conclusions. Do not "
-                    "leave English explanatory sentences. Preserve only IS "
-                    "standard numbers, BIS, ISI, QCO, Scheme-I, Scheme-II, "
-                    "URLs, and official codes. Do not transliterate English "
-                    "pronunciation into the target script; translate the "
-                    "meaning naturally. For the title 'High Strength Deformed "
-                    "Steel Bars and Wires for Concrete Reinforcement - "
-                    "Specification', use the meaning 'కాంక్రీట్‌లో ఉపబలానికి "
-                    "ఉపయోగించే అధిక బలం కలిగిన డీఫార్మ్డ్ స్టీల్ బార్లు మరియు "
-                    "వైర్లకు సంబంధించిన ప్రమాణం' in Telugu, or 'कंक्रीट में "
-                    "सुदृढ़ीकरण के लिए उच्च शक्ति वाले विकृत स्टील बार और वायर "
-                    "से संबंधित मानक' in Hindi. Do not use phonetic forms such "
-                    "as हाई/హై स्ट्रेंथ or रीइन्फोर्समेंट/రీఇన్ఫోర్స్‌మెంట్. "
-                    "Return only the corrected answer."
-                )
-            }
-        ]
-
-        retry_response = client.chat.completions.create(
-            model=GENERATION_MODEL,
-            messages=retry_messages,
-            temperature=0.1,
-            max_tokens=800
+    if language == "te":
+        user_prompt += (
+            "\nRespond in Telugu."
+        )
+    elif language == "hi":
+        user_prompt += (
+            "\nRespond in Hindi."
+        )
+    else:
+        user_prompt += (
+            "\nRespond in English."
         )
 
-        retry_answer = (retry_response.choices[0].message.content or "").strip()
-        if retry_answer:
-            answer = retry_answer
+    try:
+        response = client.chat.completions.create(
+            model=GROQ_MODEL,
+            messages=[
+                {
+                    "role": "system",
+                    "content": system_prompt
+                },
+                {
+                    "role": "user",
+                    "content": user_prompt
+                }
+            ],
+            temperature=0.1,
+            max_tokens=900
+        )
 
-        if not answer_matches_language(answer, language):
-            logger.warning(
-                "Generated answer did not match requested language after retry: %s",
-                language,
-            )
+        raw_answer = response.choices[0].message.content
 
-    answer = normalize_semantic_terms(answer, language)
+        print("RAW GROQ:", repr(raw_answer))
 
-    if not answer:
-        logger.warning("Generation returned empty content for language: %s", language)
-        answer = fallback_messages.get(language, fallback_messages["en"])
+        answer = normalize_text(raw_answer)
+
+        print("NORMALIZED:", repr(answer))
+
+        answer = normalize_text(
+            answer
+        )
+
+    except Exception as e:
+        print(
+            f"Generation error: "
+            f"{type(e).__name__}: {e}"
+        )
+
+        return {
+            "answer": (
+                "I found relevant BIS data, "
+                "but the answer could not be "
+                "generated at this time."
+            ),
+            "sources": []
+        }
 
     sources = []
 
-    for result in retrieved_results:
+    for item in hybrid_results.get(
+        "exact_standards",
+        []
+    ):
         sources.append({
-            "standard_number": result.get("standard_number"),
-            "part": result.get("part"),
-            "year": result.get("year"),
-            "title": result.get("title"),
-            "scheme": result.get("scheme"),
-            "mandatory_qco": result.get("mandatory_qco"),
-            "status": result.get("status"),
-            "document_url": result.get("document_url"),
-            "source_url": result.get("source_url"),
-            "distance": result.get("distance")
+            "standard_number": item.get(
+                "standard_number"
+            ),
+            "part": item.get("part"),
+            "year": (
+                item.get("year")
+                or item.get("date")
+            ),
+            "title": item.get("title"),
+            "source": item.get(
+                "source",
+                "BIS Standards Catalogue"
+            ),
+            "department": item.get(
+                "department"
+            ),
+            "sectional_committee": item.get(
+                "sectional_committee"
+            ),
+            "lab_name": None,
+            "lab_code": None,
+            "product": None,
+            "clause": None,
+            "testing_charge": None,
+            "testing_charge_raw": None,
+            "effective_date": None,
+            "remark": None,
+            "designation": None,
+            "qco_document_id": None,
+            "relationship": None,
+            "order_number": None,
+            "order_date": None,
+            "scheme": None,
+            "mandatory_qco": None,
+            "status": None,
+            "confidence": None,
+            "evidence": None,
+            "document_url": item.get(
+                "document_url"
+            ),
+            "source_url": item.get(
+                "source_url"
+            ),
+            "distance": item.get(
+                "distance"
+            )
+        })
+
+    for item in hybrid_results.get(
+        "tests",
+        []
+    ):
+        sources.append({
+            "standard_number": (
+                item.get(
+                    "standard_number"
+                )
+                or item.get(
+                    "indian_standard_no"
+                )
+            ),
+            "part": None,
+            "year": None,
+            "title": item.get("title"),
+            "source": item.get(
+                "source",
+                "BIS LIMS"
+            ),
+            "department": None,
+            "sectional_committee": None,
+            "lab_name": item.get(
+                "lab_name"
+            ),
+            "lab_code": item.get(
+                "lab_code"
+            ),
+            "product": item.get(
+                "product"
+            ),
+            "clause": (
+                item.get("clause")
+                or item.get("clause_raw")
+            ),
+            "testing_charge": item.get(
+                "testing_charge"
+            ),
+            "testing_charge_raw": item.get(
+                "testing_charge_raw"
+            ),
+            "effective_date": item.get(
+                "effective_date"
+            ),
+            "remark": item.get(
+                "remark"
+            ),
+            "designation": item.get(
+                "designation"
+            ),
+            "qco_document_id": None,
+            "relationship": None,
+            "order_number": None,
+            "order_date": None,
+            "scheme": None,
+            "mandatory_qco": None,
+            "status": None,
+            "confidence": None,
+            "evidence": None,
+            "document_url": None,
+            "source_url": (
+                item.get("scope_url")
+                or item.get("source")
+            ),
+            "distance": None
+        })
+
+    for item in hybrid_results.get(
+        "labs",
+        []
+    ):
+        sources.append({
+            "standard_number": (
+                item.get(
+                    "standard_number"
+                )
+                or item.get(
+                    "indian_standard_no"
+                )
+            ),
+            "part": None,
+            "year": None,
+            "title": item.get("title"),
+            "source": item.get(
+                "source",
+                "BIS LIMS"
+            ),
+            "department": None,
+            "sectional_committee": None,
+            "lab_name": item.get(
+                "lab_name"
+            ),
+            "lab_code": item.get(
+                "lab_code"
+            ),
+            "product": item.get(
+                "product"
+            ),
+            "clause": item.get(
+                "clause"
+            ),
+            "testing_charge": item.get(
+                "testing_charge"
+            ),
+            "testing_charge_raw": item.get(
+                "testing_charge_raw"
+            ),
+            "effective_date": item.get(
+                "effective_date"
+            ),
+            "remark": item.get(
+                "remark"
+            ),
+            "designation": item.get(
+                "designation"
+            ),
+            "qco_document_id": None,
+            "relationship": None,
+            "order_number": None,
+            "order_date": None,
+            "scheme": None,
+            "mandatory_qco": None,
+            "status": None,
+            "confidence": None,
+            "evidence": None,
+            "document_url": None,
+            "source_url": (
+                item.get("scope_url")
+                or item.get("source")
+            ),
+            "distance": None
+        })
+
+    for item in hybrid_results.get(
+        "qco",
+        []
+    ):
+        sources.append({
+            "standard_number": item.get(
+                "standard_number"
+            ),
+            "part": None,
+            "year": None,
+            "title": None,
+            "source": item.get(
+                "source",
+                "BIS QCO"
+            ),
+            "department": None,
+            "sectional_committee": None,
+            "lab_name": None,
+            "lab_code": None,
+            "product": None,
+            "clause": None,
+            "testing_charge": None,
+            "testing_charge_raw": None,
+            "effective_date": item.get(
+                "order_date"
+            ),
+            "remark": None,
+            "designation": None,
+            "qco_document_id": item.get(
+                "qco_document_id"
+            ),
+            "relationship": item.get(
+                "relationship"
+            ),
+            "order_number": item.get(
+                "order_number"
+            ),
+            "order_date": item.get(
+                "order_date"
+            ),
+            "scheme": item.get(
+                "scheme"
+            ),
+            "mandatory_qco": item.get(
+                "mandatory_qco"
+            ),
+            "status": item.get(
+                "status"
+            ),
+            "confidence": item.get(
+                "confidence"
+            ),
+            "evidence": item.get(
+                "evidence"
+            ),
+            "document_url": item.get(
+                "document_url"
+            ),
+            "source_url": item.get(
+                "source_url"
+            ),
+            "distance": None
         })
 
     return {

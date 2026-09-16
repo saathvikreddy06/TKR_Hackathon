@@ -23,10 +23,8 @@ export const registerUser = async (
     username,
     email,
     password,
-    role
+    role = "user"
 ) => {
-
-    // Create account in Firebase Authentication
     const userCredential =
         await createUserWithEmailAndPassword(
             auth,
@@ -36,13 +34,12 @@ export const registerUser = async (
 
     const user = userCredential.user;
 
-    // Store additional user information in Firestore
     await setDoc(
         doc(db, "users", user.uid),
         {
-            username: username,
-            email: email,
-            role: role,
+            username,
+            email,
+            role,
             createdAt: serverTimestamp()
         }
     );
@@ -59,9 +56,6 @@ export const loginUser = async (
     email,
     password
 ) => {
-
-    // Firebase automatically validates
-    // the email and password.
     const userCredential =
         await signInWithEmailAndPassword(
             auth,
@@ -78,16 +72,24 @@ export const loginUser = async (
 // ========================================
 
 export const getUserProfile = async (uid) => {
+    if (!uid) {
+        return null;
+    }
 
     const userDocument = await getDoc(
         doc(db, "users", uid)
     );
 
-    if (userDocument.exists()) {
-        return userDocument.data();
+    if (!userDocument.exists()) {
+        return null;
     }
 
-    return null;
+    const profile = userDocument.data();
+
+    return {
+        ...profile,
+        role: profile.role || "user"
+    };
 };
 
 
@@ -104,10 +106,7 @@ export const logoutUser = async () => {
 // AUTHENTICATION STATE LISTENER
 // ========================================
 
-export const subscribeToAuthChanges = (
-    callback
-) => {
-
+export const subscribeToAuthChanges = (callback) => {
     return onAuthStateChanged(
         auth,
         callback
