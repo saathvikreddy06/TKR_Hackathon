@@ -47,6 +47,7 @@ app.add_middleware(
 
         # Production frontend
         "https://sih-2026-nu-liard.vercel.app",
+        "https://sih-2026-one-kappa.vercel.app",
     ],
     allow_credentials=True,
     allow_methods=["*"],
