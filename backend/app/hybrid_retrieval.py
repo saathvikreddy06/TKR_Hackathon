@@ -2,6 +2,7 @@
 import os
 import re
 import math
+import traceback
 from collections import defaultdict
 
 from app.firebase import db
@@ -278,8 +279,14 @@ class HybridRetriever:
         print("Configuring Firebase semantic retrieval...")
 
         if db is None:
-            print("Firebase is not connected. Semantic retrieval is disabled.")
+
+            print(
+                "Firebase is not connected. "
+                "Semantic retrieval is disabled."
+            )
+
             self.firebase_vector_enabled = False
+
             return
 
         self.firebase_vector_enabled = True
@@ -288,18 +295,35 @@ class HybridRetriever:
             "Firebase semantic collection: "
             f"{FIRESTORE_COLLECTION}"
         )
+
         print(
             "Firebase vector field: "
             f"{FIRESTORE_VECTOR_FIELD} "
             f"({FIRESTORE_VECTOR_DIMENSIONS} dimensions)"
         )
 
+    # ========================================================
+    # EMBEDDING MODEL
+    # ========================================================
+
     def _get_embedding_model(self):
 
         if self.embedding_model is None:
+
+            print(
+                "Loading SentenceTransformer model: "
+                f"{MODEL_NAME}"
+            )
+
             from sentence_transformers import SentenceTransformer
 
-            self.embedding_model = SentenceTransformer(MODEL_NAME)
+            self.embedding_model = SentenceTransformer(
+                MODEL_NAME
+            )
+
+            print(
+                "SentenceTransformer model loaded successfully."
+            )
 
         return self.embedding_model
 
@@ -357,10 +381,6 @@ class HybridRetriever:
 
             self.standards = data
 
-            # ------------------------------------------------
-            # STANDARD NUMBER INDEX
-            # ------------------------------------------------
-
             for item in self.standards:
 
                 if not isinstance(
@@ -396,10 +416,6 @@ class HybridRetriever:
                 ).append(
                     item
                 )
-
-            # ------------------------------------------------
-            # STANDARD TITLE INDEX
-            # ------------------------------------------------
 
             self.standards_by_title = []
 
@@ -451,38 +467,34 @@ class HybridRetriever:
                         )
                     ),
 
-                    "type": (
+                    "document_id": (
                         item.get(
-                            "type"
-                        )
-                    ),
-
-                    "published_on": (
-                        item.get(
-                            "published_on"
+                            "document_id"
                         )
                     ),
 
                     "source": (
-                        "BIS Standards Catalogue"
+                        item.get(
+                            "source"
+                        )
+                        or "BIS Standards Catalogue"
+                    ),
+
+                    "match_type": (
+                        "standard_catalogue"
                     ),
                 })
-
-            print(
-                f"Standards: "
-                f"{len(self.standards)}"
-            )
-
-            print(
-                f"Standard title index: "
-                f"{len(self.standards_by_title)}"
-            )
 
         except Exception as e:
 
             print(
-                f"Standards load error: {e}"
+                "Standards loading error:",
+                repr(e)
             )
+
+            traceback.print_exc()
+
+            self.standards = []
 
     # ========================================================
     # LOAD QCO
@@ -490,9 +502,7 @@ class HybridRetriever:
 
     def _load_qco(self):
 
-        print(
-            "Loading QCO relationships..."
-        )
+        print("Loading QCO relationships...")
 
         if not os.path.exists(
             QCO_LINKS_PATH
@@ -540,7 +550,7 @@ class HybridRetriever:
 
             self.qco_links = data
 
-            for item in self.qco_links:
+            for item in data:
 
                 if not isinstance(
                     item,
@@ -548,49 +558,43 @@ class HybridRetriever:
                 ):
                     continue
 
-                numbers = (
+                number = (
                     item.get(
-                        "matched_is_numbers"
-                    )
-                    or []
-                )
-
-                if not numbers:
-
-                    number = item.get(
                         "standard_number"
                     )
-
-                    if number:
-
-                        numbers = [
-                            number
-                        ]
-
-                for number in numbers:
-
-                    normalized = (
-                        self._normalize_is_number(
-                            number
-                        )
+                    or item.get(
+                        "is_number"
                     )
-
-                    self.qco_by_number[
-                        normalized
-                    ].append(
-                        item
+                    or item.get(
+                        "standard_id"
                     )
+                )
 
-            print(
-                f"QCO links: "
-                f"{len(self.qco_links)}"
-            )
+                if not number:
+                    continue
+
+                normalized = (
+                    self._normalize_is_number(
+                        number
+                    )
+                )
+
+                self.qco_by_number[
+                    normalized
+                ].append(
+                    item
+                )
 
         except Exception as e:
 
             print(
-                f"QCO load error: {e}"
+                "QCO loading error:",
+                repr(e)
             )
+
+            traceback.print_exc()
+
+            self.qco_links = []
 
     # ========================================================
     # LOAD LIMS TESTS
@@ -598,9 +602,7 @@ class HybridRetriever:
 
     def _load_lims_tests(self):
 
-        print(
-            "Loading LIMS tests..."
-        )
+        print("Loading LIMS tests...")
 
         if not os.path.exists(
             LIMS_TESTS_DIR
@@ -612,97 +614,99 @@ class HybridRetriever:
 
             return
 
-        files = []
+        try:
 
-        for root, _, filenames in os.walk(
-            LIMS_TESTS_DIR
-        ):
+            for root, _, files in os.walk(
+                LIMS_TESTS_DIR
+            ):
 
-            for filename in filenames:
+                for filename in files:
 
-                if filename.lower().endswith(
-                    ".json"
-                ):
-
-                    files.append(
-                        os.path.join(
-                            root,
-                            filename
-                        )
-                    )
-
-        total = 0
-
-        for path in files:
-
-            try:
-
-                with open(
-                    path,
-                    "r",
-                    encoding="utf-8"
-                ) as f:
-
-                    data = json.load(f)
-
-                records = []
-
-                if isinstance(
-                    data,
-                    list
-                ):
-
-                    records = data
-
-                elif isinstance(
-                    data,
-                    dict
-                ):
-
-                    for key in (
-                        "tests",
-                        "records",
-                        "capabilities",
-                        "labs",
-                        "data"
-                    ):
-
-                        value = data.get(
-                            key
-                        )
-
-                        if isinstance(
-                            value,
-                            list
-                        ):
-
-                            records.extend(
-                                value
-                            )
-
-                for item in records:
-
-                    if not isinstance(
-                        item,
-                        dict
+                    if not filename.lower().endswith(
+                        ".json"
                     ):
                         continue
 
-                    self.lims_tests.append(
-                        item
+                    path = os.path.join(
+                        root,
+                        filename
                     )
 
-                    total += 1
+                    try:
 
-            except Exception:
-                continue
+                        with open(
+                            path,
+                            "r",
+                            encoding="utf-8"
+                        ) as f:
 
-        print(
-            f"LIMS tests: {total}"
-        )
+                            data = json.load(f)
+
+                    except Exception as e:
+
+                        print(
+                            f"LIMS file loading error "
+                            f"for {path}: {e}"
+                        )
+
+                        continue
+
+                    if isinstance(
+                        data,
+                        dict
+                    ):
+
+                        if "tests" in data:
+
+                            data = data[
+                                "tests"
+                            ]
+
+                        elif "records" in data:
+
+                            data = data[
+                                "records"
+                            ]
+
+                        else:
+
+                            data = [data]
+
+                    if not isinstance(
+                        data,
+                        list
+                    ):
+                        continue
+
+                    for item in data:
+
+                        if isinstance(
+                            item,
+                            dict
+                        ):
+
+                            self.lims_tests.append(
+                                item
+                            )
+
+            print(
+                "Loaded LIMS records:",
+                len(self.lims_tests)
+            )
+
+        except Exception as e:
+
+            print(
+                "LIMS loading error:",
+                repr(e)
+            )
+
+            traceback.print_exc()
+
+            self.lims_tests = []
 
     # ========================================================
-    # NORMALIZE IS NUMBER
+    # IS NUMBER NORMALIZATION
     # ========================================================
 
     @staticmethod
@@ -710,36 +714,392 @@ class HybridRetriever:
         value
     ):
 
-        if not value:
+        if value is None:
             return ""
 
         text = str(
             value
-        ).upper()
+        ).upper().strip()
 
-        match = re.search(
-            r"IS\s*(?:NO\.?\s*)?(\d{3,6})",
+        text = re.sub(
+            r"[^A-Z0-9]+",
+            "",
             text
         )
 
-        if match:
+        if text.startswith(
+            "IS"
+        ):
 
-            return match.group(
-                1
+            text = text[2:]
+
+        return text
+
+    # ========================================================
+    # FIREBASE SEMANTIC SEARCH
+    # ========================================================
+
+    def semantic_search(
+        self,
+        query,
+        limit=8
+    ):
+
+        if not self.firebase_vector_enabled:
+
+            print(
+                "Semantic search skipped: "
+                "Firebase vector retrieval disabled."
             )
 
-        match = re.search(
-            r"\b(\d{3,6})\b",
-            text
+            return []
+
+        if db is None:
+
+            print(
+                "Semantic search skipped: "
+                "Firestore database is None."
+            )
+
+            return []
+
+        print()
+        print(
+            "========== FIREBASE SEMANTIC SEARCH =========="
+        )
+        print(
+            "Query:",
+            repr(query)
+        )
+        print(
+            "Collection:",
+            FIRESTORE_COLLECTION
+        )
+        print(
+            "Vector field:",
+            FIRESTORE_VECTOR_FIELD
+        )
+        print(
+            "Vector dimensions:",
+            FIRESTORE_VECTOR_DIMENSIONS
+        )
+        print(
+            "Requested limit:",
+            limit
         )
 
-        if match:
+        try:
 
-            return match.group(
-                1
+            # ------------------------------------------------
+            # STEP 1: LOAD MODEL
+            # ------------------------------------------------
+
+            print(
+                "Step 1: Loading embedding model..."
             )
 
-        return text.strip()
+            model = self._get_embedding_model()
+
+            print(
+                "Step 1 complete."
+            )
+
+            # ------------------------------------------------
+            # STEP 2: CREATE QUERY EMBEDDING
+            # ------------------------------------------------
+
+            print(
+                "Step 2: Creating query embedding..."
+            )
+
+            query_vector = model.encode(
+                query,
+                normalize_embeddings=True
+            )
+
+            print(
+                "Raw embedding type:",
+                type(query_vector)
+            )
+
+            print(
+                "Raw embedding shape:",
+                getattr(
+                    query_vector,
+                    "shape",
+                    None
+                )
+            )
+
+            query_vector = query_vector.tolist()
+
+            print(
+                "Embedding length:",
+                len(query_vector)
+            )
+
+            if len(query_vector) != FIRESTORE_VECTOR_DIMENSIONS:
+
+                raise ValueError(
+                    "Embedding dimension mismatch. "
+                    f"Expected {FIRESTORE_VECTOR_DIMENSIONS}, "
+                    f"got {len(query_vector)}."
+                )
+
+            print(
+                "Step 2 complete."
+            )
+
+            # ------------------------------------------------
+            # STEP 3: IMPORT FIRESTORE VECTOR TYPES
+            # ------------------------------------------------
+
+            print(
+                "Step 3: Loading Firestore vector classes..."
+            )
+
+            from google.cloud.firestore_v1.base_vector_query import (
+                DistanceMeasure
+            )
+
+            from google.cloud.firestore_v1.vector import (
+                Vector
+            )
+
+            print(
+                "Step 3 complete."
+            )
+
+            # ------------------------------------------------
+            # STEP 4: CREATE VECTOR QUERY
+            # ------------------------------------------------
+
+            print(
+                "Step 4: Creating Firestore vector query..."
+            )
+
+            vector_query = db.collection(
+                FIRESTORE_COLLECTION
+            ).find_nearest(
+                vector_field=FIRESTORE_VECTOR_FIELD,
+                query_vector=Vector(
+                    query_vector
+                ),
+                distance_measure=DistanceMeasure.COSINE,
+                limit=min(
+                    max(
+                        int(limit),
+                        1
+                    ),
+                    1000
+                ),
+                distance_result_field="vector_distance"
+            )
+
+            print(
+                "Step 4 complete."
+            )
+
+            # ------------------------------------------------
+            # STEP 5: EXECUTE QUERY
+            # ------------------------------------------------
+
+            print(
+                "Step 5: Executing Firestore vector query..."
+            )
+
+            documents = vector_query.stream()
+
+            results = []
+
+            for document in documents:
+
+                data = document.to_dict() or {}
+
+                metadata = (
+                    data.get(
+                        "metadata"
+                    )
+                    or {}
+                )
+
+                if not isinstance(
+                    metadata,
+                    dict
+                ):
+
+                    metadata = {}
+
+                distance = data.get(
+                    "vector_distance"
+                )
+
+                if distance is None:
+
+                    distance = 1.0
+
+                try:
+
+                    distance = float(
+                        distance
+                    )
+
+                except (
+                    TypeError,
+                    ValueError
+                ):
+
+                    distance = 1.0
+
+                result = {
+
+                    "chunk_id": (
+                        data.get(
+                            "chunk_id"
+                        )
+                        or document.id
+                    ),
+
+                    "document_id": (
+                        data.get(
+                            "document_id"
+                        )
+                    ),
+
+                    "document_type": (
+                        data.get(
+                            "document_type"
+                        )
+                    ),
+
+                    "text": (
+                        data.get(
+                            "text"
+                        )
+                        or ""
+                    ),
+
+                    "standard_number": (
+                        data.get(
+                            "standard_number"
+                        )
+                        or metadata.get(
+                            "standard_number"
+                        )
+                        or metadata.get(
+                            "is_number"
+                        )
+                        or metadata.get(
+                            "indian_standard_no"
+                        )
+                    ),
+
+                    "title": (
+                        data.get(
+                            "title"
+                        )
+                        or metadata.get(
+                            "title"
+                        )
+                        or metadata.get(
+                            "standard_name"
+                        )
+                    ),
+
+                    "source": (
+                        data.get(
+                            "source"
+                        )
+                        or metadata.get(
+                            "source"
+                        )
+                        or "BIS Firestore Knowledge Base"
+                    ),
+
+                    "metadata": metadata,
+
+                    "distance": distance,
+
+                    "similarity": max(
+                        0.0,
+                        1.0 - distance
+                    ),
+
+                    "match_type": (
+                        "firebase_semantic"
+                    ),
+                }
+
+                results.append(
+                    result
+                )
+
+            print(
+                "Step 5 complete."
+            )
+
+            print(
+                "Firebase semantic results:",
+                len(results)
+            )
+
+            print(
+                "========== FIREBASE SEARCH COMPLETE =========="
+            )
+            print()
+
+            return results
+
+        except Exception as e:
+
+            print()
+            print(
+                "!!!!!!!!!! FIREBASE SEMANTIC SEARCH FAILED !!!!!!!!!!"
+            )
+
+            print(
+                "Exception type:",
+                type(e).__name__
+            )
+
+            print(
+                "Exception:",
+                repr(e)
+            )
+
+            print(
+                "Query:",
+                repr(query)
+            )
+
+            print(
+                "Collection:",
+                FIRESTORE_COLLECTION
+            )
+
+            print(
+                "Vector field:",
+                FIRESTORE_VECTOR_FIELD
+            )
+
+            print(
+                "Expected dimensions:",
+                FIRESTORE_VECTOR_DIMENSIONS
+            )
+
+            traceback.print_exc()
+
+            print(
+                "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+            )
+            print()
+
+            # IMPORTANT:
+            # Do not silently hide this failure.
+            raise RuntimeError(
+                "Firebase semantic retrieval failed: "
+                f"{type(e).__name__}: {e}"
+            ) from e
 
     # ========================================================
     # EXACT STANDARD SEARCH
@@ -760,14 +1120,10 @@ class HybridRetriever:
                 )
             )
 
-            matches = (
-                self.standards_by_number.get(
-                    normalized,
-                    []
-                )
-            )
-
-            for item in matches:
+            for item in self.standards_by_number.get(
+                normalized,
+                []
+            ):
 
                 result = dict(
                     item
@@ -775,7 +1131,7 @@ class HybridRetriever:
 
                 result[
                     "match_type"
-                ] = "exact"
+                ] = "exact_standard"
 
                 results.append(
                     result
@@ -795,353 +1151,78 @@ class HybridRetriever:
         limit=8
     ):
 
-        if not self.standards_by_title:
+        normalized_query = (
+            normalize_search_text(
+                query
+            )
+        )
+
+        if not normalized_query:
             return []
 
-        query_text = normalize_search_text(
-            query
-        )
-
-        stop_words = {
-            "which",
-            "what",
-            "where",
-            "when",
-            "how",
-            "does",
-            "do",
-            "is",
-            "are",
-            "the",
-            "a",
-            "an",
-            "bis",
-            "standard",
-            "standards",
-            "indian",
-            "applies",
-            "apply",
-            "applicable",
-            "application",
-            "used",
-            "use",
-            "required",
-            "requirements",
-            "for",
-            "to",
-            "my",
-            "product",
-            "under",
-            "with",
-            "of",
-        }
-
-        query_terms = [
-            term
-            for term in query_text.split()
-            if (
-                len(term) > 2
-                and term not in stop_words
-            )
-        ]
-
-        query_term_set = set(
-            query_terms
-        )
-
-        if not query_term_set:
-            return []
-
-        # ----------------------------------------------------
-        # PRODUCT PHRASE
-        # ----------------------------------------------------
-
-        product_phrase = query_text
-
-        prefixes = (
-            "which bis standard applies to ",
-            "what bis standard applies to ",
-            "which standard applies to ",
-            "what standard applies to ",
-            "which bis standard is applicable to ",
-            "what bis standard is applicable to ",
-            "which bis standard is used for ",
-            "what bis standard is used for ",
-            "bis standard for ",
-            "standard for ",
-            "which bis standard for ",
-            "what bis standard for ",
-        )
-
-        for prefix in prefixes:
-
-            if product_phrase.startswith(
-                prefix
-            ):
-
-                product_phrase = (
-                    product_phrase[
-                        len(prefix):
-                    ]
-                )
-
-                break
-
-        product_phrase = normalize_search_text(
-            product_phrase
-        )
-
-        product_terms = [
-            term
-            for term in product_phrase.split()
-            if (
-                len(term) > 2
-                and term not in stop_words
-            )
-        ]
-
-        product_phrase_clean = " ".join(
-            product_terms
+        query_tokens = set(
+            normalized_query.split()
         )
 
         scored = []
 
-        # ----------------------------------------------------
-        # SCORE ALL STANDARD TITLES
-        # ----------------------------------------------------
-
-        for standard in self.standards_by_title:
+        for item in self.standards_by_title:
 
             title = (
-                standard.get(
+                item.get(
                     "title"
                 )
                 or ""
             )
 
-            title_normalized = normalize_search_text(
-                title
+            normalized_title = (
+                normalize_search_text(
+                    title
+                )
             )
 
-            if not title_normalized:
+            title_tokens = set(
+                normalized_title.split()
+            )
+
+            overlap = len(
+                query_tokens
+                & title_tokens
+            )
+
+            if overlap == 0:
                 continue
 
-            title_terms = set(
-                title_normalized.split()
+            score = overlap / max(
+                len(query_tokens),
+                1
             )
 
-            matched_terms = (
-                query_term_set
-                & title_terms
+            result = dict(
+                item
             )
 
-            partial_matches = set()
+            result[
+                "keyword_score"
+            ] = score
 
-            for query_term in query_term_set:
-
-                for title_term in title_terms:
-
-                    if query_term == title_term:
-                        continue
-
-                    if (
-                        len(query_term) >= 4
-                        and len(title_term) >= 4
-                        and (
-                            query_term in title_term
-                            or title_term in query_term
-                        )
-                    ):
-
-                        partial_matches.add(
-                            query_term
-                        )
-
-            all_matches = (
-                matched_terms
-                | partial_matches
-            )
-
-            if not all_matches:
-                continue
-
-            score = 0
-
-            score += (
-                len(matched_terms)
-                * 5
-            )
-
-            score += (
-                len(partial_matches)
-                * 2
-            )
-
-            if (
-                product_phrase_clean
-                and product_phrase_clean
-                in title_normalized
-            ):
-
-                score += 30
-
-            if (
-                product_phrase_clean
-                and product_phrase_clean
-                == title_normalized
-            ):
-
-                score += 50
-
-            if query_term_set:
-
-                coverage = (
-                    len(all_matches)
-                    / len(query_term_set)
-                )
-
-                score += (
-                    coverage * 10
-                )
+            result[
+                "match_type"
+            ] = "keyword_standard"
 
             scored.append(
-                (
-                    score,
-                    standard
-                )
+                result
             )
 
         scored.sort(
-            key=lambda item: (
-                item[0],
-                item[1].get(
-                    "standard_number"
-                ) or ""
+            key=lambda x: x.get(
+                "keyword_score",
+                0
             ),
             reverse=True
         )
 
-        results = []
-
-        for score, standard in scored[:limit]:
-
-            result = dict(
-                standard
-            )
-
-            result[
-                "match_type"
-            ] = "keyword"
-
-            result[
-                "keyword_score"
-            ] = round(
-                score,
-                3
-            )
-
-            results.append(
-                result
-            )
-
-        return results
-
-    # ========================================================
-    # SEMANTIC SEARCH
-    # ========================================================
-
-    def semantic_search(
-        self,
-        query,
-        limit=8
-    ):
-
-        if not self.firebase_vector_enabled or db is None:
-            return []
-
-        try:
-
-            model = self._get_embedding_model()
-
-            query_vector = model.encode(
-                query,
-                normalize_embeddings=True
-            )
-
-            query_vector = query_vector.tolist()
-
-            from google.cloud.firestore_v1.base_vector_query import DistanceMeasure
-            from google.cloud.firestore_v1.vector import Vector
-
-            vector_query = db.collection(
-                FIRESTORE_COLLECTION
-            ).find_nearest(
-                vector_field=FIRESTORE_VECTOR_FIELD,
-                query_vector=Vector(query_vector),
-                distance_measure=DistanceMeasure.COSINE,
-                limit=min(max(int(limit), 1), 1000),
-                distance_result_field="vector_distance"
-            )
-
-            documents = vector_query.stream()
-            results = []
-
-            for document in documents:
-
-                data = document.to_dict() or {}
-                metadata = data.get("metadata") or {}
-
-                if not isinstance(metadata, dict):
-                    metadata = {}
-
-                distance = data.get("vector_distance")
-
-                if distance is None:
-                    distance = 1.0
-
-                try:
-                    distance = float(distance)
-                except (TypeError, ValueError):
-                    distance = 1.0
-
-                result = {
-                    "chunk_id": data.get("chunk_id") or document.id,
-                    "document_id": data.get("document_id"),
-                    "document_type": data.get("document_type"),
-                    "text": data.get("text") or "",
-                    "standard_number": (
-                        data.get("standard_number")
-                        or metadata.get("standard_number")
-                        or metadata.get("is_number")
-                        or metadata.get("indian_standard_no")
-                    ),
-                    "title": (
-                        data.get("title")
-                        or metadata.get("title")
-                        or metadata.get("standard_name")
-                    ),
-                    "source": (
-                        data.get("source")
-                        or metadata.get("source")
-                        or "BIS Firestore Knowledge Base"
-                    ),
-                    "metadata": metadata,
-                    "distance": distance,
-                    "similarity": max(0.0, 1.0 - distance),
-                    "match_type": "firebase_semantic",
-                }
-
-                results.append(result)
-
-            return results
-
-        except Exception as e:
-
-            print(
-                f"Firebase semantic search error: {e}"
-            )
-
-            return []
+        return scored[:limit]
 
     # ========================================================
     # QCO SEARCH
@@ -1265,7 +1346,10 @@ class HybridRetriever:
                 result
             )
 
-            if len(results) >= limit:
+            if len(
+                results
+            ) >= limit:
+
                 break
 
         return self._deduplicate_results(
@@ -1293,7 +1377,6 @@ class HybridRetriever:
         }
 
         results = []
-        seen = set()
 
         for item in self.lims_tests:
 
@@ -1324,38 +1407,6 @@ class HybridRetriever:
             if normalized not in wanted:
                 continue
 
-            key = (
-                normalized,
-                item.get(
-                    "lab_code"
-                ),
-                item.get(
-                    "lab_name"
-                ),
-                item.get(
-                    "product"
-                ),
-                item.get(
-                    "designation"
-                ),
-                item.get(
-                    "testing_charge_raw"
-                ),
-                item.get(
-                    "test_name"
-                ),
-                item.get(
-                    "clause"
-                ),
-            )
-
-            if key in seen:
-                continue
-
-            seen.add(
-                key
-            )
-
             result = dict(
                 item
             )
@@ -1372,10 +1423,15 @@ class HybridRetriever:
                 result
             )
 
-            if len(results) >= limit:
+            if len(
+                results
+            ) >= limit:
+
                 break
 
-        return results
+        return self._deduplicate_results(
+            results
+        )
 
     # ========================================================
     # DEDUPLICATION
@@ -1443,6 +1499,23 @@ class HybridRetriever:
         qco = []
         labs = []
         tests = []
+
+        print()
+        print(
+            "========== HYBRID SEARCH =========="
+        )
+        print(
+            "Query:",
+            repr(query)
+        )
+        print(
+            "Intent:",
+            intent
+        )
+        print(
+            "IS numbers:",
+            is_numbers
+        )
 
         # ----------------------------------------------------
         # LABORATORY
@@ -1541,7 +1614,7 @@ class HybridRetriever:
                     is_numbers
                 )
 
-        return {
+        result = {
             "query": query,
             "intent": intent,
             "is_numbers": is_numbers,
@@ -1551,6 +1624,38 @@ class HybridRetriever:
             "labs": labs,
             "tests": tests,
         }
+
+        print(
+            "Semantic results:",
+            len(semantic)
+        )
+
+        print(
+            "Exact standards:",
+            len(exact)
+        )
+
+        print(
+            "QCO results:",
+            len(qco)
+        )
+
+        print(
+            "Lab results:",
+            len(labs)
+        )
+
+        print(
+            "Test results:",
+            len(tests)
+        )
+
+        print(
+            "========== HYBRID SEARCH COMPLETE =========="
+        )
+        print()
+
+        return result
 
 
 # ============================================================
@@ -1564,8 +1669,11 @@ try:
 except Exception as e:
 
     print(
-        f"Hybrid retriever initialization failed: {e}"
+        "Hybrid retriever initialization failed:",
+        repr(e)
     )
+
+    traceback.print_exc()
 
     hybrid_retriever = None
 
@@ -1616,10 +1724,6 @@ if __name__ == "__main__":
     print("=" * 70)
     print("StandIQ Hybrid Retriever")
     print("=" * 70)
-
-    # --------------------------------------------------------
-    # AUTOMATIC TEST
-    # --------------------------------------------------------
 
     test_query = (
         "Which BIS standard applies to composite cement?"
