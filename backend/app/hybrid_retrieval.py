@@ -50,6 +50,12 @@ MODEL_NAME = (
     "paraphrase-multilingual-MiniLM-L12-v2"
 )
 
+MODEL_LOCAL_PATH = os.path.join(
+    BASE_DIR,
+    "models",
+    "paraphrase-multilingual-MiniLM-L12-v2"
+)
+
 FIRESTORE_COLLECTION = "standard_chunks_local"
 FIRESTORE_VECTOR_FIELD = "embedding"
 FIRESTORE_VECTOR_DIMENSIONS = 384
@@ -310,19 +316,33 @@ class HybridRetriever:
 
         if self.embedding_model is None:
 
-            print(
-                "Loading SentenceTransformer model: "
-                f"{MODEL_NAME}"
-            )
-
             from sentence_transformers import SentenceTransformer
 
-            self.embedding_model = SentenceTransformer(
-                MODEL_NAME
+            if not os.path.isdir(MODEL_LOCAL_PATH):
+
+                raise RuntimeError(
+                    "Local embedding model was not found at: "
+                    f"{MODEL_LOCAL_PATH}. "
+                    "The Render build must run "
+                    "scripts/download_embedding_model.py."
+                )
+
+            print(
+                "Loading local embedding model:"
             )
 
             print(
-                "SentenceTransformer model loaded successfully."
+                MODEL_LOCAL_PATH
+            )
+
+            self.embedding_model = SentenceTransformer(
+                MODEL_LOCAL_PATH,
+                device="cpu"
+            )
+
+            print(
+                "Local SentenceTransformer model "
+                "loaded successfully."
             )
 
         return self.embedding_model
