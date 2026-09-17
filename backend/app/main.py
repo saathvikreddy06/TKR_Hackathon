@@ -21,6 +21,12 @@ from app.routes.history import router as history_router
 from app.routes.admin import router as admin_router
 
 
+
+
+# ============================================================
+# FASTAPI APP
+# ============================================================
+
 app = FastAPI(
     title="StandIQ API",
     description="BIS Intelligent Assistant Backend",
@@ -28,11 +34,18 @@ app = FastAPI(
 )
 
 
+# ============================================================
+# CORS CONFIGURATION
+# ============================================================
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
+        # Local development
         "http://localhost:5173",
         "http://127.0.0.1:5173",
+
+        # Production frontend
         "https://sih-2026-nu-liard.vercel.app",
     ],
     allow_credentials=True,
@@ -40,6 +53,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+# ============================================================
+# ROUTERS
+# ============================================================
 
 app.include_router(consultancies_router)
 app.include_router(consultations_router)
@@ -49,11 +66,19 @@ app.include_router(history_router)
 app.include_router(admin_router)
 
 
+# ============================================================
+# REQUEST MODELS
+# ============================================================
+
 class SearchRequest(BaseModel):
     query: str
     limit: int = 5
     language: str | None = None
 
+
+# ============================================================
+# BASIC ENDPOINTS
+# ============================================================
 
 @app.get("/")
 def root():
@@ -68,6 +93,10 @@ def health():
         "status": "healthy"
     }
 
+
+# ============================================================
+# FIREBASE CONNECTION TEST
+# ============================================================
 
 @app.get("/firebase-test")
 def firebase_test():
@@ -91,6 +120,10 @@ def firebase_test():
     }
 
 
+# ============================================================
+# STANDIQ SEARCH / RAG ENDPOINT
+# ============================================================
+
 def normalize_hybrid_results(hybrid_results):
     normalized = []
 
@@ -106,12 +139,8 @@ def normalize_hybrid_results(hybrid_results):
             "lab_name": None,
             "lab_code": None,
             "product": None,
-            "designation": None,
             "clause": None,
             "testing_charge": None,
-            "testing_charge_raw": None,
-            "effective_date": None,
-            "remark": None,
             "qco_document_id": None,
             "relationship": None,
             "order_number": None,
@@ -125,35 +154,57 @@ def normalize_hybrid_results(hybrid_results):
         })
 
     for item in hybrid_results.get("semantic", []):
+        metadata = item.get("metadata") or {}
+        if not isinstance(metadata, dict):
+            metadata = {}
+
         normalized.append({
-            "standard_number": item.get("standard_number"),
-            "part": item.get("part"),
-            "year": item.get("published_on"),
-            "title": item.get("title"),
-            "source": item.get("source", "BIS Standards Catalogue"),
-            "department": item.get("department"),
-            "sectional_committee": item.get("sectional_committee"),
+            "standard_number": (
+                item.get("standard_number")
+                or metadata.get("standard_number")
+                or metadata.get("is_number")
+                or metadata.get("indian_standard_no")
+            ),
+            "part": item.get("part") or metadata.get("part"),
+            "section": item.get("section") or metadata.get("section"),
+            "year": (
+                item.get("published_on")
+                or metadata.get("published_on")
+                or metadata.get("year")
+            ),
+            "title": (
+                item.get("title")
+                or metadata.get("title")
+                or metadata.get("standard_name")
+            ),
+            "source": item.get("source") or metadata.get("source") or "BIS Firestore Knowledge Base",
+            "department": item.get("department") or metadata.get("department"),
+            "sectional_committee": (
+                item.get("sectional_committee")
+                or metadata.get("sectional_committee")
+            ),
+            "product_category": item.get("product_category") or metadata.get("product_category"),
+            "industry": item.get("industry") or metadata.get("industry"),
             "lab_name": None,
             "lab_code": None,
             "product": None,
-            "designation": None,
-            "clause": None,
+            "clause": metadata.get("clause"),
             "testing_charge": None,
-            "testing_charge_raw": None,
-            "effective_date": None,
-            "remark": None,
             "qco_document_id": None,
             "relationship": None,
             "order_number": None,
             "order_date": None,
-            "scheme": None,
-            "mandatory_qco": None,
-            "status": None,
-            "document_url": None,
-            "source_url": None,
-            "distance": item.get("score"),
+            "scheme": item.get("scheme") or metadata.get("scheme"),
+            "mandatory_qco": item.get("mandatory_qco") or metadata.get("mandatory_qco"),
+            "status": item.get("status") or metadata.get("status"),
+            "document_url": item.get("document_url") or metadata.get("document_url"),
+            "source_url": item.get("source_url") or metadata.get("source_url"),
+            "distance": item.get("distance"),
+            "similarity": item.get("similarity"),
+            "match_type": item.get("match_type", "firebase_semantic"),
             "chunk_id": item.get("chunk_id"),
-            "document_id": item.get("document_id")
+            "document_id": item.get("document_id"),
+            "text": item.get("text") or ""
         })
 
     for item in hybrid_results.get("qco", []):
@@ -168,12 +219,8 @@ def normalize_hybrid_results(hybrid_results):
             "lab_name": None,
             "lab_code": None,
             "product": None,
-            "designation": None,
             "clause": None,
             "testing_charge": None,
-            "testing_charge_raw": None,
-            "effective_date": None,
-            "remark": None,
             "qco_document_id": item.get("qco_document_id"),
             "relationship": item.get("relationship"),
             "order_number": item.get("order_number"),
@@ -182,7 +229,7 @@ def normalize_hybrid_results(hybrid_results):
             "mandatory_qco": None,
             "status": None,
             "document_url": None,
-            "source_url": item.get("source"),
+            "source_url": None,
             "distance": None,
             "evidence": item.get("evidence"),
             "confidence": item.get("confidence"),
@@ -201,12 +248,8 @@ def normalize_hybrid_results(hybrid_results):
             "lab_name": item.get("lab_name"),
             "lab_code": item.get("lab_code"),
             "product": item.get("product"),
-            "designation": item.get("designation"),
             "clause": item.get("clause"),
             "testing_charge": item.get("testing_charge"),
-            "testing_charge_raw": item.get("testing_charge_raw"),
-            "effective_date": item.get("effective_date"),
-            "remark": item.get("remark"),
             "qco_document_id": None,
             "relationship": None,
             "order_number": None,
@@ -216,47 +259,23 @@ def normalize_hybrid_results(hybrid_results):
             "status": None,
             "document_url": None,
             "source_url": item.get("scope_url"),
-            "distance": None
-        })
-
-    for item in hybrid_results.get("tests", []):
-        normalized.append({
-            "standard_number": item.get("standard_number"),
-            "part": None,
-            "year": None,
-            "title": item.get("title"),
-            "source": item.get("source", "BIS LIMS"),
-            "department": None,
-            "sectional_committee": None,
-            "lab_name": item.get("lab_name"),
-            "lab_code": item.get("lab_code"),
-            "product": item.get("product"),
-            "designation": item.get("designation"),
-            "clause": item.get("clause"),
-            "testing_charge": item.get("testing_charge"),
-            "testing_charge_raw": item.get("testing_charge_raw"),
+            "distance": None,
             "effective_date": item.get("effective_date"),
             "remark": item.get("remark"),
-            "qco_document_id": None,
-            "relationship": None,
-            "order_number": None,
-            "order_date": None,
-            "scheme": None,
-            "mandatory_qco": None,
-            "status": None,
-            "document_url": None,
-            "source_url": item.get("source"),
-            "distance": None
+            "designation": item.get("designation")
         })
 
     return normalized
-
 
 @app.post("/api/search")
 def search(
     request: SearchRequest,
     current_user=Depends(get_optional_current_user)
 ):
+
+    # --------------------------------------------------------
+    # Supported languages
+    # --------------------------------------------------------
 
     supported_languages = {
         "en",
@@ -276,12 +295,22 @@ def search(
             ),
         )
 
+
+    # --------------------------------------------------------
+    # Detect language
+    # --------------------------------------------------------
+
     detected_language = detect_language(request.query)
 
     language = (
         request.language
         or detected_language["language"]
     )
+
+
+    # --------------------------------------------------------
+    # Response language information
+    # --------------------------------------------------------
 
     response_language = {
         "language": language,
@@ -291,6 +320,11 @@ def search(
             "te": "Telugu",
         }[language],
     }
+
+
+    # --------------------------------------------------------
+    # Scope check
+    # --------------------------------------------------------
 
     if not is_bis_related(request.query):
 
@@ -303,6 +337,11 @@ def search(
             "in_scope": False,
             **response_language
         }
+
+
+    # --------------------------------------------------------
+    # RAG RETRIEVAL
+    # --------------------------------------------------------
 
     retrieval_query = prepare_retrieval_query(
         request.query,
@@ -317,11 +356,21 @@ def search(
 
     results = normalize_hybrid_results(hybrid_results)
 
+
+    # --------------------------------------------------------
+    # GROQ GENERATION
+    # --------------------------------------------------------
+
     generated = generate_answer(
         query=request.query,
         retrieved_results=hybrid_results,
         language=language
     )
+
+
+    # --------------------------------------------------------
+    # FINAL RESPONSE
+    # --------------------------------------------------------
 
     response = {
         "query": request.query,
@@ -330,6 +379,11 @@ def search(
         "in_scope": True,
         **response_language
     }
+
+
+    # --------------------------------------------------------
+    # SAVE SEARCH HISTORY
+    # --------------------------------------------------------
 
     if current_user:
 
@@ -346,8 +400,13 @@ def search(
             "created_at": SERVER_TIMESTAMP,
         })
 
+
     return response
 
+
+# ============================================================
+# AUTHENTICATED USER ENDPOINT
+# ============================================================
 
 @app.get("/api/auth/me")
 def get_me(

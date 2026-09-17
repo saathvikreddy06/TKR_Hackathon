@@ -4,6 +4,8 @@ import re
 import math
 from collections import defaultdict
 
+from app.firebase import db
+
 
 BASE_DIR = os.path.dirname(
     os.path.dirname(
@@ -46,6 +48,10 @@ MODEL_NAME = (
     "sentence-transformers/"
     "paraphrase-multilingual-MiniLM-L12-v2"
 )
+
+FIRESTORE_COLLECTION = "standard_chunks_local"
+FIRESTORE_VECTOR_FIELD = "embedding"
+FIRESTORE_VECTOR_DIMENSIONS = 384
 
 
 # ============================================================
@@ -246,6 +252,8 @@ class HybridRetriever:
 
         self.semantic_embeddings = []
         self.embedding_vectors = {}
+        self.embedding_model = None
+        self.firebase_vector_enabled = db is not None
 
         self.standards = []
         self.standards_by_number = {}
@@ -267,157 +275,33 @@ class HybridRetriever:
 
     def _load_semantic_embeddings(self):
 
-        print("Loading semantic embeddings...")
+        print("Configuring Firebase semantic retrieval...")
 
-        if not os.path.exists(
-            LOCAL_EMBEDDINGS_PATH
-        ):
-
-            print(
-                "Local embeddings file not found"
-            )
-
+        if db is None:
+            print("Firebase is not connected. Semantic retrieval is disabled.")
+            self.firebase_vector_enabled = False
             return
 
-        try:
+        self.firebase_vector_enabled = True
 
-            with open(
-                LOCAL_EMBEDDINGS_PATH,
-                "r",
-                encoding="utf-8"
-            ) as f:
+        print(
+            "Firebase semantic collection: "
+            f"{FIRESTORE_COLLECTION}"
+        )
+        print(
+            "Firebase vector field: "
+            f"{FIRESTORE_VECTOR_FIELD} "
+            f"({FIRESTORE_VECTOR_DIMENSIONS} dimensions)"
+        )
 
-                for line in f:
+    def _get_embedding_model(self):
 
-                    line = line.strip()
+        if self.embedding_model is None:
+            from sentence_transformers import SentenceTransformer
 
-                    if not line:
-                        continue
+            self.embedding_model = SentenceTransformer(MODEL_NAME)
 
-                    record = json.loads(line)
-
-                    if not isinstance(
-                        record,
-                        dict
-                    ):
-                        continue
-
-                    chunk_id = record.get(
-                        "chunk_id"
-                    )
-
-                    vector = (
-                        record.get("embedding")
-                        or record.get("vector")
-                    )
-
-                    if chunk_id and vector:
-
-                        self.embedding_vectors[
-                            chunk_id
-                        ] = vector
-
-            if not os.path.exists(
-                EMBEDDING_CHUNKS_PATH
-            ):
-
-                print(
-                    "Embedding chunks file not found"
-                )
-
-                return
-
-            with open(
-                EMBEDDING_CHUNKS_PATH,
-                "r",
-                encoding="utf-8"
-            ) as f:
-
-                data = json.load(f)
-
-            if isinstance(
-                data,
-                dict
-            ):
-
-                chunks = (
-                    data.get("chunks")
-                    or data.get("documents")
-                    or list(data.values())
-                )
-
-            else:
-
-                chunks = data
-
-            chunk_by_id = {}
-
-            for item in chunks:
-
-                if not isinstance(
-                    item,
-                    dict
-                ):
-                    continue
-
-                chunk_id = item.get(
-                    "chunk_id"
-                )
-
-                if chunk_id:
-
-                    chunk_by_id[
-                        chunk_id
-                    ] = item
-
-            for (
-                chunk_id,
-                vector
-            ) in self.embedding_vectors.items():
-
-                chunk = chunk_by_id.get(
-                    chunk_id
-                )
-
-                if not chunk:
-                    continue
-
-                self.semantic_embeddings.append({
-                    "chunk_id": chunk_id,
-                    "vector": vector,
-                    "text": chunk.get(
-                        "text",
-                        ""
-                    ),
-                    "document_type": chunk.get(
-                        "document_type"
-                    ),
-                    "standard_number": (
-                        chunk.get(
-                            "standard_number"
-                        )
-                        or chunk.get(
-                            "indian_standard_no"
-                        )
-                    ),
-                    "title": chunk.get(
-                        "title"
-                    ),
-                    "source": chunk.get(
-                        "source"
-                    ),
-                })
-
-            print(
-                f"Semantic chunks: "
-                f"{len(self.semantic_embeddings)}"
-            )
-
-        except Exception as e:
-
-            print(
-                f"Semantic embedding load error: {e}"
-            )
+        return self.embedding_model
 
     # ========================================================
     # LOAD STANDARDS
@@ -1172,71 +1056,89 @@ class HybridRetriever:
         limit=8
     ):
 
-        if not self.semantic_embeddings:
+        if not self.firebase_vector_enabled or db is None:
             return []
 
         try:
 
-            from sentence_transformers import (
-                SentenceTransformer
-            )
-
-            model = SentenceTransformer(
-                MODEL_NAME
-            )
+            model = self._get_embedding_model()
 
             query_vector = model.encode(
                 query,
                 normalize_embeddings=True
             )
 
-            scored = []
+            query_vector = query_vector.tolist()
 
-            for item in self.semantic_embeddings:
+            from google.cloud.firestore_v1.base_vector_query import DistanceMeasure
+            from google.cloud.firestore_v1.vector import Vector
 
-                score = cosine_similarity(
-                    query_vector,
-                    item["vector"]
-                )
-
-                scored.append(
-                    (
-                        score,
-                        item
-                    )
-                )
-
-            scored.sort(
-                key=lambda x: x[0],
-                reverse=True
+            vector_query = db.collection(
+                FIRESTORE_COLLECTION
+            ).find_nearest(
+                vector_field=FIRESTORE_VECTOR_FIELD,
+                query_vector=Vector(query_vector),
+                distance_measure=DistanceMeasure.COSINE,
+                limit=min(max(int(limit), 1), 1000),
+                distance_result_field="vector_distance"
             )
 
+            documents = vector_query.stream()
             results = []
 
-            for score, item in scored[:limit]:
+            for document in documents:
 
-                result = dict(
-                    item
-                )
+                data = document.to_dict() or {}
+                metadata = data.get("metadata") or {}
 
-                result[
-                    "distance"
-                ] = 1 - score
+                if not isinstance(metadata, dict):
+                    metadata = {}
 
-                result[
-                    "similarity"
-                ] = score
+                distance = data.get("vector_distance")
 
-                results.append(
-                    result
-                )
+                if distance is None:
+                    distance = 1.0
+
+                try:
+                    distance = float(distance)
+                except (TypeError, ValueError):
+                    distance = 1.0
+
+                result = {
+                    "chunk_id": data.get("chunk_id") or document.id,
+                    "document_id": data.get("document_id"),
+                    "document_type": data.get("document_type"),
+                    "text": data.get("text") or "",
+                    "standard_number": (
+                        data.get("standard_number")
+                        or metadata.get("standard_number")
+                        or metadata.get("is_number")
+                        or metadata.get("indian_standard_no")
+                    ),
+                    "title": (
+                        data.get("title")
+                        or metadata.get("title")
+                        or metadata.get("standard_name")
+                    ),
+                    "source": (
+                        data.get("source")
+                        or metadata.get("source")
+                        or "BIS Firestore Knowledge Base"
+                    ),
+                    "metadata": metadata,
+                    "distance": distance,
+                    "similarity": max(0.0, 1.0 - distance),
+                    "match_type": "firebase_semantic",
+                }
+
+                results.append(result)
 
             return results
 
         except Exception as e:
 
             print(
-                f"Semantic search error: {e}"
+                f"Firebase semantic search error: {e}"
             )
 
             return []

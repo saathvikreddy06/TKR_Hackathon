@@ -35,79 +35,106 @@ def result_type(item):
     return item.get("document_type") or "standard"
 
 def normalize_text(text):
+    """
+    Normalize retrieved/generated text and repair UTF-8 mojibake.
+
+    The repair is intentionally applied before the BIS-specific cleanup.
+    It handles both normal mojibake (for example, "â¯") and text that has
+    been accidentally mojibaked more than once.
+    """
     if not text:
         return ""
 
     text = str(text)
 
+    # Repair one or more layers of UTF-8 text that were decoded as Latin-1.
+    # Only apply the conversion when it produces valid UTF-8 and does not
+    # make the text worse.
+    for _ in range(3):
+        try:
+            repaired = text.encode("latin1").decode("utf-8")
+        except (UnicodeEncodeError, UnicodeDecodeError):
+            break
+
+        if repaired == text:
+            break
+
+        bad_before = sum(
+            text.count(marker)
+            for marker in (
+                "\u00c3", "\u00c2", "\u00e2", "\u00f0"
+            )
+        )
+        bad_after = sum(
+            repaired.count(marker)
+            for marker in (
+                "\u00c3", "\u00c2", "\u00e2", "\u00f0"
+            )
+        )
+
+        if bad_after > bad_before:
+            break
+
+        text = repaired
+
+    # Common mojibake fallbacks. These use Unicode escapes so the source
+    # file itself cannot become corrupted when copied between terminals.
     replacements = {
-        "â¯": " ",
-        "Â±": "±",
-        "â€“": "–",
-        "â€”": "—",
-        "â€˜": "'",
-        "â€™": "'",
-        "â€œ": '"',
-        "â€�": '"',
-        "â€¦": "...",
-        "â†’": "→",
-        "â†": "←",
-        "Ã—": "×",
-        "Ã·": "÷",
-        "Ã©": "é",
-        "Ã¨": "è",
-        "Ã¢": "â",
-        "Ã¤": "ä",
-        "Ã¶": "ö",
-        "Ã¼": "ü",
-        "Â": "",
+        "\u00e2\u00af": " ",
+        "\u00c2\u00b1": "\u00b1",
+        "\u00e2\u0080\u0093": "\u2013",
+        "\u00e2\u0080\u0094": "\u2014",
+        "\u00e2\u0080\u0098": "\u2018",
+        "\u00e2\u0080\u0099": "\u2019",
+        "\u00e2\u0080\u009c": "\u201c",
+        "\u00e2\u0080\u009d": "\u201d",
+        "\u00e2\u0080\u00a6": "\u2026",
+        "\u00e2\u0086\u0092": "\u2192",
+        "\u00e2\u0086\u0090": "\u2190",
+        "\u00c3\u0097": "\u00d7",
+        "\u00c3\u00b7": "\u00f7",
+        "\u00c3\u00a9": "\u00e9",
+        "\u00c3\u00a8": "\u00e8",
+        "\u00c3\u00a2": "\u00e2",
+        "\u00c3\u00a4": "\u00e4",
+        "\u00c3\u00b6": "\u00f6",
+        "\u00c3\u00bc": "\u00fc",
+        "\u00c2": "",
     }
 
     for old, new in replacements.items():
         text = text.replace(old, new)
 
-    # Common BIS/OCR mojibake patterns
-    text = text.replace("â Chemical", "– Chemical")
-    text = text.replace("â Physical", "– Physical")
-    text = text.replace("â Requirements", "– Requirements")
-    text = text.replace("â requirement", "– requirement")
-    text = text.replace("â Table", " – Table")
-    text = text.replace("â Clause", " – Clause")
-    text = text.replace("â IS", " – IS")
+    # Common BIS/OCR patterns where only the leading mojibake character
+    # remains after partial corruption.
+    text = text.replace("\u00e2 Chemical", " - Chemical")
+    text = text.replace("\u00e2 Physical", " - Physical")
+    text = text.replace("\u00e2 Requirements", " - Requirements")
+    text = text.replace("\u00e2 requirement", " - requirement")
+    text = text.replace("\u00e2 Table", " - Table")
+    text = text.replace("\u00e2 Clause", " - Clause")
+    text = text.replace("\u00e2 IS", " - IS")
 
-    # Standalone mojibake caused by corrupted non-breaking spaces/dashes
-    text = re.sub(r'â(?=\d)', ' ', text)
-    text = re.sub(r'(?<=\d)â(?=\s)', ' ', text)
-    text = re.sub(r'â(?=\()', ' ', text)
-    text = re.sub(r'â(?=\|)', ' ', text)
-    text = re.sub(r'â(?=\n)', ' ', text)
+    # Standalone corrupted dash/non-breaking-space markers.
+    text = re.sub(r"\u00e2(?=\d)", " ", text)
+    text = re.sub(r"(?<=\d)\u00e2(?=\s)", " ", text)
+    text = re.sub(r"\u00e2(?=\()", " ", text)
+    text = re.sub(r"\u00e2(?=\|)", " ", text)
+    text = re.sub(r"\u00e2(?=\n)", " ", text)
 
-    # Chemical formulas
+    # Chemical formula cleanup.
+    text = re.sub(r"\bSO\u00e2\b", "SO\u2083", text)
+
+    # Remove residual UTF-8 mojibake byte prefixes when safe.
     text = re.sub(
-        r'\bSOâ\b',
-        'SO₃',
+        r"[\u00c2\u00c3][\u0080-\u00bf]",
+        "",
         text
     )
 
-    # Remove remaining UTF-8 mojibake prefixes when safe
-    text = re.sub(
-        r'[\u00c2\u00c3][\u0080-\u00bf]',
-        '',
-        text
-    )
-
-    # Clean repeated whitespace
-    text = re.sub(
-        r'[ \t]+',
-        ' ',
-        text
-    )
-
-    text = re.sub(
-        r'\n{3,}',
-        '\n\n',
-        text
-    )
+    # Clean repeated whitespace.
+    text = re.sub(r"[ \t]+", " ", text)
+    text = re.sub(r"\n{3,}", "\n\n", text)
 
     return text.strip()
 
@@ -698,7 +725,7 @@ Answer the user's question using only the retrieved BIS context.
                 }
             ],
             temperature=0.1,
-            max_tokens=900
+            max_tokens=1400
         )
 
         raw_answer = response.choices[0].message.content

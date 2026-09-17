@@ -12,6 +12,19 @@
           }
         }
       ]
+    },
+    {
+      "collectionGroup": "standard_chunks_local",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "embedding",
+          "vectorConfig": {
+            "dimension": 384,
+            "flat": {}
+          }
+        }
+      ]
     }
   ],
   "fieldOverrides": []
