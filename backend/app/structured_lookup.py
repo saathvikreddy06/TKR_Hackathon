@@ -6,8 +6,15 @@ from pathlib import Path
 
 import importlib
 
+from app.firebase import db
+
 
 ijson = importlib.import_module("ijson")
+
+# Minimum number of test rows that must exist in the SQLite index for it to be
+# considered usable.  This guards against accidentally treating an empty or
+# partially-written database as a valid data source.
+_SQLITE_MIN_ROWS = 1000
 
 
 class StructuredLookupIndex:
@@ -19,6 +26,8 @@ class StructuredLookupIndex:
         self.index_path = Path(index_path)
         self._ready = False
         self.error = None
+        self.firestore_records = []
+        self.firestore_labs = {}
 
     @staticmethod
     def identifier_keys(value):
@@ -183,17 +192,107 @@ class StructuredLookupIndex:
         )
         connection.commit()
 
+    def _load_firestore_records(self):
+        if db is None:
+            return False
+
+        collection_names = [
+            value.strip()
+            for value in os.getenv(
+                "FIRESTORE_LIMS_COLLECTIONS",
+                "lims_tests,bis_lims_tests,standard_lab_test_links",
+            ).split(",")
+            if value.strip()
+        ]
+        records = []
+        labs = {}
+        for collection_name in collection_names:
+            try:
+                for document in db.collection(collection_name).stream():
+                    item = document.to_dict() or {}
+                    if not isinstance(item, dict):
+                        continue
+                    item["source"] = item.get("source") or "BIS_LIMS"
+                    records.append(item)
+                    if item.get("lab_code"):
+                        labs[str(item["lab_code"])] = item
+            except Exception as exc:
+                print(f"Firestore LIMS collection '{collection_name}' unavailable: {exc}")
+
+        self.firestore_records = records
+        self.firestore_labs = labs
+        return bool(records)
+
+    def _sqlite_has_data(self, connection) -> bool:
+        """Return True if the SQLite index contains at least _SQLITE_MIN_ROWS test rows."""
+        try:
+            row = connection.execute(
+                "SELECT COUNT(*) FROM tests"
+            ).fetchone()
+            return bool(row and row[0] >= _SQLITE_MIN_ROWS)
+        except sqlite3.OperationalError:
+            return False
+
     def _ensure_ready(self):
         if self._ready:
             return True
 
         try:
+            source_files_present = self.tests_path.exists()
+
             connection = self._open()
             try:
-                if not self._is_current(connection):
-                    self._build(connection)
+                if source_files_present:
+                    # Local / developer mode: rebuild the SQLite index whenever the
+                    # source normalized JSON files have changed.
+                    if not self._is_current(connection):
+                        print(
+                            "LIMS index: source files changed or index missing — "
+                            "rebuilding SQLite index from normalized data."
+                        )
+                        self._build(connection)
+                    else:
+                        print(
+                            f"LIMS index: using up-to-date SQLite index "
+                            f"({self.index_path})"
+                        )
+                else:
+                    # Production / Render mode: the normalized JSON files are not
+                    # present (they are git-ignored and only the SQLite index has
+                    # been deployed, e.g. downloaded by download_lims_db.py).
+                    # Use the existing SQLite directly if it is non-empty.
+                    if self._sqlite_has_data(connection):
+                        print(
+                            "LIMS index: source files absent — using pre-built "
+                            f"SQLite index ({self.index_path}).  "
+                            "Source-signature check skipped (production mode)."
+                        )
+                    else:
+                        # SQLite is absent or empty; fall back to Firestore.
+                        connection.close()
+                        print(
+                            "LIMS index: SQLite is absent or empty and source files "
+                            "are not available — trying Firestore LIMS fallback."
+                        )
+                        self._load_firestore_records()
+                        if not self.firestore_records:
+                            raise FileNotFoundError(
+                                "No pre-built SQLite index, no source files, and no "
+                                "Firestore LIMS records are available. "
+                                "Set LIMS_DB_URL and run download_lims_db.py during "
+                                "the Render build step, or populate a Firestore "
+                                f"LIMS collection. (tests_path={self.tests_path})"
+                            )
+                        self._ready = True
+                        self.error = None
+                        return True
             finally:
-                connection.close()
+                # Only close if connection is still open (we may have closed it above).
+                try:
+                    connection.close()
+                except Exception:
+                    pass
+
             self._ready = True
             self.error = None
             return True
@@ -215,6 +314,51 @@ class StructuredLookupIndex:
             keys.update(self.identifier_keys(identifier))
         if not keys:
             return {"status": "not_found", "tests": [], "laboratories": []}
+
+        if self.firestore_records:
+            tests = []
+            for item in self.firestore_records:
+                standard = (
+                    item.get("standard_number")
+                    or item.get("indian_standard_no")
+                    or item.get("standard")
+                )
+                if keys.intersection(self.identifier_keys(standard)):
+                    record = dict(item)
+                    record["standard_number"] = standard
+                    record["match_type"] = "lims_test"
+                    tests.append(record)
+                    if len(tests) >= max(int(test_limit), 1):
+                        break
+
+            laboratories = []
+            seen_codes = set()
+            for item in tests:
+                code = item.get("lab_code")
+                if not code or code in seen_codes:
+                    continue
+                seen_codes.add(code)
+                lab = dict(self.firestore_labs.get(str(code), {}))
+                lab.update({
+                    "lab_code": code,
+                    "lab_name": item.get("lab_name") or lab.get("lab_name"),
+                    "standard_number": item.get("standard_number"),
+                    "product": item.get("product"),
+                    "capability": item.get("designation") or item.get("product"),
+                    "relevant_test": item.get("clause_raw") or item.get("clause"),
+                    "scope_url": item.get("scope_url") or lab.get("scope_url"),
+                    "source": item.get("source") or "BIS_LIMS",
+                    "match_type": "lims_lab",
+                })
+                laboratories.append(lab)
+                if len(laboratories) >= lab_limit:
+                    break
+
+            return {
+                "status": "supported" if tests or laboratories else "not_found",
+                "tests": tests,
+                "laboratories": laboratories,
+            }
 
         placeholders = ",".join("?" for _ in keys)
         connection = self._open()

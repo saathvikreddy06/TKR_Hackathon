@@ -390,8 +390,9 @@ function StructuredResponse({ message, language, onFollowup }) {
                                     </details>
                                 )}
 
-                                {sourceUrl && (
+                                {sourceUrl ? (
                                     <a
+                                        className="source-item-link"
                                         href={sourceUrl}
                                         target="_blank"
                                         rel="noreferrer"
@@ -399,6 +400,8 @@ function StructuredResponse({ message, language, onFollowup }) {
                                     >
                                         {t.viewSource}
                                     </a>
+                                ) : (
+                                    <span className="source-unavailable">No direct official link available</span>
                                 )}
                             </div>
                         )

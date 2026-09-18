@@ -3444,6 +3444,29 @@ footer p {
     font-size: 10px;
 }
 
+.source-item-link {
+    flex: 0 0 auto;
+    padding: 6px 8px;
+    border: 1px solid #e4b59b;
+    border-radius: 4px;
+    color: #a95732;
+    background: #fff4ed;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.source-item-link:hover,
+.source-item-link:focus-visible {
+    color: #7d3f28;
+    border-color: #d77243;
+}
+
+.source-unavailable {
+    flex: 0 0 auto !important;
+    color: #8a968c !important;
+    font-size: 10px;
+}
+
 .source-evidence {
     flex: 1 1 100%;
     color: #718077;

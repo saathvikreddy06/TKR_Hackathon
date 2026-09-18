@@ -4,6 +4,7 @@ import re
 
 from dotenv import load_dotenv
 from groq import Groq
+from app.language import get_language_instruction
 
 
 load_dotenv()
@@ -939,6 +940,67 @@ def _build_followups(query, hybrid_results):
     return followups[:4]
 
 
+SECTION_TRANSLATIONS = {
+    "te": {
+        "Relevant Standards": "సంబంధిత ప్రమాణాలు",
+        "Testing & Requirements": "పరీక్షలు మరియు అవసరాలు",
+        "BIS Laboratories": "BIS ప్రయోగశాలలు",
+        "QCO / Mandatory Requirements": "QCO / నియంత్రణ సమాచారం",
+        "Certification / Conformity Assessment": "ధృవీకరణ / అనుగుణ్యత అంచనా",
+        "Related Standards": "సంబంధిత ప్రమాణాలు",
+        "Overview": "అవలోకనం",
+        "Sources & Evidence": "మూలాలు మరియు ఆధారాలు",
+        "Relevant laboratory information retrieved from BIS records.": "BIS రికార్డుల నుండి సంబంధిత ప్రయోగశాల సమాచారం పొందబడింది.",
+        "Testing information was not available in the retrieved BIS records.": "పొందిన BIS రికార్డుల్లో పరీక్షల సమాచారం అందుబాటులో లేదు.",
+        "No verified laboratory relationship was found in the retrieved BIS LIMS data for the relevant standards/tests.": "సంబంధిత ప్రమాణాలు/పరీక్షలకు BIS LIMS డేటాలో ధృవీకరించిన ప్రయోగశాల సంబంధం కనుగొనబడలేదు.",
+        "No verified QCO relationship was found in the retrieved data for the relevant standards.": "సంబంధిత ప్రమాణాలకు పొందిన డేటాలో ధృవీకరించిన QCO సంబంధం కనుగొనబడలేదు.",
+        "The retrieved BIS data was insufficient to answer this question without making unsupported claims.": "మద్దతు లేని అంచనాలు చేయకుండా ఈ ప్రశ్నకు సమాధానం ఇవ్వడానికి పొందిన BIS డేటా సరిపోలేదు.",
+        "Based on the available BIS records.": "అందుబాటులో ఉన్న BIS రికార్డుల ఆధారంగా.",
+        "The retrieved BIS records include test-related evidence for the identified standard(s). Details are presented below without inferring any unsupported numerical limits.": "గుర్తించిన ప్రమాణాలకు సంబంధించిన పరీక్ష ఆధారాలు పొందిన BIS రికార్డుల్లో ఉన్నాయి. మద్దతు లేని సంఖ్యా పరిమితులను ఊహించకుండా వివరాలు క్రింద ఇవ్వబడ్డాయి.",
+        "Certification information was not available in the retrieved evidence.": "పొందిన ఆధారాల్లో ధృవీకరణ సమాచారం అందుబాటులో లేదు.",
+        "Related BIS records were retrieved for the queried product or standard area and are listed above where supported by evidence.": "ప్రశ్నించిన ఉత్పత్తి లేదా ప్రమాణ ప్రాంతానికి సంబంధించిన BIS రికార్డులు పొందబడ్డాయి; ఆధారం ఉన్న చోట పై జాబితాలో చూపించబడ్డాయి.",
+    },
+    "hi": {
+        "Relevant Standards": "संबंधित मानक",
+        "Testing & Requirements": "परीक्षण और आवश्यकताएँ",
+        "BIS Laboratories": "BIS प्रयोगशालाएँ",
+        "QCO / Mandatory Requirements": "QCO / नियामक जानकारी",
+        "Certification / Conformity Assessment": "प्रमाणन / अनुरूपता मूल्यांकन",
+        "Related Standards": "संबंधित मानक",
+        "Overview": "अवलोकन",
+        "Sources & Evidence": "स्रोत और प्रमाण",
+        "Relevant laboratory information retrieved from BIS records.": "BIS रिकॉर्ड से संबंधित प्रयोगशाला जानकारी प्राप्त हुई।",
+        "Testing information was not available in the retrieved BIS records.": "प्राप्त BIS रिकॉर्ड में परीक्षण की जानकारी उपलब्ध नहीं थी।",
+        "No verified laboratory relationship was found in the retrieved BIS LIMS data for the relevant standards/tests.": "संबंधित मानकों/परीक्षणों के लिए BIS LIMS डेटा में कोई सत्यापित प्रयोगशाला संबंध नहीं मिला।",
+        "No verified QCO relationship was found in the retrieved data for the relevant standards.": "संबंधित मानकों के लिए प्राप्त डेटा में कोई सत्यापित QCO संबंध नहीं मिला।",
+        "The retrieved BIS data was insufficient to answer this question without making unsupported claims.": "बिना असमर्थित दावे किए इस प्रश्न का उत्तर देने के लिए प्राप्त BIS डेटा पर्याप्त नहीं था।",
+        "Based on the available BIS records.": "उपलब्ध BIS रिकॉर्ड के आधार पर।",
+        "The retrieved BIS records include test-related evidence for the identified standard(s). Details are presented below without inferring any unsupported numerical limits.": "प्राप्त BIS रिकॉर्ड में पहचाने गए मानकों से संबंधित परीक्षण प्रमाण हैं। बिना असमर्थित संख्यात्मक सीमाएँ मानकर विवरण नीचे दिया गया है।",
+        "Certification information was not available in the retrieved evidence.": "प्राप्त प्रमाण में प्रमाणन की जानकारी उपलब्ध नहीं थी।",
+        "Related BIS records were retrieved for the queried product or standard area and are listed above where supported by evidence.": "पूछे गए उत्पाद या मानक क्षेत्र से संबंधित BIS रिकॉर्ड प्राप्त हुए हैं और प्रमाण होने पर ऊपर सूचीबद्ध हैं।",
+    },
+}
+
+
+def _localize_sections(sections, language):
+    translations = SECTION_TRANSLATIONS.get(language, {})
+    if not translations:
+        return sections
+
+    localized = []
+    for section in sections:
+        item = dict(section)
+        item["title"] = translations.get(item.get("title"), item.get("title"))
+        if isinstance(item.get("content"), str):
+            item["content"] = translations.get(item["content"], item["content"])
+        localized.append(item)
+    return localized
+
+
+def _localize_text(text, language):
+    return SECTION_TRANSLATIONS.get(language, {}).get(text, text)
+
+
 def _extract_json_object(raw_text):
     if not raw_text:
         return None
@@ -1072,8 +1134,8 @@ def generate_answer(
     if not client:
         structured = {
             "title": "BIS Information",
-            "summary": "The answer generation service is not configured.",
-            "sections": _build_structured_sections(query, hybrid_results),
+            "summary": _localize_text("The answer generation service is not configured.", language),
+            "sections": _localize_sections(_build_structured_sections(query, hybrid_results), language),
             "sources": _flatten_retrieved_sources(hybrid_results),
             "followups": _build_followups(query, hybrid_results),
             "evidence_status": "insufficient" if not _flatten_retrieved_sources(hybrid_results) else "supported",
@@ -1096,12 +1158,12 @@ def generate_answer(
     if not context:
         structured = {
             "title": "BIS Information",
-            "summary": "I could not find sufficient BIS information in the retrieved data to answer this question.",
-            "sections": [{
+            "summary": _localize_text("The retrieved BIS data was insufficient to answer this question without making unsupported claims.", language),
+            "sections": _localize_sections([{
                 "type": "overview",
                 "title": "Overview",
                 "content": "The retrieved BIS data was insufficient to answer this question without making unsupported claims.",
-            }],
+            }], language),
             "sources": [],
             "followups": _build_followups(query, hybrid_results),
             "evidence_status": "insufficient",
@@ -1118,8 +1180,8 @@ def generate_answer(
 
     structured_payload = {
         "title": "BIS Information",
-        "summary": "Based on the available BIS records.",
-        "sections": _build_structured_sections(query, hybrid_results),
+        "summary": _localize_text("Based on the available BIS records.", language),
+        "sections": _localize_sections(_build_structured_sections(query, hybrid_results), language),
         "sources": _flatten_retrieved_sources(hybrid_results),
         "followups": _build_followups(query, hybrid_results),
         "evidence_status": "supported" if _flatten_retrieved_sources(hybrid_results) else "insufficient",
@@ -1169,12 +1231,7 @@ The following evidence IDs are valid and must be referenced only as needed:
 Return only valid JSON.
 """
 
-    if language == "te":
-        user_prompt += "\nRespond in Telugu."
-    elif language == "hi":
-        user_prompt += "\nRespond in Hindi."
-    else:
-        user_prompt += "\nRespond in English."
+    user_prompt += f"\n{get_language_instruction(language)}"
 
     try:
         response = client.chat.completions.create(

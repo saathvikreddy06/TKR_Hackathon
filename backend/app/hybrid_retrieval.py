@@ -1,4 +1,4 @@
-﻿import json
+import json
 import os
 import re
 import math
@@ -82,6 +82,10 @@ MODEL_LOCAL_PATH = os.path.join(
 FIRESTORE_COLLECTION = "standard_chunks_local"
 FIRESTORE_VECTOR_FIELD = "embedding"
 FIRESTORE_VECTOR_DIMENSIONS = 384
+QCO_OFFICIAL_URL = (
+    "https://www.bis.gov.in/product-certification/"
+    "products-under-compulsory-certification/?lang=en"
+)
 
 
 # ============================================================
@@ -536,12 +540,12 @@ class HybridRetriever:
         ):
 
             print(
-                "QCO links file not found"
+                "QCO links file not found; checking Firestore indexed QCO evidence"
             )
-
+            if self._load_qco_from_firestore():
+                return
             self.qco_status = "error"
-            self.qco_error = "QCO relationship dataset is unavailable."
-
+            self.qco_error = "QCO relationship dataset is unavailable locally and in Firestore."
             return
 
         try:
@@ -621,15 +625,78 @@ class HybridRetriever:
             self.qco_status = "error"
             self.qco_error = f"{type(e).__name__}: {e}"
 
+    def _load_qco_from_firestore(self):
+        if db is None:
+            return False
+
+        try:
+            from google.cloud.firestore_v1.base_query import FieldFilter
+
+            documents = db.collection(FIRESTORE_COLLECTION).where(
+                filter=FieldFilter("document_type", "==", "standard_qco")
+            ).stream()
+            for document in documents:
+                data = document.to_dict() or {}
+                text = data.get("text") or ""
+                matched = extract_is_numbers(text)
+                if not matched:
+                    continue
+                document_id = data.get("document_id") or document.id
+                for number in matched:
+                    self.qco_links.append({
+                        "standard_number": number,
+                        "qco_document_id": document_id,
+                        "relationship": "QCO relationship",
+                        "matched_is_numbers": matched,
+                        "evidence": text,
+                        "source": "BIS Firestore Knowledge Base",
+                        "source_url": QCO_OFFICIAL_URL,
+                        "match_type": "qco_relationship",
+                    })
+
+            if not self.qco_links:
+                return False
+
+            self.qco_status = "supported"
+            for item in self.qco_links:
+                for number in item.get("matched_is_numbers", []):
+                    for normalized in self._identifier_keys(number):
+                        self.qco_by_number[normalized].append(item)
+                    base_key = self._normalize_is_base(number)
+                    if base_key:
+                        self.qco_by_base[base_key].append(item)
+            print(f"Firestore indexed QCO relationships: {len(self.qco_links)}")
+            return True
+        except Exception as exc:
+            self.qco_error = f"{type(exc).__name__}: {exc}"
+            print(f"Firestore QCO retrieval error: {self.qco_error}")
+            return False
+
     # ========================================================
     # LOAD LIMS TESTS
     # ========================================================
 
     def _load_lims_tests(self):
-        if os.path.isfile(self.lims_tests_path):
-            print("LIMS tests: indexed lookup enabled")
+        # Log the actual SQLite index availability (which is what matters for lookups)
+        # rather than the normalized JSON source file availability.
+        sqlite_path = self.structured_lims.index_path
+        if sqlite_path.is_file():
+            size_mb = sqlite_path.stat().st_size / 1_048_576
+            print(
+                f"LIMS: SQLite index found ({size_mb:.1f} MB) — {sqlite_path}"
+            )
+        elif os.path.isfile(self.lims_tests_path):
+            print(
+                "LIMS: SQLite index absent but source JSON found "
+                f"({self.lims_tests_path}) — index will be built on first request."
+            )
         else:
-            print("LIMS tests file not found:", self.lims_tests_path)
+            print(
+                "LIMS: neither SQLite index nor source JSON is present. "
+                f"Index path: {sqlite_path}. "
+                "Set LIMS_DB_URL and run scripts/download_lims_db.py during the "
+                "Render build, or populate a Firestore LIMS collection."
+            )
 
     # ========================================================
     # IS NUMBER NORMALIZATION
@@ -1186,6 +1253,7 @@ class HybridRetriever:
             for item in candidate_items:
                 result = dict(item)
                 result["match_type"] = "qco_relationship"
+                result["source_url"] = result.get("source_url") or QCO_OFFICIAL_URL
                 results.append(result)
 
         return self._deduplicate_results(
