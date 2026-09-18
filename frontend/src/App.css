@@ -2033,6 +2033,50 @@ footer p {
     text-align: left;
 }
 
+.assistant-message.assistant .message-text h1 {
+    margin: 13px 0 10px;
+    color: #17271f;
+    font-size: 30px;
+    font-weight: 600;
+    letter-spacing: -.035em;
+    line-height: 1.1;
+}
+
+.assistant-message.assistant .message-text h2,
+.assistant-message.assistant .structured-section h3,
+.assistant-message.assistant .source-panel summary {
+    margin: 13px 0 5px;
+    color: #203329;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0;
+    line-height: 1.25;
+}
+
+.assistant-message.assistant .message-text h3,
+.assistant-message.assistant .message-text h4,
+.assistant-message.assistant .standard-card h4 {
+    color: #203329;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0;
+    line-height: 1.3;
+}
+
+.assistant-message.assistant .message-text p,
+.assistant-message.assistant .message-text li,
+.assistant-message.assistant .structured-section p,
+.assistant-message.assistant .structured-section li {
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.assistant-message.assistant .message-text h2+p,
+.assistant-message.assistant .message-text h2+ul,
+.assistant-message.assistant .message-text h2+ol {
+    margin-top: 4px;
+}
+
 .assistant-message.user p {
     color: #fff8f2;
     border-color: transparent;
@@ -3422,6 +3466,22 @@ footer p {
     margin-top: 12px;
 }
 
+.structured-title {
+    margin: 14px 0 7px;
+    color: #17271f;
+    font-size: 30px;
+    font-weight: 600;
+    letter-spacing: -.035em;
+    line-height: 1.1;
+}
+
+.structured-summary {
+    margin: 0;
+    color: #526359;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
 .structured-section {
     padding: 12px 14px;
     border-left: 3px solid #d77243;
@@ -3429,17 +3489,20 @@ footer p {
 }
 
 .structured-section h3 {
-    margin: 0 0 7px;
+    margin: 0 0 6px;
     color: #203329;
-    font-size: 13px;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0;
+    line-height: 1.25;
 }
 
 .structured-section p,
 .structured-section ul {
     margin: 0;
     color: #526359;
-    font-size: 12px;
-    line-height: 1.55;
+    font-size: 14px;
+    line-height: 1.5;
 }
 
 .structured-section ul {
