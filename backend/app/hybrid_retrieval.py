@@ -1,4 +1,5 @@
 ﻿import json
+import importlib
 import os
 import re
 import math
@@ -7,6 +8,10 @@ import traceback
 from collections import defaultdict
 
 from app.firebase import db
+from app.embedding_runtime import load_embedding_model
+
+
+ijson = importlib.import_module("ijson")
 
 
 os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
@@ -49,6 +54,11 @@ QCO_LINKS_PATH = os.path.join(
 LIMS_TESTS_DIR = os.path.join(
     NORMALIZED_DIR,
     "labs"
+)
+
+LIMS_TESTS_PATH = os.path.join(
+    LIMS_TESTS_DIR,
+    "bis_lims_tests.json"
 )
 
 MODEL_NAME = (
@@ -260,10 +270,6 @@ def normalize_search_text(value):
 # ============================================================
 
 class HybridRetriever:
-
-    _embedding_model = None
-    _embedding_model_lock = threading.Lock()
-
     def __init__(self):
 
         self.semantic_embeddings = []
@@ -277,7 +283,7 @@ class HybridRetriever:
         self.qco_links = []
         self.qco_by_number = defaultdict(list)
 
-        self.lims_tests = []
+        self.lims_tests_path = LIMS_TESTS_PATH
 
         self._load_semantic_embeddings()
         self._load_standards()
@@ -322,44 +328,7 @@ class HybridRetriever:
 
     @classmethod
     def _get_embedding_model(cls):
-
-        if cls._embedding_model is not None:
-            return cls._embedding_model
-
-        with cls._embedding_model_lock:
-            if cls._embedding_model is not None:
-                return cls._embedding_model
-
-            from sentence_transformers import SentenceTransformer
-
-            if not os.path.isdir(MODEL_LOCAL_PATH):
-                raise RuntimeError(
-                    "Local embedding model was not found at: "
-                    f"{MODEL_LOCAL_PATH}. The Render build must run "
-                    "scripts/download_embedding_model.py."
-                )
-
-            print("Loading local embedding model:", MODEL_LOCAL_PATH)
-
-            model = SentenceTransformer(
-                MODEL_LOCAL_PATH,
-                device="cpu",
-                local_files_only=True,
-            )
-            model.eval()
-
-            try:
-                import torch
-
-                torch.set_num_threads(1)
-                torch.set_num_interop_threads(1)
-            except RuntimeError:
-                pass
-
-            cls._embedding_model = model
-            print("Local SentenceTransformer model loaded successfully.")
-
-        return cls._embedding_model
+        return load_embedding_model()
 
     @classmethod
     def load_embedding_model(cls):
@@ -641,109 +610,24 @@ class HybridRetriever:
     # ========================================================
 
     def _load_lims_tests(self):
+        if os.path.isfile(self.lims_tests_path):
+            print("LIMS tests: lazy streaming enabled")
+        else:
+            print("LIMS tests file not found:", self.lims_tests_path)
 
-        print("Loading LIMS tests...")
-
-        if not os.path.exists(
-            LIMS_TESTS_DIR
-        ):
-
-            print(
-                "LIMS directory not found"
-            )
-
+    def _iter_lims_tests(self):
+        if not os.path.isfile(self.lims_tests_path):
             return
 
         try:
-
-            for root, _, files in os.walk(
-                LIMS_TESTS_DIR
-            ):
-
-                for filename in files:
-
-                    if not filename.lower().endswith(
-                        ".json"
-                    ):
-                        continue
-
-                    path = os.path.join(
-                        root,
-                        filename
-                    )
-
-                    try:
-
-                        with open(
-                            path,
-                            "r",
-                            encoding="utf-8"
-                        ) as f:
-
-                            data = json.load(f)
-
-                    except Exception as e:
-
-                        print(
-                            f"LIMS file loading error "
-                            f"for {path}: {e}"
-                        )
-
-                        continue
-
-                    if isinstance(
-                        data,
-                        dict
-                    ):
-
-                        if "tests" in data:
-
-                            data = data[
-                                "tests"
-                            ]
-
-                        elif "records" in data:
-
-                            data = data[
-                                "records"
-                            ]
-
-                        else:
-
-                            data = [data]
-
-                    if not isinstance(
-                        data,
-                        list
-                    ):
-                        continue
-
-                    for item in data:
-
-                        if isinstance(
-                            item,
-                            dict
-                        ):
-
-                            self.lims_tests.append(
-                                item
-                            )
-
+            with open(self.lims_tests_path, "rb") as file:
+                yield from ijson.items(file, "item")
+        except Exception as exc:
             print(
-                "Loaded LIMS records:",
-                len(self.lims_tests)
+                "LIMS streaming error:",
+                repr(exc)
             )
-
-        except Exception as e:
-
-            print(
-                "LIMS loading error:",
-                repr(e)
-            )
-
             traceback.print_exc()
-
-            self.lims_tests = []
 
     # ========================================================
     # IS NUMBER NORMALIZATION
@@ -852,13 +736,7 @@ class HybridRetriever:
                 "Step 2: Creating query embedding..."
             )
 
-            query_vector = model.encode(
-                query,
-                batch_size=1,
-                convert_to_numpy=True,
-                normalize_embeddings=True,
-                show_progress_bar=False,
-            )
+            query_vector = model.encode(query)
 
             print(
                 "Raw embedding type:",
@@ -873,8 +751,6 @@ class HybridRetriever:
                     None
                 )
             )
-
-            query_vector = query_vector.tolist()
 
             print(
                 "Embedding length:",
@@ -1329,7 +1205,7 @@ class HybridRetriever:
 
         results = []
 
-        for item in self.lims_tests:
+        for item in self._iter_lims_tests():
 
             number = (
                 item.get(
@@ -1421,7 +1297,7 @@ class HybridRetriever:
 
         results = []
 
-        for item in self.lims_tests:
+        for item in self._iter_lims_tests():
 
             number = (
                 item.get(

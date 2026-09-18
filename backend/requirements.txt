@@ -6,4 +6,5 @@ google-genai
 groq
 requests
 google-cloud-firestore>=2.21.0
-sentence-transformers
+onnxruntime
+ijson

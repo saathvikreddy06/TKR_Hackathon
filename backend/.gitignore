@@ -65,5 +65,8 @@ node_modules/
 # dotenv environment variables file
 .env
 
+# Build-generated embedding model artifacts
+models/
+
 # dataconnect generated files
 .dataconnect

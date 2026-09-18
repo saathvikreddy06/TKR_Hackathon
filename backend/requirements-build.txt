@@ -1,0 +1,4 @@
+onnx
+onnxruntime
+sentence-transformers
+torch

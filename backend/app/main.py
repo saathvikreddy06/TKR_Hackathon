@@ -33,18 +33,6 @@ app = FastAPI(
 )
 
 
-@app.on_event("startup")
-def load_embedding_model_on_startup():
-    if hybrid_retriever is None:
-        print("Hybrid retriever is unavailable during startup.")
-        return
-
-    try:
-        hybrid_retriever.load_embedding_model()
-    except Exception as exc:
-        print(f"Embedding model preload failed: {type(exc).__name__}: {exc}")
-
-
 # ============================================================
 # CORS CONFIGURATION
 # ============================================================
