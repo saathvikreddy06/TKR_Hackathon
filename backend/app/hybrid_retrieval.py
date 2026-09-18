@@ -2,10 +2,16 @@
 import os
 import re
 import math
+import threading
 import traceback
 from collections import defaultdict
 
 from app.firebase import db
+
+
+os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
+os.environ.setdefault("OMP_NUM_THREADS", "1")
+os.environ.setdefault("MKL_NUM_THREADS", "1")
 
 
 BASE_DIR = os.path.dirname(
@@ -255,11 +261,13 @@ def normalize_search_text(value):
 
 class HybridRetriever:
 
+    _embedding_model = None
+    _embedding_model_lock = threading.Lock()
+
     def __init__(self):
 
         self.semantic_embeddings = []
         self.embedding_vectors = {}
-        self.embedding_model = None
         self.firebase_vector_enabled = db is not None
 
         self.standards = []
@@ -312,40 +320,52 @@ class HybridRetriever:
     # EMBEDDING MODEL
     # ========================================================
 
-    def _get_embedding_model(self):
+    @classmethod
+    def _get_embedding_model(cls):
 
-        if self.embedding_model is None:
+        if cls._embedding_model is not None:
+            return cls._embedding_model
+
+        with cls._embedding_model_lock:
+            if cls._embedding_model is not None:
+                return cls._embedding_model
 
             from sentence_transformers import SentenceTransformer
 
             if not os.path.isdir(MODEL_LOCAL_PATH):
-
                 raise RuntimeError(
                     "Local embedding model was not found at: "
-                    f"{MODEL_LOCAL_PATH}. "
-                    "The Render build must run "
+                    f"{MODEL_LOCAL_PATH}. The Render build must run "
                     "scripts/download_embedding_model.py."
                 )
 
-            print(
-                "Loading local embedding model:"
-            )
+            print("Loading local embedding model:", MODEL_LOCAL_PATH)
 
-            print(
-                MODEL_LOCAL_PATH
-            )
-
-            self.embedding_model = SentenceTransformer(
+            model = SentenceTransformer(
                 MODEL_LOCAL_PATH,
-                device="cpu"
+                device="cpu",
+                local_files_only=True,
             )
+            model.eval()
 
-            print(
-                "Local SentenceTransformer model "
-                "loaded successfully."
-            )
+            try:
+                import torch
 
-        return self.embedding_model
+                torch.set_num_threads(1)
+                torch.set_num_interop_threads(1)
+            except RuntimeError:
+                pass
+
+            cls._embedding_model = model
+            print("Local SentenceTransformer model loaded successfully.")
+
+        return cls._embedding_model
+
+    @classmethod
+    def load_embedding_model(cls):
+        """Load the build-time model before the first semantic request."""
+
+        return cls._get_embedding_model()
 
     # ========================================================
     # LOAD STANDARDS
@@ -834,7 +854,10 @@ class HybridRetriever:
 
             query_vector = model.encode(
                 query,
-                normalize_embeddings=True
+                batch_size=1,
+                convert_to_numpy=True,
+                normalize_embeddings=True,
+                show_progress_bar=False,
             )
 
             print(

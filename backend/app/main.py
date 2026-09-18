@@ -4,8 +4,7 @@ from pydantic import BaseModel
 from google.cloud.firestore_v1 import SERVER_TIMESTAMP
 
 from app.firebase import db
-from app.hybrid_retrieval import HybridRetriever
-hybrid_retriever = HybridRetriever()
+from app.hybrid_retrieval import hybrid_retriever
 from app.generation import generate_answer
 from app.scope import is_bis_related, get_scope_response
 from app.language import detect_language, prepare_retrieval_query
@@ -32,6 +31,18 @@ app = FastAPI(
     description="BIS Intelligent Assistant Backend",
     version="1.0.0"
 )
+
+
+@app.on_event("startup")
+def load_embedding_model_on_startup():
+    if hybrid_retriever is None:
+        print("Hybrid retriever is unavailable during startup.")
+        return
+
+    try:
+        hybrid_retriever.load_embedding_model()
+    except Exception as exc:
+        print(f"Embedding model preload failed: {type(exc).__name__}: {exc}")
 
 
 # ============================================================
@@ -349,11 +360,27 @@ def search(
         language
     )
 
-    hybrid_results = hybrid_retriever.search(
-        retrieval_query,
-        semantic_limit=request.limit,
-        lab_limit=20
-    )
+    if hybrid_retriever is None:
+        raise HTTPException(
+            status_code=503,
+            detail="BIS retrieval is unavailable because the retriever failed to initialize.",
+        )
+
+    try:
+        hybrid_results = hybrid_retriever.search(
+            retrieval_query,
+            semantic_limit=request.limit,
+            lab_limit=20
+        )
+    except Exception as exc:
+        print(f"BIS retrieval error: {type(exc).__name__}: {exc}")
+        raise HTTPException(
+            status_code=503,
+            detail=(
+                "BIS semantic retrieval is temporarily unavailable. "
+                "Please try again shortly."
+            ),
+        ) from exc
 
     results = normalize_hybrid_results(hybrid_results)
 
@@ -386,7 +413,7 @@ def search(
     # SAVE SEARCH HISTORY
     # --------------------------------------------------------
 
-    if current_user:
+    if current_user and db:
 
         db.collection("search_history").document().set({
             "user_id": current_user["uid"],
