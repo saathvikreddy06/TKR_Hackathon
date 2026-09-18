@@ -4,6 +4,10 @@ import threading
 import unicodedata
 from pathlib import Path
 
+os.environ.setdefault("OMP_NUM_THREADS", "1")
+os.environ.setdefault("MKL_NUM_THREADS", "1")
+os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
+
 import numpy as np
 from onnxruntime import ExecutionMode, InferenceSession, SessionOptions
 

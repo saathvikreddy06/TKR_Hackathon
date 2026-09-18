@@ -2,6 +2,10 @@ import os
 import json
 from pathlib import Path
 
+os.environ.setdefault("OMP_NUM_THREADS", "1")
+os.environ.setdefault("MKL_NUM_THREADS", "1")
+os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
+
 import torch
 from onnxruntime.quantization import QuantType, quantize_dynamic
 from sentence_transformers import SentenceTransformer
@@ -110,7 +114,4 @@ def main():
 
 
 if __name__ == "__main__":
-    os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
-    os.environ.setdefault("OMP_NUM_THREADS", "1")
-    os.environ.setdefault("MKL_NUM_THREADS", "1")
     main()
