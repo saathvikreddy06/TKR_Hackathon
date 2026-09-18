@@ -594,7 +594,241 @@ def build_context(hybrid_results, query=""):
                 + qco
             )
 
+    if intent != "testing" and hybrid_results.get("tests"):
+        sections.append(
+            build_testing_context(
+                hybrid_results.get("tests", []),
+                query,
+            )
+        )
+
+    if intent != "laboratory" and hybrid_results.get("labs"):
+        sections.append(
+            build_lab_context(hybrid_results.get("labs", []))
+        )
+
+    if intent != "qco" and hybrid_results.get("qco"):
+        sections.append(
+            build_qco_context(hybrid_results.get("qco", []))
+        )
+
+    core = hybrid_results.get("core", [])
+    if core:
+        core_lines = ["BIS CORE KNOWLEDGE:"]
+        for item in core[:4]:
+            title = normalize_text(item.get("title") or "")
+            text = normalize_text(item.get("text") or "")
+            source_url = item.get("source_url") or ""
+            core_lines.append(
+                " | ".join(
+                    part for part in (
+                        f"Topic: {title}" if title else "",
+                        f"Information: {text}" if text else "",
+                        f"Source: {source_url}" if source_url else "",
+                    )
+                    if part
+                )
+            )
+        sections.append("\n".join(core_lines))
+
     return "\n\n".join(sections)
+
+
+def _source_type(item):
+    match_type = item.get("match_type", "")
+    if match_type == "qco_relationship":
+        return "qco"
+    if match_type in {"lims_test", "lims_lab"}:
+        return "lims"
+    if match_type == "core_knowledge":
+        return "core_bis_knowledge"
+    if match_type == "firebase_semantic":
+        return "semantic"
+    return "standard"
+
+
+def build_structured_sections(hybrid_results, query=""):
+    sections = []
+    standards = hybrid_results.get("exact_standards", [])
+    tests = hybrid_results.get("tests", [])
+    labs = hybrid_results.get("labs", [])
+    qcos = hybrid_results.get("qco", [])
+    core = hybrid_results.get("core", [])
+
+    if standards:
+        lines = []
+        seen = set()
+        for item in standards[:8]:
+            number = normalize_text(item.get("standard_number") or "")
+            title = normalize_text(item.get("title") or "")
+            if not number and not title:
+                continue
+            key = (number, title)
+            if key in seen:
+                continue
+            seen.add(key)
+            details = [part for part in (
+                f"**{number}**" if number else "",
+                title,
+                f"Published: {item.get('published_on')}" if item.get("published_on") else "",
+                f"Department: {item.get('department')}" if item.get("department") else "",
+                f"Sectional committee: {item.get('sectional_committee')}" if item.get("sectional_committee") else "",
+            ) if part]
+            lines.append(" - ".join(details))
+        if lines:
+            sections.append({
+                "title": "Standard Overview",
+                "content": "\n".join(f"- {line}" for line in lines),
+                "evidence_type": "standard",
+            })
+
+    if tests:
+        lines = []
+        seen = set()
+        for item in tests[:12]:
+            key = (
+                item.get("standard_number"),
+                item.get("lab_code"),
+                item.get("clause_raw"),
+                item.get("designation"),
+            )
+            if key in seen:
+                continue
+            seen.add(key)
+            details = [part for part in (
+                f"Standard: {item.get('standard_number')}" if item.get("standard_number") else "",
+                f"Product: {item.get('product')}" if item.get("product") else "",
+                f"Clause/test scope: {item.get('clause_raw')}" if item.get("clause_raw") else "",
+                f"Designation: {item.get('designation')}" if item.get("designation") else "",
+                f"Test method: {item.get('test_method')}" if item.get("test_method") else "",
+            ) if part]
+            if details:
+                lines.append(" - ".join(details))
+        if lines:
+            sections.append({
+                "title": "Requirements / Testing",
+                "content": "\n".join(f"- {line}" for line in lines),
+                "evidence_type": "lims",
+            })
+
+    if labs:
+        lines = []
+        seen = set()
+        for item in labs[:10]:
+            key = (item.get("lab_code"), item.get("lab_name"))
+            if key in seen:
+                continue
+            seen.add(key)
+            details = [part for part in (
+                f"**{item.get('lab_name')}**" if item.get("lab_name") else "",
+                f"Lab code: {item.get('lab_code')}" if item.get("lab_code") else "",
+                f"Standard: {item.get('standard_number')}" if item.get("standard_number") else "",
+                f"Product/capability: {item.get('product')}" if item.get("product") else "",
+                f"[View BIS LIMS record]({item.get('scope_url')})" if item.get("scope_url") else "",
+            ) if part]
+            if details:
+                lines.append(" - ".join(details))
+        if lines:
+            sections.append({
+                "title": "BIS Laboratories",
+                "content": "\n".join(f"- {line}" for line in lines),
+                "evidence_type": "lims",
+            })
+
+    if qcos:
+        lines = []
+        for item in qcos[:8]:
+            details = [part for part in (
+                f"Standard: {item.get('standard_number')}" if item.get("standard_number") else "",
+                f"QCO: {item.get('qco_document_id')}" if item.get("qco_document_id") else "",
+                f"Relationship: {item.get('relationship')}" if item.get("relationship") else "",
+                f"Order: {item.get('order_number')}" if item.get("order_number") else "",
+                f"Evidence: {normalize_text(item.get('evidence'))[:700]}" if item.get("evidence") else "",
+            ) if part]
+            if details:
+                lines.append(" - ".join(details))
+        if lines:
+            sections.append({
+                "title": "QCO / Mandatory Requirements",
+                "content": "\n".join(f"- {line}" for line in lines),
+                "evidence_type": "qco",
+            })
+
+    if core:
+        lines = []
+        for item in core[:4]:
+            title = normalize_text(item.get("title") or "")
+            text = normalize_text(item.get("text") or "")
+            url = item.get("source_url")
+            source = f" ([Official source]({url}))" if url else ""
+            lines.append(f"- **{title}**: {text}{source}")
+        if lines:
+            sections.append({
+                "title": "Certification / BIS Services",
+                "content": "\n".join(lines),
+                "evidence_type": "core_bis_knowledge",
+            })
+
+    return sections
+
+
+def build_source_records(hybrid_results):
+    records = []
+    for category in ("exact_standards", "tests", "labs", "qco", "semantic", "core"):
+        for item in hybrid_results.get(category, []):
+            source_type = _source_type(item)
+            source_url = item.get("document_url") or item.get("source_url") or item.get("scope_url")
+            records.append({
+                "type": source_type,
+                "identifier": (
+                    item.get("standard_number")
+                    or item.get("qco_document_id")
+                    or item.get("chunk_id")
+                    or item.get("id")
+                ),
+                "title": item.get("title") or item.get("product") or item.get("document_type"),
+                "source": item.get("source") or source_type,
+                "url": source_url,
+                "standard_number": item.get("standard_number"),
+                "lab_name": item.get("lab_name"),
+                "lab_code": item.get("lab_code"),
+                "qco_identifier": item.get("qco_document_id"),
+                "evidence": (
+                    item.get("evidence")
+                    or item.get("text")
+                    or item.get("clause_raw")
+                    or item.get("product")
+                ),
+                "match_type": item.get("match_type"),
+                "distance": item.get("distance"),
+            })
+
+    unique = []
+    seen = set()
+    for record in records:
+        key = (
+            record.get("type"), record.get("identifier"),
+            record.get("lab_code"), record.get("qco_identifier"),
+        )
+        if key in seen:
+            continue
+        seen.add(key)
+        unique.append(record)
+    return unique[:40]
+
+
+def build_followups(hybrid_results):
+    if hybrid_results.get("is_numbers"):
+        return [
+            {"label": "View testing requirements", "query": f"What tests are required for {hybrid_results['is_numbers'][0]}?"},
+            {"label": "Find BIS laboratories", "query": f"Which laboratories can test products according to {hybrid_results['is_numbers'][0]}?"},
+            {"label": "Check related QCOs", "query": f"Does {hybrid_results['is_numbers'][0]} have a related QCO?"},
+        ]
+    return [
+        {"label": "Find applicable standards", "query": "Which BIS standards are relevant to this product?"},
+        {"label": "Find testing laboratories", "query": "Which BIS laboratories can test this product?"},
+        {"label": "Check certification requirements", "query": "What BIS certification requirements apply?"},
+    ]
 
 
 def answer_matches_language(answer, language):
@@ -634,7 +868,10 @@ def generate_answer(
                 "The answer generation service "
                 "is not configured."
             ),
-            "sources": []
+            "sources": [],
+            "sections": [],
+            "evidence_status": "unavailable",
+            "followups": build_followups(retrieved_results),
         }
 
     hybrid_results = retrieved_results
@@ -651,7 +888,10 @@ def generate_answer(
                 "information in the retrieved data "
                 "to answer this question."
             ),
-            "sources": []
+            "sources": build_source_records(hybrid_results),
+            "sections": [],
+            "evidence_status": "insufficient",
+            "followups": build_followups(hybrid_results),
         }
 
     intent = hybrid_results.get(
@@ -683,6 +923,8 @@ BIS Answering Rules:
    - laboratory testing charges,
    - QCO relationships/evidence.
 15. Prefer the most specific retrieved record over broad standard-level context.
+16. When an exact IS identifier is present, prioritize the exact standard record and clearly separate it from related LIMS or QCO evidence.
+17. For core BIS concepts, use only the supplied BIS CORE KNOWLEDGE and do not add unsupported legal or fee details.
 """
 
     user_prompt = f"""
@@ -1007,7 +1249,77 @@ Answer the user's question using only the retrieved BIS context.
             "distance": None
         })
 
+    for item in hybrid_results.get("semantic", []):
+        sources.append({
+            "standard_number": item.get("standard_number"),
+            "part": None,
+            "year": None,
+            "title": item.get("title"),
+            "source": item.get("source", "BIS Firestore Knowledge Base"),
+            "department": None,
+            "sectional_committee": None,
+            "lab_name": None,
+            "lab_code": None,
+            "product": None,
+            "clause": None,
+            "testing_charge": None,
+            "testing_charge_raw": None,
+            "effective_date": None,
+            "remark": None,
+            "designation": None,
+            "qco_document_id": None,
+            "relationship": None,
+            "order_number": None,
+            "order_date": None,
+            "scheme": None,
+            "mandatory_qco": None,
+            "status": None,
+            "confidence": item.get("similarity"),
+            "evidence": item.get("text"),
+            "document_url": item.get("document_url"),
+            "source_url": item.get("source_url"),
+            "distance": item.get("distance"),
+        })
+
+    for item in hybrid_results.get("core", []):
+        sources.append({
+            "standard_number": None,
+            "part": None,
+            "year": None,
+            "title": item.get("title"),
+            "source": "BIS core knowledge",
+            "department": None,
+            "sectional_committee": None,
+            "lab_name": None,
+            "lab_code": None,
+            "product": None,
+            "clause": None,
+            "testing_charge": None,
+            "testing_charge_raw": None,
+            "effective_date": None,
+            "remark": None,
+            "designation": None,
+            "qco_document_id": None,
+            "relationship": None,
+            "order_number": None,
+            "order_date": None,
+            "scheme": None,
+            "mandatory_qco": None,
+            "status": None,
+            "confidence": item.get("core_score"),
+            "evidence": item.get("text"),
+            "document_url": None,
+            "source_url": item.get("source_url"),
+            "distance": None,
+        })
+
+    structured_sources = build_source_records(hybrid_results)
+    sections = build_structured_sections(hybrid_results, query)
+
     return {
         "answer": answer,
-        "sources": sources
+        "sources": structured_sources or sources,
+        "sections": sections,
+        "evidence_status": "supported" if structured_sources else "insufficient",
+        "followups": build_followups(hybrid_results),
     }

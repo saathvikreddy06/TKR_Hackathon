@@ -1,0 +1,53 @@
+{
+    "source": "BIS official public information sources",
+    "records": [
+        {
+            "id": "bis",
+            "title": "Bureau of Indian Standards (BIS)",
+            "text": "The Bureau of Indian Standards (BIS) is India's national standards body. StandIQ uses BIS official standards, certification, hallmarking, laboratory, and Quality Control Order records as its evidence sources.",
+            "source_url": "https://www.bis.gov.in/"
+        },
+        {
+            "id": "indian-standards",
+            "title": "Indian Standards",
+            "text": "An Indian Standard is a standard published through the Bureau of Indian Standards standards system. A standard record identifies the standard number, title, publication information, and other catalogue metadata.",
+            "source_url": "https://www.bis.gov.in/know-your-standard/?lang=en"
+        },
+        {
+            "id": "product-certification",
+            "title": "BIS Product Certification",
+            "text": "BIS Product Certification is the BIS conformity-assessment and licensing area for products covered by applicable BIS certification requirements. The applicable product standard and scheme must be checked from the relevant official BIS record.",
+            "source_url": "https://www.bis.gov.in/product-certification/"
+        },
+        {
+            "id": "hallmarking",
+            "title": "BIS Hallmarking",
+            "text": "BIS Hallmarking is the BIS system for hallmarking-related information and services. Product-specific requirements must be checked against the applicable official BIS hallmarking record.",
+            "source_url": "https://www.bis.gov.in/hallmarking/"
+        },
+        {
+            "id": "qco",
+            "title": "Quality Control Orders (QCOs)",
+            "text": "A Quality Control Order (QCO) is a regulatory reference that may identify Indian Standards and applicable enforcement information. StandIQ reports a QCO relationship only when it is present in the retrieved BIS QCO evidence.",
+            "source_url": "https://www.bis.gov.in/product-certification/products-under-compulsory-certification/?lang=en"
+        },
+        {
+            "id": "conformity-assessment",
+            "title": "BIS Conformity Assessment",
+            "text": "BIS conformity assessment information covers the official routes and requirements used to assess conformity with applicable Indian Standards. The applicable scheme and requirement depend on the product and the relevant BIS record.",
+            "source_url": "https://www.bis.gov.in/conformity-assessment/"
+        },
+        {
+            "id": "bis-laboratories",
+            "title": "BIS Laboratories",
+            "text": "BIS laboratory records identify laboratory facilities and their published testing capabilities. A laboratory capability is not by itself a certification requirement; the specific standard and testing scope must be checked in the BIS LIMS record.",
+            "source_url": "https://lims.bis.gov.in/"
+        },
+        {
+            "id": "licensing",
+            "title": "BIS Licensing",
+            "text": "BIS licensing information concerns licences and certification activity under applicable BIS product certification schemes. Licence requirements, fees, and conditions must be taken from the applicable official BIS record rather than inferred.",
+            "source_url": "https://www.bis.gov.in/product-certification/"
+        }
+    ]
+}

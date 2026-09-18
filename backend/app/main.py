@@ -334,6 +334,9 @@ def search(
             "query": request.query,
             "answer": scope_response["answer"],
             "sources": [],
+            "sections": [],
+            "evidence_status": "out_of_scope",
+            "followups": [],
             "in_scope": False,
             **response_language
         }
@@ -392,6 +395,9 @@ def search(
         "query": request.query,
         "answer": generated["answer"],
         "sources": generated["sources"],
+        "sections": generated.get("sections", []),
+        "evidence_status": generated.get("evidence_status", "insufficient"),
+        "followups": generated.get("followups", []),
         "in_scope": True,
         **response_language
     }
