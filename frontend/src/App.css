@@ -3372,6 +3372,17 @@ footer p {
     font: 10px 'DM Mono';
 }
 
+.source-type-badge {
+    flex: 0 0 auto;
+    padding: 4px 6px;
+    border: 1px solid #e4b59b;
+    border-radius: 4px;
+    color: #a95732;
+    background: #fff4ed;
+    font: 9px 'DM Mono';
+    text-transform: uppercase;
+}
+
 .source-item span {
     display: flex;
     flex: 1;
@@ -3387,6 +3398,88 @@ footer p {
 .source-item a {
     color: #d77243;
     font-size: 10px;
+}
+
+.source-evidence {
+    flex: 1 1 100%;
+    color: #718077;
+    font-size: 10px;
+}
+
+.source-evidence summary {
+    color: #a95732;
+    cursor: pointer;
+}
+
+.source-evidence p {
+    margin: 6px 0 0;
+    line-height: 1.5;
+}
+
+.structured-sections {
+    display: grid;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.structured-section {
+    padding: 12px 14px;
+    border-left: 3px solid #d77243;
+    background: #fffdf8;
+}
+
+.structured-section h3 {
+    margin: 0 0 7px;
+    color: #203329;
+    font-size: 13px;
+}
+
+.structured-section p,
+.structured-section ul {
+    margin: 0;
+    color: #526359;
+    font-size: 12px;
+    line-height: 1.55;
+}
+
+.structured-section ul {
+    padding-left: 17px;
+}
+
+.evidence-badge,
+.evidence-note {
+    color: #527253;
+    font-size: 10px;
+}
+
+.evidence-note {
+    margin: 8px 0 0;
+    line-height: 1.5;
+}
+
+.answer-actions,
+.followup-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 9px;
+}
+
+.answer-actions button,
+.followup-row button {
+    padding: 6px 9px;
+    border: 1px solid #d5dfd2;
+    border-radius: 5px;
+    color: #53665c;
+    background: #ffffffa8;
+    cursor: pointer;
+    font-size: 10px;
+}
+
+.answer-actions button:hover,
+.followup-row button:hover {
+    border-color: #e07949;
+    color: #a95732;
 }
 
 .consultant-link {
@@ -5307,6 +5400,7 @@ footer p {
 }
 
 @media (max-width: 760px) {
+
     .setup-form-section,
     .consultant-dashboard-profile {
         grid-template-columns: 1fr;

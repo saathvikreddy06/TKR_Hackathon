@@ -45,11 +45,6 @@ STANDARDS_PATH = os.path.join(
     "bis_standards_master.json"
 )
 
-CORE_KNOWLEDGE_PATH = os.path.join(
-    DATA_DIR,
-    "core_bis_knowledge.json"
-)
-
 QCO_LINKS_PATH = os.path.join(
     NORMALIZED_DIR,
     "standards",
@@ -88,21 +83,25 @@ FIRESTORE_VECTOR_DIMENSIONS = 384
 
 def extract_is_numbers(query):
 
-    pattern = (
-        r"\bI(?:S|\.S\.?)\s*(?:No\.?\s*)?\d{3,6}"
-        r"(?:\s*\(\s*Part\s*[^):]+\))?"
-        r"(?:\s*(?:[:/]\s*|\(\s*)\d{4}\s*\)?)?"
-    )
+    patterns = [
+        r"\bIS\s*(?:No\.?\s*)?(\d{3,6})\b",
+        r"\bI\.S\.?\s*(?:No\.?\s*)?(\d{3,6})\b",
+    ]
 
     numbers = []
 
-    for match in re.findall(pattern, query or "", re.IGNORECASE):
-        value = re.sub(r"\s+", " ", match).strip()
+    for pattern in patterns:
 
-        if value and value.upper() not in {
-            item.upper() for item in numbers
-        }:
-            numbers.append(value)
+        for match in re.findall(
+            pattern,
+            query,
+            re.IGNORECASE
+        ):
+
+            value = str(match).strip()
+
+            if value and value not in numbers:
+                numbers.append(value)
 
     return numbers
 
@@ -266,14 +265,6 @@ def normalize_search_text(value):
     return text
 
 
-SEARCH_STOPWORDS = {
-    "a", "an", "and", "are", "according", "about", "can", "does",
-    "for", "have", "is", "me", "of", "on", "product", "products",
-    "required", "relevant", "standard", "standards", "tell", "the",
-    "these", "to", "what", "which", "with",
-}
-
-
 # ============================================================
 # HYBRID RETRIEVER
 # ============================================================
@@ -288,7 +279,6 @@ class HybridRetriever:
         self.standards = []
         self.standards_by_number = {}
         self.standards_by_title = []
-        self.core_knowledge = []
 
         self.qco_links = []
         self.qco_by_number = defaultdict(list)
@@ -299,7 +289,6 @@ class HybridRetriever:
         self._load_standards()
         self._load_qco()
         self._load_lims_tests()
-        self._load_core_knowledge()
 
     # ========================================================
     # LOAD SEMANTIC EMBEDDINGS
@@ -433,13 +422,9 @@ class HybridRetriever:
                 self.standards_by_number.setdefault(
                     normalized,
                     []
-                ).append(item)
-
-                for alias in self._standard_number_keys(number):
-                    self.standards_by_number.setdefault(
-                        alias,
-                        []
-                    ).append(item)
+                ).append(
+                    item
+                )
 
             self.standards_by_title = []
 
@@ -597,8 +582,17 @@ class HybridRetriever:
                 if not number:
                     continue
 
-                for alias in self._standard_number_keys(number):
-                    self.qco_by_number[alias].append(item)
+                normalized = (
+                    self._normalize_is_number(
+                        number
+                    )
+                )
+
+                self.qco_by_number[
+                    normalized
+                ].append(
+                    item
+                )
 
         except Exception as e:
 
@@ -610,32 +604,6 @@ class HybridRetriever:
             traceback.print_exc()
 
             self.qco_links = []
-
-    # ========================================================
-    # LOAD CORE BIS KNOWLEDGE
-    # ========================================================
-
-    def _load_core_knowledge(self):
-
-        if not os.path.isfile(CORE_KNOWLEDGE_PATH):
-            print("Core BIS knowledge file not found")
-            return
-
-        try:
-            with open(CORE_KNOWLEDGE_PATH, "r", encoding="utf-8") as file:
-                data = json.load(file)
-
-            records = data.get("records", []) if isinstance(data, dict) else data
-            self.core_knowledge = [
-                dict(item)
-                for item in records
-                if isinstance(item, dict)
-            ]
-            print("Loaded BIS core knowledge records:", len(self.core_knowledge))
-        except Exception as exc:
-            print("Core BIS knowledge loading error:", repr(exc))
-            traceback.print_exc()
-            self.core_knowledge = []
 
     # ========================================================
     # LOAD LIMS TESTS
@@ -690,38 +658,6 @@ class HybridRetriever:
             text = text[2:]
 
         return text
-
-    @classmethod
-    def _standard_number_keys(cls, value):
-
-        text = str(value or "").upper().strip()
-        text = text.replace("INDIAN STANDARD", "IS")
-        text = re.sub(r"\s+", " ", text)
-
-        match = re.search(
-            r"\bIS\s*[-:]?\s*(\d{1,6})"
-            r"(?:\s*\(\s*PART\s*([^):]+)\))?"
-            r"(?:\s*(?:[:/.-]|\s|\()\s*(\d{4})\s*\)?)?",
-            text,
-            re.IGNORECASE,
-        )
-
-        if not match:
-            normalized = cls._normalize_is_number(text)
-            return {normalized} if normalized else set()
-
-        number, part, year = match.groups()
-        base = f"IS{number}"
-
-        if part:
-            base += "PART" + re.sub(r"[^A-Z0-9]", "", part.upper())
-
-        keys = {
-            cls._normalize_is_number(base),
-            cls._normalize_is_number(f"{base}{year or ''}"),
-        }
-
-        return {key for key in keys if key}
 
     # ========================================================
     # FIREBASE SEMANTIC SEARCH
@@ -1097,12 +1033,16 @@ class HybridRetriever:
 
         for number in is_numbers:
 
-            candidates = []
+            normalized = (
+                self._normalize_is_number(
+                    number
+                )
+            )
 
-            for alias in self._standard_number_keys(number):
-                candidates.extend(self.standards_by_number.get(alias, []))
-
-            for item in candidates:
+            for item in self.standards_by_number.get(
+                normalized,
+                []
+            ):
 
                 result = dict(
                     item
@@ -1139,11 +1079,9 @@ class HybridRetriever:
         if not normalized_query:
             return []
 
-        query_tokens = {
-            token
-            for token in normalized_query.split()
-            if token not in SEARCH_STOPWORDS and len(token) > 2
-        }
+        query_tokens = set(
+            normalized_query.split()
+        )
 
         scored = []
 
@@ -1218,12 +1156,16 @@ class HybridRetriever:
 
         for number in is_numbers:
 
-            candidates = []
+            normalized = (
+                self._normalize_is_number(
+                    number
+                )
+            )
 
-            for alias in self._standard_number_keys(number):
-                candidates.extend(self.qco_by_number.get(alias, []))
-
-            for item in candidates:
+            for item in self.qco_by_number.get(
+                normalized,
+                []
+            ):
 
                 result = dict(
                     item
@@ -1254,9 +1196,12 @@ class HybridRetriever:
         if not is_numbers:
             return []
 
-        wanted = set()
-        for number in is_numbers:
-            wanted.update(self._standard_number_keys(number))
+        wanted = {
+            self._normalize_is_number(
+                number
+            )
+            for number in is_numbers
+        }
 
         results = []
 
@@ -1280,9 +1225,13 @@ class HybridRetriever:
             if not number:
                 continue
 
-            if not wanted.intersection(
-                self._standard_number_keys(number)
-            ):
+            normalized = (
+                self._normalize_is_number(
+                    number
+                )
+            )
+
+            if normalized not in wanted:
                 continue
 
             lab_name = (
@@ -1326,68 +1275,6 @@ class HybridRetriever:
             results
         )
 
-    def lab_keyword_search(self, query, limit=20):
-
-        query_tokens = {
-            token
-            for token in normalize_search_text(query).split()
-            if token not in SEARCH_STOPWORDS and len(token) > 2
-        }
-
-        if not query_tokens:
-            return []
-
-        domain_terms = {
-            "cement", "steel", "spring", "washer", "washers", "concrete",
-            "gold", "helmet", "cable", "water", "toy", "toys", "motor",
-            "transformer", "pipe", "tyre", "tyres",
-        }
-        required_terms = query_tokens.intersection(domain_terms)
-
-        results = []
-        seen = set()
-
-        for item in self._iter_lims_tests():
-            searchable = normalize_search_text(
-                " ".join(
-                    str(item.get(key) or "")
-                    for key in (
-                        "indian_standard_no",
-                        "product",
-                        "designation",
-                        "lab_name",
-                    )
-                )
-            )
-
-            if not query_tokens.intersection(searchable.split()):
-                continue
-
-            searchable_tokens = set(searchable.split())
-            if required_terms and not required_terms.issubset(searchable_tokens):
-                continue
-
-            key = (
-                item.get("lab_code"),
-                item.get("lab_name"),
-                item.get("indian_standard_no"),
-                item.get("product"),
-            )
-
-            if key in seen:
-                continue
-
-            seen.add(key)
-            result = dict(item)
-            result["standard_number"] = item.get("indian_standard_no")
-            result["match_type"] = "lims_lab"
-            results.append(result)
-
-            if len(results) >= limit:
-                break
-
-        return results
-
     # ========================================================
     # TEST SEARCH
     # ========================================================
@@ -1401,9 +1288,12 @@ class HybridRetriever:
         if not is_numbers:
             return []
 
-        wanted = set()
-        for number in is_numbers:
-            wanted.update(self._standard_number_keys(number))
+        wanted = {
+            self._normalize_is_number(
+                number
+            )
+            for number in is_numbers
+        }
 
         results = []
 
@@ -1427,9 +1317,13 @@ class HybridRetriever:
             if not number:
                 continue
 
-            if not wanted.intersection(
-                self._standard_number_keys(number)
-            ):
+            normalized = (
+                self._normalize_is_number(
+                    number
+                )
+            )
+
+            if normalized not in wanted:
                 continue
 
             result = dict(
@@ -1457,48 +1351,6 @@ class HybridRetriever:
         return self._deduplicate_results(
             results
         )
-
-    def core_search(self, query, limit=4):
-
-        query_tokens = {
-            token
-            for token in normalize_search_text(query).split()
-            if len(token) > 2
-        }
-
-        scored = []
-
-        core_keywords = {
-            "bis": {"bis", "bureau"},
-            "indian-standards": {"indian", "standard", "standards"},
-            "product-certification": {"product", "certification"},
-            "hallmarking": {"hallmarking", "hallmark"},
-            "qco": {"qco", "quality", "control", "order", "orders"},
-            "conformity-assessment": {"conformity", "assessment"},
-            "bis-laboratories": {"laboratories", "laboratory", "labs", "lab", "capabilities"},
-            "licensing": {"licensing", "licence", "license"},
-        }
-
-        for item in self.core_knowledge:
-            keywords = core_keywords.get(item.get("id"), set())
-            overlap = query_tokens.intersection(keywords)
-
-            if item.get("id") == "bis" and "bis" in query_tokens:
-                overlap = {"bis"}
-
-            if not overlap:
-                continue
-
-            result = dict(item)
-            result["match_type"] = "core_knowledge"
-            result["core_score"] = len(overlap) / max(len(query_tokens), 1)
-            scored.append(result)
-
-        scored.sort(
-            key=lambda item: item.get("core_score", 0),
-            reverse=True,
-        )
-        return scored[:limit]
 
     # ========================================================
     # DEDUPLICATION
@@ -1562,11 +1414,10 @@ class HybridRetriever:
         )
 
         semantic = []
-        exact = self.exact_standards(is_numbers)
+        exact = []
         qco = []
         labs = []
         tests = []
-        core = self.core_search(query)
 
         print()
         print(
@@ -1585,42 +1436,102 @@ class HybridRetriever:
             is_numbers
         )
 
-        if intent == "laboratory" and not is_numbers:
-            labs = self.lab_keyword_search(query, lab_limit)
+        # ----------------------------------------------------
+        # LABORATORY
+        # ----------------------------------------------------
 
-        semantic_error = None
-        try:
-            semantic = self.semantic_search(query, semantic_limit)
-        except Exception as exc:
-            semantic_error = f"{type(exc).__name__}: {exc}"
-            print(
-                "Semantic retrieval unavailable; using deterministic evidence:",
-                semantic_error,
+        if intent == "laboratory":
+
+            exact = self.exact_standards(
+                is_numbers
             )
 
-        if intent in {"standard", "general"} and not is_numbers:
-            exact.extend(self.standard_keyword_search(query, semantic_limit))
+            labs = self.lab_search(
+                is_numbers,
+                lab_limit
+            )
 
-        related_numbers = list(is_numbers)
-        if not related_numbers:
-            for item in exact[:semantic_limit]:
-                number = item.get("standard_number")
-                if number and number not in related_numbers:
-                    related_numbers.append(number)
+        # ----------------------------------------------------
+        # QCO
+        # ----------------------------------------------------
 
-        if related_numbers:
-            qco = self.qco_search(related_numbers)
-            labs = self.lab_search(related_numbers, lab_limit)
-            tests = self.test_search(related_numbers, 50)
+        elif intent == "qco":
 
-        if intent == "laboratory" and not is_numbers:
-            labs = self.lab_keyword_search(query, lab_limit)
+            exact = self.exact_standards(
+                is_numbers
+            )
 
-        exact = self._deduplicate_results(exact)
-        qco = self._deduplicate_results(qco)
-        labs = self._deduplicate_results(labs)
-        tests = self._deduplicate_results(tests)
-        core = self._deduplicate_results(core)
+            qco = self.qco_search(
+                is_numbers
+            )
+
+        # ----------------------------------------------------
+        # TESTING
+        # ----------------------------------------------------
+
+        elif intent == "testing":
+
+            exact = self.exact_standards(
+                is_numbers
+            )
+
+            tests = self.test_search(
+                is_numbers,
+                50
+            )
+
+        # ----------------------------------------------------
+        # STANDARD
+        # ----------------------------------------------------
+
+        elif intent == "standard":
+
+            semantic = self.semantic_search(
+                query,
+                semantic_limit
+            )
+
+            exact = self.exact_standards(
+                is_numbers
+            )
+
+            keyword_results = (
+                self.standard_keyword_search(
+                    query,
+                    semantic_limit
+                )
+            )
+
+            exact.extend(
+                keyword_results
+            )
+
+            exact = (
+                self._deduplicate_results(
+                    exact
+                )
+            )
+
+        # ----------------------------------------------------
+        # GENERAL
+        # ----------------------------------------------------
+
+        else:
+
+            semantic = self.semantic_search(
+                query,
+                semantic_limit
+            )
+
+            exact = self.exact_standards(
+                is_numbers
+            )
+
+            if is_numbers:
+
+                qco = self.qco_search(
+                    is_numbers
+                )
 
         result = {
             "query": query,
@@ -1631,8 +1542,6 @@ class HybridRetriever:
             "qco": qco,
             "labs": labs,
             "tests": tests,
-            "core": core,
-            "semantic_error": semantic_error,
         }
 
         print(
@@ -1658,11 +1567,6 @@ class HybridRetriever:
         print(
             "Test results:",
             len(tests)
-        )
-
-        print(
-            "Core results:",
-            len(core)
         )
 
         print(
@@ -1718,7 +1622,6 @@ def search(
             "qco": [],
             "labs": [],
             "tests": [],
-            "core": [],
         }
 
     return hybrid_retriever.search(

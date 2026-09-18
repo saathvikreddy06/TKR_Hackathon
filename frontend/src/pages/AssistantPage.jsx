@@ -33,6 +33,11 @@ const UI_TRANSLATIONS = {
         viewSource: 'View source',
         talkToConsultant: 'Talk to a consultant',
         responseLanguage: 'Response language'
+        , basedOn: 'Based on retrieved BIS data'
+        , evidenceIncomplete: 'Some information could not be verified from the available BIS records.'
+        , copyAnswer: 'Copy answer'
+        , copied: 'Copied'
+        , evidence: 'Evidence'
     },
     te: {
         sources: 'మూలాలు మరియు ఆధారాలు',
@@ -53,23 +58,27 @@ const UI_TRANSLATIONS = {
         viewSource: 'स्रोत देखें',
         talkToConsultant: 'सलाहकार से बात करें',
         responseLanguage: 'उत्तर की भाषा'
+        , basedOn: 'प्राप्त BIS डेटा पर आधारित'
+        , evidenceIncomplete: 'कुछ जानकारी उपलब्ध BIS रिकॉर्ड से सत्यापित नहीं हो सकी।'
+        , copyAnswer: 'उत्तर कॉपी करें'
+        , copied: 'कॉपी किया गया'
+        , evidence: 'प्रमाण'
     }
 }
 
 function getOfficialSourceUrl(source) {
-    if (source.document_url) return source.document_url
-    if (source.source_url) return source.source_url
-
-    const searchTerm = [source.standard_number, source.title]
-        .filter(Boolean)
-        .join(' ')
-
-    if (!searchTerm) return null
-
-    return `https://standards.bis.gov.in/website/know-your-standards?search=${encodeURIComponent(searchTerm)}`
+    return source.url || source.document_url || source.source_url || null
 }
 
-function AnswerEvidence({ message, language }) {
+function copyText(value, setCopied) {
+    if (!value || !navigator.clipboard) return
+    navigator.clipboard.writeText(value).then(() => {
+        setCopied(true)
+        window.setTimeout(() => setCopied(false), 1600)
+    })
+}
+
+function StructuredResponse({ message, language, onFollowup }) {
     if (!message.confidence) return null
 
     const t = UI_TRANSLATIONS[language] || UI_TRANSLATIONS.en
@@ -93,13 +102,16 @@ function AnswerEvidence({ message, language }) {
         uniqueSources.push(source)
     }
 
+    const [copied, setCopied] = useState(false)
+    const sections = message.sections || []
+
     return (
         <>
             <div className="answer-meta">
                 <span
                     className={`confidence-badge ${message.confidence === 'High'
-                            ? 'confidence-high'
-                            : 'confidence-low'
+                        ? 'confidence-high'
+                        : 'confidence-low'
                         }`}
                 >
                     {message.confidence}
@@ -116,7 +128,33 @@ function AnswerEvidence({ message, language }) {
                         {message.verdict}
                     </span>
                 )}
+                {message.evidenceStatus === 'supported' && (
+                    <span className="evidence-badge">{t.basedOn}</span>
+                )}
             </div>
+
+            {message.evidenceStatus === 'insufficient' && (
+                <p className="evidence-note">{t.evidenceIncomplete}</p>
+            )}
+
+            <div className="answer-actions">
+                <button type="button" onClick={() => copyText(message.text, setCopied)}>
+                    {copied ? t.copied : t.copyAnswer}
+                </button>
+            </div>
+
+            {sections.length > 0 && (
+                <div className="structured-sections">
+                    {sections.map((section) => (
+                        <section className="structured-section" key={section.title}>
+                            <h3>{section.title}</h3>
+                            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                {section.content}
+                            </ReactMarkdown>
+                        </section>
+                    ))}
+                </div>
+            )}
 
             {uniqueSources.length > 0 && (
                 <details className="source-panel">
@@ -142,75 +180,32 @@ function AnswerEvidence({ message, language }) {
                             .filter(Boolean)
                             .join(' ')
 
-                        const hasQCOStatus =
-                            typeof source.mandatory_qco === 'boolean'
-
+                        const sourceText = source.evidence || source.title || source.identifier || ''
                         return (
                             <div
                                 className="source-item"
                                 key={`${standardLabel}-${source.lab_code || ''}-${source.qco_document_id || ''}-${index}`}
                             >
-                                <strong>
-                                    {standardLabel}
-                                </strong>
+                                <span className="source-type-badge">{source.type || 'source'}</span>
 
                                 <span>
-                                    {language === 'en' &&
-                                        source.title && (
-                                            <span>
-                                                {source.title}
-                                            </span>
-                                        )}
+                                    <strong>{standardLabel || source.title || source.identifier || 'BIS record'}</strong>
+                                    {source.title && standardLabel && <span>{source.title}</span>}
 
                                     <small>
-                                        {source.scheme && (
-                                            <>
-                                                {t.certification}:{' '}
-                                                {source.scheme}
-                                            </>
-                                        )}
-
-                                        {hasQCOStatus && (
-                                            <>
-                                                {source.scheme
-                                                    ? ' • '
-                                                    : ''}
-                                                {t.qco}:{' '}
-                                                {source.mandatory_qco
-                                                    ? t.yes
-                                                    : t.no}
-                                            </>
-                                        )}
-
-                                        {!hasQCOStatus &&
-                                            source.qco_document_id && (
-                                                <>
-                                                    {source.scheme
-                                                        ? ' • '
-                                                        : ''}
-                                                    {t.qco}:{' '}
-                                                    {source.qco_document_id}
-                                                </>
-                                            )}
-
-                                        {source.relationship && (
-                                            <>
-                                                {' • '}
-                                                {source.relationship}
-                                            </>
-                                        )}
-
-                                        {source.lab_name && (
-                                            <>
-                                                {' • '}
-                                                {source.lab_name}
-                                                {source.lab_code
-                                                    ? ` (${source.lab_code})`
-                                                    : ''}
-                                            </>
-                                        )}
+                                        {source.source && <>{source.source} </>}
+                                        {source.lab_name && <>• {source.lab_name} </>}
+                                        {source.lab_code && <>• Lab {source.lab_code} </>}
+                                        {source.qco_identifier && <>• QCO {source.qco_identifier}</>}
                                     </small>
                                 </span>
+
+                                {sourceText && (
+                                    <details className="source-evidence">
+                                        <summary>{t.evidence}</summary>
+                                        <p>{sourceText}</p>
+                                    </details>
+                                )}
 
                                 {getOfficialSourceUrl(source) && (
                                     <a
@@ -226,6 +221,16 @@ function AnswerEvidence({ message, language }) {
                         )
                     })}
                 </details>
+            )}
+
+            {message.followups?.length > 0 && (
+                <div className="followup-row">
+                    {message.followups.map((followup) => (
+                        <button type="button" key={followup.query} onClick={() => onFollowup(followup.query)}>
+                            {followup.label}
+                        </button>
+                    ))}
+                </div>
             )}
 
             {message.confidence === 'Insufficient evidence' && (
@@ -317,6 +322,9 @@ function AssistantPage({ language = 'en', onLanguageChange }) {
                     text: data.answer,
                     confidence: data.in_scope ? 'High' : 'Insufficient evidence',
                     sources: data.in_scope ? (data.sources || []) : [],
+                    sections: data.sections || [],
+                    evidenceStatus: data.evidence_status,
+                    followups: data.followups || [],
                     languageName: data.language_name
                 }
             ])
@@ -330,7 +338,9 @@ function AssistantPage({ language = 'en', onLanguageChange }) {
                     text: 'Sorry, I could not connect to the StandIQ backend. Please make sure the backend server is running and try again.',
                     confidence: 'Insufficient evidence',
                     verdict: 'Backend connection error',
-                    sources: []
+                    sources: [],
+                    sections: [],
+                    followups: []
                 }
             ])
         } finally {
@@ -366,7 +376,7 @@ function AssistantPage({ language = 'en', onLanguageChange }) {
                 <ReactMarkdown remarkPlugins={[remarkGfm]}>
                     {chatMessage.text}
                 </ReactMarkdown>
-            </div><AnswerEvidence message={chatMessage} language={language} /></div>)}{isThinking && <div className="assistant-message assistant thinking-message"><span className="message-label"><span className="assistant-avatar">*</span> standIQ</span><p className="typing-indicator" aria-label="Assistant is thinking"><i></i><i></i><i></i></p></div>}</div>
+            </div><StructuredResponse message={chatMessage} language={language} onFollowup={setMessage} /></div>)}{isThinking && <div className="assistant-message assistant thinking-message"><span className="message-label"><span className="assistant-avatar">*</span> standIQ</span><p className="typing-indicator" aria-label="Assistant is thinking"><i></i><i></i><i></i></p></div>}</div>
             <div className="suggestion-row"><button type="button" onClick={() => setMessage('Which BIS standard applies to my product?')}>Find a product standard</button><button type="button" onClick={() => setMessage('How do I apply for BIS certification?')}>Understand certification</button><button type="button" onClick={() => setMessage('How does hallmarking work?')}>Learn about hallmarking</button></div>
             <form className="assistant-composer" onSubmit={sendMessage}><textarea value={message} onChange={(event) => setMessage(event.target.value)} onKeyDown={handleComposerKeyDown} placeholder="Ask anything about BIS standards..." aria-label="Ask the BIS assistant" rows="1" /><div className="composer-actions"><span className="voice-hint">{voiceSupported ? (isListening ? 'Listening...' : 'Text or voice input') : 'Voice input is not supported in this browser'}</span><button className={`voice-button ${isListening ? 'listening' : ''}`} type="button" onClick={toggleListening} disabled={!voiceSupported} aria-label={isListening ? 'Stop voice input' : 'Start voice input'}><span className="mic-icon" aria-hidden="true"></span></button><button className="send-button" type="submit" aria-label="Send message">&uarr;</button></div></form>
         </div>
