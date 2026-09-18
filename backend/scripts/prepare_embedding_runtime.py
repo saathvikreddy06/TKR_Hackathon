@@ -7,6 +7,7 @@ os.environ.setdefault("MKL_NUM_THREADS", "1")
 os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
 
 import torch
+from onnxruntime import ExecutionMode, InferenceSession, SessionOptions
 from onnxruntime.quantization import QuantType, quantize_dynamic
 from sentence_transformers import SentenceTransformer
 
@@ -104,13 +105,55 @@ def main():
         per_channel=True,
         reduce_range=True,
     )
+
+    if not UNQUANTIZED_PATH.is_file():
+        raise RuntimeError("ONNX model conversion did not produce model.onnx.")
+
     UNQUANTIZED_PATH.unlink()
 
     if not QUANTIZED_PATH.is_file():
         raise RuntimeError("ONNX INT8 model conversion did not produce an output.")
 
+    session_options = SessionOptions()
+    session_options.intra_op_num_threads = 1
+    session_options.inter_op_num_threads = 1
+    session_options.execution_mode = ExecutionMode.ORT_SEQUENTIAL
+    session_options.enable_cpu_mem_arena = False
+    session_options.add_session_config_entry(
+        "session.disable_prepacking",
+        "1",
+    )
+
+    session = InferenceSession(
+        str(QUANTIZED_PATH),
+        sess_options=session_options,
+        providers=["CPUExecutionProvider"],
+    )
+
+    output = session.run(
+        None,
+        {
+            "input_ids": inputs[0].numpy(),
+            "attention_mask": inputs[1].numpy(),
+            "token_type_ids": inputs[2].numpy(),
+        },
+    )[0]
+
+    attention_mask = inputs[1].numpy().astype("float32")[..., None]
+    pooled = (output * attention_mask).sum(axis=1)
+    pooled /= attention_mask.sum(axis=1).clip(min=1e-9)
+    norm = (pooled * pooled).sum(axis=1, keepdims=True) ** 0.5
+    embedding = pooled / norm.clip(min=1e-12)
+    dimensions = int(embedding.shape[-1])
+
+    if dimensions != EXPECTED_DIMENSIONS:
+        raise RuntimeError(
+            "ONNX inference embedding dimension mismatch: "
+            f"expected {EXPECTED_DIMENSIONS}, got {dimensions}."
+        )
+
     print("Prepared ONNX Runtime CPU INT8 model:", QUANTIZED_PATH)
-    print("Embedding dimensions:", EXPECTED_DIMENSIONS)
+    print("Verified ONNX inference embedding dimensions:", dimensions)
 
 
 if __name__ == "__main__":
