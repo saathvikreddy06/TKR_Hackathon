@@ -1,9 +1,15 @@
 import { auth } from '../firebase'
 
-const API_BASE_URL =
-    import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
+const configuredApiBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim()
+const API_BASE_URL = configuredApiBaseUrl || (
+    import.meta.env.DEV ? 'http://127.0.0.1:8000' : ''
+)
 
 export const apiRequest = async (path, options = {}) => {
+    if (!API_BASE_URL) {
+        throw new Error('The production API URL is not configured.')
+    }
+
     const headers = new Headers(options.headers || {})
     headers.set('Accept', 'application/json')
 
@@ -15,10 +21,24 @@ export const apiRequest = async (path, options = {}) => {
         headers.set('Authorization', `Bearer ${await auth.currentUser.getIdToken()}`)
     }
 
-    const response = await fetch(`${API_BASE_URL}${path}`, {
-        ...options,
-        headers
-    })
+    const controller = new AbortController()
+    const timeout = window.setTimeout(() => controller.abort(), 30000)
+
+    let response
+    try {
+        response = await fetch(`${API_BASE_URL}${path}`, {
+            ...options,
+            headers,
+            signal: options.signal || controller.signal
+        })
+    } catch (error) {
+        if (error.name === 'AbortError') {
+            throw new Error('The StandIQ backend request timed out.')
+        }
+        throw new Error('The StandIQ backend could not be reached.')
+    } finally {
+        window.clearTimeout(timeout)
+    }
 
     const data = await response.json().catch(() => ({}))
 

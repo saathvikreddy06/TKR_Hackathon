@@ -8,7 +8,7 @@ const initialMessage = {
     from: 'assistant',
     text: 'Hello. I can help you find a standard, understand certification, or locate a BIS service.',
     confidence: 'High',
-    sources: [{ number: 'BIS source registry', title: 'Assistant scope and service directory', clause: 'Public service catalogue' }],
+    sources: [],
 }
 
 const initialMessageByLanguage = {
@@ -78,10 +78,86 @@ function copyText(value, setCopied) {
     })
 }
 
-function StructuredResponse({ message, language, onFollowup }) {
-    if (!message.confidence) return null
+function buildCategorySections(message) {
+    const sections = []
 
+    if (message.knowledge?.length > 0) {
+        sections.push({
+            type: 'overview',
+            title: 'Overview',
+            content: message.knowledge
+                .slice(0, 3)
+                .map((item) => item.text || item.title || item.description)
+                .filter(Boolean)
+                .join('\n\n')
+        })
+    }
+
+    if (message.standards?.length > 0) {
+        sections.push({
+            type: 'standards',
+            title: 'Relevant Standards',
+            items: message.standards.slice(0, 12).map((item) => ({
+                standard_number: item.standard_number || item.is_number || item.number,
+                title: item.title || item.name || 'BIS standard',
+                description: item.description || item.summary || item.text || 'Retrieved BIS standard record.',
+                evidence_id: item.document_id || item.chunk_id || item.standard_id
+            }))
+        })
+    }
+
+    if (message.tests?.length > 0) {
+        sections.push({
+            type: 'testing',
+            title: 'Testing & Requirements',
+            content: 'Testing evidence retrieved from BIS LIMS records.',
+            tests: message.tests.slice(0, 50).map((item) => ({
+                standard_number: item.standard_number || item.indian_standard_no,
+                product: item.product || item.designation || 'BIS test record',
+                designation: item.designation,
+                lab_name: item.lab_name,
+                lab_code: item.lab_code,
+                evidence: item.clause_raw || item.testing_charge_raw || item.remark || 'Verified BIS LIMS test relationship.'
+            }))
+        })
+    }
+
+    if (message.laboratories?.length > 0) {
+        sections.push({
+            type: 'laboratories',
+            title: 'BIS Laboratories',
+            content: 'Laboratories linked through verified BIS LIMS relationships.',
+            labs: message.laboratories.slice(0, 20).map((item) => ({
+                lab_name: item.lab_name,
+                lab_code: item.lab_code,
+                capability: item.capability || item.product || item.relevant_test,
+                standard_number: item.standard_number || item.indian_standard_no
+            }))
+        })
+    }
+
+    if (message.qcos?.length > 0) {
+        sections.push({
+            type: 'qco',
+            title: 'QCO / Regulatory Information',
+            content: 'QCO relationships retrieved from the BIS relationship dataset.',
+            qcos: message.qcos.slice(0, 20).map((item) => ({
+                qco_document_id: item.qco_document_id,
+                relationship: item.relationship,
+                evidence: item.evidence,
+                standard_number: item.standard_number
+            }))
+        })
+    }
+
+    return sections
+}
+
+function StructuredResponse({ message, language, onFollowup }) {
     const t = UI_TRANSLATIONS[language] || UI_TRANSLATIONS.en
+    const [copied, setCopied] = useState(false)
+
+    if (!message.confidence) return null
 
     const uniqueSources = []
     const seen = new Set()
@@ -102,8 +178,9 @@ function StructuredResponse({ message, language, onFollowup }) {
         uniqueSources.push(source)
     }
 
-    const [copied, setCopied] = useState(false)
-    const sections = message.sections || []
+    const sections = message.sections?.length > 0
+        ? message.sections
+        : buildCategorySections(message)
 
     const renderSectionBody = (section) => {
         if (!section) return null
@@ -432,6 +509,13 @@ function AssistantPage({ language = 'en', onLanguageChange }) {
                     confidence: data.in_scope ? 'High' : 'Insufficient evidence',
                     sources: data.in_scope ? (data.sources || []) : [],
                     sections: data.sections || [],
+                    standards: data.in_scope ? (data.standards || []) : [],
+                    tests: data.in_scope ? (data.tests || []) : [],
+                    laboratories: data.in_scope ? (data.laboratories || []) : [],
+                    qcos: data.in_scope ? (data.qcos || []) : [],
+                    knowledge: data.in_scope ? (data.knowledge || []) : [],
+                    structuredStatus: data.structured_status,
+                    qcoStatus: data.qco_status,
                     evidenceStatus: data.evidence_status || 'supported',
                     followups: data.followups || [],
                     languageName: data.language_name
@@ -481,11 +565,11 @@ function AssistantPage({ language = 'en', onLanguageChange }) {
         <div className="assistant-intro"><p className="eyebrow"><span></span> Your BIS guide</p><h1>Ask with <em>confidence.</em></h1><p>Describe a product, standard, certification question, or hallmarking need. Use text or your voice.</p><label className="assistant-language-picker" htmlFor="assistant-language">{(UI_TRANSLATIONS[language] || UI_TRANSLATIONS.en).responseLanguage}<select id="assistant-language" value={language} onChange={(event) => onLanguageChange?.(event.target.value)}>{assistantLanguages.map((option) => <option key={option.code} value={option.code}>{option.label}</option>)}</select></label></div>
         <div className="assistant-window">
             <div className="assistant-window-head"><div className="assistant-head-identity"><img src="/logo.jpeg" alt="standIQ logo" /><span><strong>standIQ assistant</strong><small>Source-backed guidance for Indian standards</small></span></div><span className="header-sparkle">*</span></div>
-            <div ref={conversationRef} className="assistant-conversation" aria-live="polite">{messages.map((chatMessage, index) => <div className={`assistant-message ${chatMessage.from}`} key={`${chatMessage.from}-${index}`}><span className="message-label">{chatMessage.from === 'assistant' ? <><span className="assistant-avatar">*</span> standIQ</> : 'You'}</span><div className="message-text">
+            <div ref={conversationRef} className="assistant-conversation" aria-live="polite">{messages.map((chatMessage, index) => <div className={`assistant-message ${chatMessage.from}`} key={`${chatMessage.from}-${index}`}><span className="message-label">{chatMessage.from === 'assistant' ? <><span className="assistant-avatar">*</span> standIQ</> : 'You'}</span>{(chatMessage.from === 'user' || (!chatMessage.sections?.length && !chatMessage.standards?.length && !chatMessage.tests?.length && !chatMessage.laboratories?.length && !chatMessage.qcos?.length)) && <div className="message-text">
                 <ReactMarkdown remarkPlugins={[remarkGfm]}>
                     {chatMessage.text}
                 </ReactMarkdown>
-            </div><StructuredResponse message={chatMessage} language={language} onFollowup={setMessage} /></div>)}{isThinking && <div className="assistant-message assistant thinking-message"><span className="message-label"><span className="assistant-avatar">*</span> standIQ</span><p className="typing-indicator" aria-label="Assistant is thinking"><i></i><i></i><i></i></p></div>}</div>
+            </div>}<StructuredResponse message={chatMessage} language={language} onFollowup={setMessage} /></div>)}{isThinking && <div className="assistant-message assistant thinking-message"><span className="message-label"><span className="assistant-avatar">*</span> standIQ</span><p className="typing-indicator" aria-label="Assistant is thinking"><i></i><i></i><i></i></p></div>}</div>
             <div className="suggestion-row"><button type="button" onClick={() => setMessage('Which BIS standard applies to my product?')}>Find a product standard</button><button type="button" onClick={() => setMessage('How do I apply for BIS certification?')}>Understand certification</button><button type="button" onClick={() => setMessage('How does hallmarking work?')}>Learn about hallmarking</button></div>
             <form className="assistant-composer" onSubmit={sendMessage}><textarea value={message} onChange={(event) => setMessage(event.target.value)} onKeyDown={handleComposerKeyDown} placeholder="Ask anything about BIS standards..." aria-label="Ask the BIS assistant" rows="1" /><div className="composer-actions"><span className="voice-hint">{voiceSupported ? (isListening ? 'Listening...' : 'Text or voice input') : 'Voice input is not supported in this browser'}</span><button className={`voice-button ${isListening ? 'listening' : ''}`} type="button" onClick={toggleListening} disabled={!voiceSupported} aria-label={isListening ? 'Stop voice input' : 'Start voice input'}><span className="mic-icon" aria-hidden="true"></span></button><button className="send-button" type="submit" aria-label="Send message">&uarr;</button></div></form>
         </div>

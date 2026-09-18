@@ -156,7 +156,7 @@ def build_standard_context(standards):
 
     lines = ["STANDARD INFORMATION:"]
 
-    for item in standards[:8]:
+    for item in standards[:5]:
         standard_number = normalize_text(
             item.get("standard_number")
             or item.get("is_number")
@@ -194,7 +194,7 @@ def build_standard_context(standards):
 
         if description:
             parts.append(
-                f"Description: {description[:1000]}"
+                f"Description: {description[:500]}"
             )
 
         if status:
@@ -365,7 +365,7 @@ def build_qco_context(qcos):
 
     lines = ["BIS QCO INFORMATION:"]
 
-    for item in qcos[:8]:
+    for item in qcos[:5]:
         standard_number = normalize_text(
             item.get("standard_number")
             or ""
@@ -594,6 +594,24 @@ def build_context(hybrid_results, query=""):
                 "BIS QCO DATA:\n"
                 + qco
             )
+
+    if intent != "testing":
+        testing = build_testing_context(
+            hybrid_results.get("tests", []),
+            query,
+        )
+        if testing:
+            sections.append(testing)
+
+    if intent != "laboratory":
+        labs = build_lab_context(hybrid_results.get("labs", []))
+        if labs:
+            sections.append(labs)
+
+    if intent != "qco":
+        qco = build_qco_context(hybrid_results.get("qco", []))
+        if qco:
+            sections.append("BIS QCO DATA:\n" + qco)
 
     return "\n\n".join(sections)
 
@@ -840,11 +858,24 @@ def _build_structured_sections(query, hybrid_results):
             "content": "Relevant laboratory information retrieved from BIS records.",
             "labs": labs,
         })
+    elif hybrid_results.get("structured_status") == "error":
+        sections.append({
+            "type": "laboratories",
+            "title": "BIS Laboratories",
+            "content": (
+                "Laboratory retrieval was unavailable because the BIS LIMS "
+                f"data source could not be read: {hybrid_results.get('structured_error')}."
+            ),
+            "labs": [],
+        })
     else:
         sections.append({
             "type": "laboratories",
             "title": "BIS Laboratories",
-            "content": "Relevant BIS laboratory information was not available in the retrieved records.",
+            "content": (
+                "No verified laboratory relationship was found in the retrieved "
+                "BIS LIMS data for the relevant standards/tests."
+            ),
             "labs": [],
         })
 
@@ -855,11 +886,24 @@ def _build_structured_sections(query, hybrid_results):
             "content": "The retrieved BIS evidence includes a QCO relationship. The relationship is described exactly as retrieved and is not inferred beyond the supporting record.",
             "qcos": qcos,
         })
+    elif hybrid_results.get("qco_status") == "error":
+        sections.append({
+            "type": "qco",
+            "title": "QCO / Mandatory Requirements",
+            "content": (
+                "QCO retrieval was unavailable because the QCO data source "
+                f"could not be read: {hybrid_results.get('qco_error')}."
+            ),
+            "qcos": [],
+        })
     else:
         sections.append({
             "type": "qco",
             "title": "QCO / Mandatory Requirements",
-            "content": "No verified QCO relationship was found in the retrieved BIS data.",
+            "content": (
+                "No verified QCO relationship was found in the retrieved data "
+                "for the relevant standards."
+            ),
             "qcos": [],
         })
 
@@ -1150,7 +1194,7 @@ Return only valid JSON.
                 structured_payload = {
                     "title": parsed.get("title") or structured_payload["title"],
                     "summary": parsed.get("summary") or structured_payload["summary"],
-                    "sections": parsed.get("sections") or structured_payload["sections"],
+                    "sections": structured_payload["sections"],
                     "followups": parsed.get("followups") or structured_payload["followups"],
                     "sources": _flatten_retrieved_sources(hybrid_results),
                     "evidence_status": "supported" if _flatten_retrieved_sources(hybrid_results) else "insufficient",

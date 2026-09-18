@@ -86,7 +86,6 @@ function initials(name = '') {
 }
 
 function DashboardPage({ role = 'user' }) {
-    if (role === 'consultant') return <ConsultantDashboard />
     const navigate = useNavigate()
     const [query, setQuery] = useState('')
     const [userName, setUserName] = useState('')
@@ -100,6 +99,8 @@ function DashboardPage({ role = 'user' }) {
     const [isSubmitting, setIsSubmitting] = useState(false)
 
     useEffect(() => {
+        if (role === 'consultant') return undefined
+
         let isMounted = true
         const user = auth.currentUser
 
@@ -137,7 +138,9 @@ function DashboardPage({ role = 'user' }) {
         })
 
         return () => { isMounted = false }
-    }, [])
+    }, [role])
+
+    if (role === 'consultant') return <ConsultantDashboard />
 
     const submitQuery = (event) => {
         event.preventDefault()

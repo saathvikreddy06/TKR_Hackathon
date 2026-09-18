@@ -1,5 +1,4 @@
 ﻿import json
-import importlib
 import os
 import re
 import math
@@ -9,9 +8,7 @@ from collections import defaultdict
 
 from app.firebase import db
 from app.embedding_runtime import load_embedding_model
-
-
-ijson = importlib.import_module("ijson")
+from app.structured_lookup import StructuredLookupIndex
 
 
 os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
@@ -61,6 +58,16 @@ LIMS_TESTS_PATH = os.path.join(
     "bis_lims_tests.json"
 )
 
+LIMS_LABS_PATH = os.path.join(
+    LIMS_TESTS_DIR,
+    "bis_lims_labs.json"
+)
+
+STRUCTURED_LIMS_INDEX_PATH = os.path.join(
+    PROCESSED_DIR,
+    "structured_lims_lookup.sqlite3"
+)
+
 MODEL_NAME = (
     "sentence-transformers/"
     "paraphrase-multilingual-MiniLM-L12-v2"
@@ -82,28 +89,26 @@ FIRESTORE_VECTOR_DIMENSIONS = 384
 # ============================================================
 
 def extract_is_numbers(query):
+    pattern = re.compile(
+        r"\b(?:I\.S\.?|IS|IEC(?:\s*/\s*IS)?)\s*"
+        r"(?:NO\.?\s*)?(\d{3,6})"
+        r"(?:\s*\(??\s*(?:PART|PT)\s*[-./]?\s*(\d{1,3})\s*\)??)?"
+        r"(?:\s*[:/-]?\s*(\d{4}))?",
+        re.IGNORECASE,
+    )
 
-    patterns = [
-        r"\bIS\s*(?:No\.?\s*)?(\d{3,6})\b",
-        r"\bI\.S\.?\s*(?:No\.?\s*)?(\d{3,6})\b",
-    ]
+    identifiers = []
+    for match in pattern.finditer(query or ""):
+        number, part, year = match.groups()
+        value = f"IS {number}"
+        if part:
+            value += f" Part {part}"
+        if year:
+            value += f":{year}"
+        if value not in identifiers:
+            identifiers.append(value)
 
-    numbers = []
-
-    for pattern in patterns:
-
-        for match in re.findall(
-            pattern,
-            query,
-            re.IGNORECASE
-        ):
-
-            value = str(match).strip()
-
-            if value and value not in numbers:
-                numbers.append(value)
-
-    return numbers
+    return identifiers
 
 
 # ============================================================
@@ -278,12 +283,21 @@ class HybridRetriever:
 
         self.standards = []
         self.standards_by_number = {}
+        self.standards_by_base = defaultdict(list)
         self.standards_by_title = []
 
         self.qco_links = []
         self.qco_by_number = defaultdict(list)
+        self.qco_by_base = defaultdict(list)
+        self.qco_status = "not_found"
+        self.qco_error = None
 
         self.lims_tests_path = LIMS_TESTS_PATH
+        self.structured_lims = StructuredLookupIndex(
+            LIMS_TESTS_PATH,
+            LIMS_LABS_PATH,
+            STRUCTURED_LIMS_INDEX_PATH,
+        )
 
         self._load_semantic_embeddings()
         self._load_standards()
@@ -426,6 +440,10 @@ class HybridRetriever:
                     item
                 )
 
+                base_key = self._normalize_is_base(number)
+                if base_key:
+                    self.standards_by_base[base_key].append(item)
+
             self.standards_by_title = []
 
             for item in self.standards:
@@ -521,6 +539,9 @@ class HybridRetriever:
                 "QCO links file not found"
             )
 
+            self.qco_status = "error"
+            self.qco_error = "QCO relationship dataset is unavailable."
+
             return
 
         try:
@@ -558,6 +579,7 @@ class HybridRetriever:
                 data = []
 
             self.qco_links = data
+            self.qco_status = "supported" if data else "not_found"
 
             for item in data:
 
@@ -567,32 +589,24 @@ class HybridRetriever:
                 ):
                     continue
 
-                number = (
-                    item.get(
-                        "standard_number"
-                    )
-                    or item.get(
-                        "is_number"
-                    )
-                    or item.get(
-                        "standard_id"
-                    )
+                values = item.get("matched_is_numbers") or []
+                values = list(values) if isinstance(values, list) else [values]
+                values.append(
+                    item.get("standard_number")
+                    or item.get("is_number")
+                    or item.get("standard_id")
                 )
 
-                if not number:
-                    continue
+                for number in values:
+                    if not number:
+                        continue
 
-                normalized = (
-                    self._normalize_is_number(
-                        number
-                    )
-                )
+                    for normalized in self._identifier_keys(number):
+                        self.qco_by_number[normalized].append(item)
 
-                self.qco_by_number[
-                    normalized
-                ].append(
-                    item
-                )
+                    base_key = self._normalize_is_base(number)
+                    if base_key:
+                        self.qco_by_base[base_key].append(item)
 
         except Exception as e:
 
@@ -604,6 +618,8 @@ class HybridRetriever:
             traceback.print_exc()
 
             self.qco_links = []
+            self.qco_status = "error"
+            self.qco_error = f"{type(e).__name__}: {e}"
 
     # ========================================================
     # LOAD LIMS TESTS
@@ -611,23 +627,9 @@ class HybridRetriever:
 
     def _load_lims_tests(self):
         if os.path.isfile(self.lims_tests_path):
-            print("LIMS tests: lazy streaming enabled")
+            print("LIMS tests: indexed lookup enabled")
         else:
             print("LIMS tests file not found:", self.lims_tests_path)
-
-    def _iter_lims_tests(self):
-        if not os.path.isfile(self.lims_tests_path):
-            return
-
-        try:
-            with open(self.lims_tests_path, "rb") as file:
-                yield from ijson.items(file, "item")
-        except Exception as exc:
-            print(
-                "LIMS streaming error:",
-                repr(exc)
-            )
-            traceback.print_exc()
 
     # ========================================================
     # IS NUMBER NORMALIZATION
@@ -637,27 +639,19 @@ class HybridRetriever:
     def _normalize_is_number(
         value
     ):
+        keys = StructuredLookupIndex.identifier_keys(value)
+        return StructuredLookupIndex.primary_key(value) if keys else ""
 
-        if value is None:
+    @staticmethod
+    def _normalize_is_base(value):
+        keys = StructuredLookupIndex.identifier_keys(value)
+        if not keys:
             return ""
+        return min(keys, key=lambda key: (key.count(":"), len(key)))
 
-        text = str(
-            value
-        ).upper().strip()
-
-        text = re.sub(
-            r"[^A-Z0-9]+",
-            "",
-            text
-        )
-
-        if text.startswith(
-            "IS"
-        ):
-
-            text = text[2:]
-
-        return text
+    @staticmethod
+    def _identifier_keys(value):
+        return StructuredLookupIndex.identifier_keys(value)
 
     # ========================================================
     # FIREBASE SEMANTIC SEARCH
@@ -949,6 +943,11 @@ class HybridRetriever:
                     ),
                 }
 
+                if not result["standard_number"]:
+                    extracted = extract_is_numbers(result["text"])
+                    if extracted:
+                        result["standard_number"] = extracted[0]
+
                 results.append(
                     result
                 )
@@ -1030,31 +1029,30 @@ class HybridRetriever:
     ):
 
         results = []
+        seen = set()
 
         for number in is_numbers:
+            keys = self._identifier_keys(number)
+            base_key = self._normalize_is_base(number)
+            candidate_items = []
+            for key in keys:
+                candidate_items.extend(self.standards_by_number.get(key, []))
+            if base_key:
+                candidate_items.extend(self.standards_by_base.get(base_key, []))
 
-            normalized = (
-                self._normalize_is_number(
-                    number
+            for item in candidate_items:
+                identity = (
+                    item.get("standard_id")
+                    or item.get("document_id")
+                    or item.get("standard_number")
+                    or id(item)
                 )
-            )
-
-            for item in self.standards_by_number.get(
-                normalized,
-                []
-            ):
-
-                result = dict(
-                    item
-                )
-
-                result[
-                    "match_type"
-                ] = "exact_standard"
-
-                results.append(
-                    result
-                )
+                if identity in seen:
+                    continue
+                seen.add(identity)
+                result = dict(item)
+                result["match_type"] = "exact_standard"
+                results.append(result)
 
         return self._deduplicate_results(
             results
@@ -1079,9 +1077,31 @@ class HybridRetriever:
         if not normalized_query:
             return []
 
-        query_tokens = set(
-            normalized_query.split()
-        )
+        stop_words = {
+            "bis",
+            "standard",
+            "standards",
+            "indian",
+            "on",
+            "for",
+            "the",
+            "and",
+            "of",
+            "related",
+            "test",
+            "tests",
+            "testing",
+            "laboratory",
+            "laboratories",
+            "lab",
+            "required",
+            "requirements",
+        }
+        query_tokens = {
+            token
+            for token in normalized_query.split()
+            if token not in stop_words
+        }
 
         scored = []
 
@@ -1155,32 +1175,68 @@ class HybridRetriever:
         results = []
 
         for number in is_numbers:
+            keys = self._identifier_keys(number)
+            base_key = self._normalize_is_base(number)
+            candidate_items = []
+            for key in keys:
+                candidate_items.extend(self.qco_by_number.get(key, []))
+            if base_key:
+                candidate_items.extend(self.qco_by_base.get(base_key, []))
 
-            normalized = (
-                self._normalize_is_number(
-                    number
-                )
-            )
-
-            for item in self.qco_by_number.get(
-                normalized,
-                []
-            ):
-
-                result = dict(
-                    item
-                )
-
-                result[
-                    "match_type"
-                ] = "qco_relationship"
-
-                results.append(
-                    result
-                )
+            for item in candidate_items:
+                result = dict(item)
+                result["match_type"] = "qco_relationship"
+                results.append(result)
 
         return self._deduplicate_results(
             results
+        )
+
+    def qco_product_search(self, query, limit=30):
+        terms = {
+            token
+            for token in normalize_search_text(query).split()
+            if len(token) > 2
+            and token not in {
+                "bis", "qco", "quality", "control", "order",
+                "orders", "for", "the", "and", "related", "on",
+            }
+        }
+        if not terms:
+            return []
+
+        scored = []
+        for item in self.qco_links:
+            standard_number = item.get("standard_number") or ""
+            standard_items = self.standards_by_number.get(
+                self._normalize_is_number(standard_number), []
+            )
+            title = " ".join(
+                str(standard.get("title") or "")
+                for standard in standard_items
+            )
+            evidence = " ".join(
+                str(item.get(field) or "")
+                for field in ("relationship", "evidence", "product", "category")
+            )
+            haystack = normalize_search_text(f"{title} {evidence}")
+            overlap = len(terms & set(haystack.split()))
+            if overlap:
+                result = dict(item)
+                result["match_type"] = "qco_relationship"
+                scored.append((overlap, result))
+
+        scored.sort(key=lambda pair: pair[0], reverse=True)
+        return self._deduplicate_results(
+            [item for _, item in scored[:limit]]
+        )
+
+    def lims_search(self, is_numbers, test_limit=50, lab_limit=20):
+        """Return verified LIMS tests and laboratories for standard identifiers."""
+        return self.structured_lims.lookup(
+            is_numbers,
+            test_limit=test_limit,
+            lab_limit=lab_limit,
         )
 
     # ========================================================
@@ -1193,87 +1249,12 @@ class HybridRetriever:
         limit=20
     ):
 
-        if not is_numbers:
-            return []
-
-        wanted = {
-            self._normalize_is_number(
-                number
-            )
-            for number in is_numbers
-        }
-
-        results = []
-
-        for item in self._iter_lims_tests():
-
-            number = (
-                item.get(
-                    "standard_number"
-                )
-                or item.get(
-                    "is_number"
-                )
-                or item.get(
-                    "standard"
-                )
-                or item.get(
-                    "indian_standard_no"
-                )
-            )
-
-            if not number:
-                continue
-
-            normalized = (
-                self._normalize_is_number(
-                    number
-                )
-            )
-
-            if normalized not in wanted:
-                continue
-
-            lab_name = (
-                item.get(
-                    "lab_name"
-                )
-                or item.get(
-                    "laboratory"
-                )
-                or item.get(
-                    "lab"
-                )
-            )
-
-            if not lab_name:
-                continue
-
-            result = dict(
-                item
-            )
-
-            result[
-                "standard_number"
-            ] = number
-
-            result[
-                "match_type"
-            ] = "lims_lab"
-
-            results.append(
-                result
-            )
-
-            if len(
-                results
-            ) >= limit:
-
-                break
-
-        return self._deduplicate_results(
-            results
+        indexed = self.lims_search(
+            is_numbers,
+            test_limit=max(limit, 50),
+            lab_limit=limit,
         )
+        return indexed.get("laboratories", [])
 
     # ========================================================
     # TEST SEARCH
@@ -1285,72 +1266,12 @@ class HybridRetriever:
         limit=50
     ):
 
-        if not is_numbers:
-            return []
-
-        wanted = {
-            self._normalize_is_number(
-                number
-            )
-            for number in is_numbers
-        }
-
-        results = []
-
-        for item in self._iter_lims_tests():
-
-            number = (
-                item.get(
-                    "standard_number"
-                )
-                or item.get(
-                    "is_number"
-                )
-                or item.get(
-                    "standard"
-                )
-                or item.get(
-                    "indian_standard_no"
-                )
-            )
-
-            if not number:
-                continue
-
-            normalized = (
-                self._normalize_is_number(
-                    number
-                )
-            )
-
-            if normalized not in wanted:
-                continue
-
-            result = dict(
-                item
-            )
-
-            result[
-                "standard_number"
-            ] = number
-
-            result[
-                "match_type"
-            ] = "lims_test"
-
-            results.append(
-                result
-            )
-
-            if len(
-                results
-            ) >= limit:
-
-                break
-
-        return self._deduplicate_results(
-            results
+        indexed = self.lims_search(
+            is_numbers,
+            test_limit=limit,
+            lab_limit=20,
         )
+        return indexed.get("tests", [])
 
     # ========================================================
     # DEDUPLICATION
@@ -1436,102 +1357,51 @@ class HybridRetriever:
             is_numbers
         )
 
-        # ----------------------------------------------------
-        # LABORATORY
-        # ----------------------------------------------------
+        # Retrieve general BIS knowledge for every in-scope intent. The
+        # structured lookups below remain deterministic and evidence-backed.
+        discovery_limit = max(int(semantic_limit), 20)
+        keyword_limit = max(int(semantic_limit), 50)
+        semantic = self.semantic_search(
+            query,
+            discovery_limit
+        )
 
-        if intent == "laboratory":
+        exact = self.exact_standards(
+            is_numbers
+        )
 
-            exact = self.exact_standards(
-                is_numbers
-            )
-
-            labs = self.lab_search(
-                is_numbers,
-                lab_limit
-            )
-
-        # ----------------------------------------------------
-        # QCO
-        # ----------------------------------------------------
-
-        elif intent == "qco":
-
-            exact = self.exact_standards(
-                is_numbers
-            )
-
-            qco = self.qco_search(
-                is_numbers
-            )
-
-        # ----------------------------------------------------
-        # TESTING
-        # ----------------------------------------------------
-
-        elif intent == "testing":
-
-            exact = self.exact_standards(
-                is_numbers
-            )
-
-            tests = self.test_search(
-                is_numbers,
-                50
-            )
-
-        # ----------------------------------------------------
-        # STANDARD
-        # ----------------------------------------------------
-
-        elif intent == "standard":
-
-            semantic = self.semantic_search(
-                query,
-                semantic_limit
-            )
-
-            exact = self.exact_standards(
-                is_numbers
-            )
-
-            keyword_results = (
+        if not is_numbers:
+            exact.extend(
                 self.standard_keyword_search(
                     query,
-                    semantic_limit
+                    keyword_limit
                 )
             )
+        exact = self._deduplicate_results(exact)
 
-            exact.extend(
-                keyword_results
-            )
-
-            exact = (
-                self._deduplicate_results(
-                    exact
+        lookup_identifiers = list(is_numbers)
+        if not is_numbers:
+            for item in exact + semantic:
+                identifier = (
+                    item.get("standard_number")
+                    or item.get("is_number")
+                    or (item.get("metadata") or {}).get("standard_number")
+                    or (item.get("metadata") or {}).get("is_number")
                 )
-            )
+                if identifier and identifier not in lookup_identifiers:
+                    lookup_identifiers.append(identifier)
 
-        # ----------------------------------------------------
-        # GENERAL
-        # ----------------------------------------------------
-
-        else:
-
-            semantic = self.semantic_search(
-                query,
-                semantic_limit
-            )
-
-            exact = self.exact_standards(
-                is_numbers
-            )
-
-            if is_numbers:
-
-                qco = self.qco_search(
-                    is_numbers
-                )
+        qco = self.qco_search(lookup_identifiers)
+        if not is_numbers and intent == "qco":
+            qco.extend(self.qco_product_search(query))
+            qco = self._deduplicate_results(qco)
+        lims = self.lims_search(
+            lookup_identifiers,
+            test_limit=50,
+            lab_limit=lab_limit,
+        )
+        tests = lims.get("tests", [])
+        labs = lims.get("laboratories", [])
 
         result = {
             "query": query,
@@ -1542,6 +1412,14 @@ class HybridRetriever:
             "qco": qco,
             "labs": labs,
             "tests": tests,
+            "standards": exact,
+            "knowledge": semantic,
+            "laboratories": labs,
+            "qcos": qco,
+            "structured_status": lims.get("status", "not_found"),
+            "structured_error": lims.get("error"),
+            "qco_status": self.qco_status,
+            "qco_error": self.qco_error,
         }
 
         print(
@@ -1622,6 +1500,14 @@ def search(
             "qco": [],
             "labs": [],
             "tests": [],
+            "standards": [],
+            "knowledge": [],
+            "laboratories": [],
+            "qcos": [],
+            "structured_status": "error",
+            "structured_error": "Hybrid retriever is unavailable.",
+            "qco_status": "error",
+            "qco_error": "Hybrid retriever is unavailable.",
         }
 
     return hybrid_retriever.search(

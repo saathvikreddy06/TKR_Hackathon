@@ -8,6 +8,3 @@ requests
 google-cloud-firestore>=2.21.0
 onnxruntime
 ijson
-onnx
-sentence-transformers
-torch

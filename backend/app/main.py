@@ -1,3 +1,5 @@
+import os
+
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -37,6 +39,12 @@ app = FastAPI(
 # CORS CONFIGURATION
 # ============================================================
 
+configured_origins = [
+    origin.strip()
+    for origin in os.getenv("CORS_ALLOWED_ORIGINS", "").split(",")
+    if origin.strip()
+]
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -47,7 +55,7 @@ app.add_middleware(
         # Production frontend
         "https://sih-2026-nu-liard.vercel.app",
         "https://sih-2026-one-kappa.vercel.app",
-    ],
+    ] + configured_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -333,6 +341,11 @@ def search(
         return {
             "query": request.query,
             "answer": scope_response["answer"],
+            "standards": [],
+            "knowledge": [],
+            "tests": [],
+            "laboratories": [],
+            "qcos": [],
             "sources": [],
             "in_scope": False,
             **response_language
@@ -394,9 +407,18 @@ def search(
         "title": generated.get("title"),
         "summary": generated.get("summary"),
         "sections": generated.get("sections", []),
+        "standards": hybrid_results.get("standards", hybrid_results.get("exact_standards", [])),
+        "knowledge": hybrid_results.get("knowledge", hybrid_results.get("semantic", [])),
+        "tests": hybrid_results.get("tests", []),
+        "laboratories": hybrid_results.get("laboratories", hybrid_results.get("labs", [])),
+        "qcos": hybrid_results.get("qcos", hybrid_results.get("qco", [])),
         "sources": generated.get("sources", []),
         "followups": generated.get("followups", []),
         "evidence_status": generated.get("evidence_status", "supported" if generated.get("sources") else "insufficient"),
+        "structured_status": hybrid_results.get("structured_status", "not_found"),
+        "structured_error": hybrid_results.get("structured_error"),
+        "qco_status": hybrid_results.get("qco_status", "not_found"),
+        "qco_error": hybrid_results.get("qco_error"),
         "in_scope": True,
         **response_language
     }
