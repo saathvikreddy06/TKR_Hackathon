@@ -88,12 +88,12 @@ function StructuredResponse({ message, language, onFollowup }) {
 
     for (const source of message.sources || []) {
         const key = [
-            source.standard_number || source.number || source.id || '',
+            source.standard_number || source.number || source.id || source.identifier || '',
             source.part || '',
             source.year || '',
             source.lab_code || '',
             source.qco_document_id || '',
-            source.source_url || source.document_url || ''
+            source.source_url || source.document_url || source.url || ''
         ].join('|')
 
         if (seen.has(key)) continue
@@ -104,6 +104,108 @@ function StructuredResponse({ message, language, onFollowup }) {
 
     const [copied, setCopied] = useState(false)
     const sections = message.sections || []
+
+    const renderSectionBody = (section) => {
+        if (!section) return null
+
+        if (section.type === 'standards' && Array.isArray(section.items)) {
+            return (
+                <div className="section-grid">
+                    {section.items.map((item) => (
+                        <article className="standard-card" key={`${item.standard_number || item.title}-${item.evidence_id || item.description}`}>
+                            <div className="card-headline">
+                                <span className="card-label">{item.standard_number || 'BIS record'}</span>
+                            </div>
+                            <h4>{item.title || 'BIS record'}</h4>
+                            <p>{item.description || 'No description was available in the retrieved evidence.'}</p>
+                            {item.evidence_id && <small className="evidence-meta">Evidence ID: {item.evidence_id}</small>}
+                        </article>
+                    ))}
+                </div>
+            )
+        }
+
+        if (section.type === 'testing' && Array.isArray(section.tests)) {
+            return (
+                <div>
+                    {section.content && <ReactMarkdown remarkPlugins={[remarkGfm]}>{section.content}</ReactMarkdown>}
+                    {section.tests.length > 0 && (
+                        <div className="section-grid">
+                            {section.tests.map((test, index) => (
+                                <article className="standard-card" key={`${test.standard_number}-${test.product}-${index}`}>
+                                    <div className="card-headline"><span className="card-label">{test.standard_number || 'Standard'}</span></div>
+                                    <h4>{test.product || 'Test record'}</h4>
+                                    {test.designation && <p><strong>Designation:</strong> {test.designation}</p>}
+                                    {(test.lab_name || test.lab_code) && <p><strong>Lab:</strong> {test.lab_name || 'Lab'} {test.lab_code ? `(${test.lab_code})` : ''}</p>}
+                                    <p>{test.evidence || 'Test evidence was not available in the retrieved records.'}</p>
+                                </article>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            )
+        }
+
+        if (section.type === 'laboratories' && Array.isArray(section.labs)) {
+            if (section.labs.length === 0) {
+                return <p>{section.content}</p>
+            }
+
+            return (
+                <div className="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Laboratory</th>
+                                <th>Lab Code</th>
+                                <th>Relevant Capability</th>
+                                <th>Standard</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {section.labs.map((lab, index) => (
+                                <tr key={`${lab.lab_name}-${lab.lab_code}-${index}`}>
+                                    <td>{lab.lab_name || 'BIS laboratory'}</td>
+                                    <td>{lab.lab_code || '-'}</td>
+                                    <td>{lab.capability || 'Laboratory information available in retrieved BIS records.'}</td>
+                                    <td>{lab.standard_number || '-'}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            )
+        }
+
+        if (section.type === 'qco' && Array.isArray(section.qcos)) {
+            if (section.qcos.length === 0) {
+                return <p>{section.content}</p>
+            }
+
+            return (
+                <div className="section-grid">
+                    {section.qcos.map((qco, index) => (
+                        <article className="standard-card" key={`${qco.qco_document_id || qco.relationship || 'qco'}-${index}`}>
+                            <div className="card-headline"><span className="card-label">{qco.qco_document_id || 'QCO record'}</span></div>
+                            <h4>{qco.relationship || 'QCO relationship'}</h4>
+                            <p><strong>Standard:</strong> {qco.standard_number || 'Not provided'}</p>
+                            <p>{qco.evidence || 'No evidence text was retrieved.'}</p>
+                        </article>
+                    ))}
+                </div>
+            )
+        }
+
+        if (section.type === 'certification' || section.type === 'related' || section.type === 'overview') {
+            return <ReactMarkdown remarkPlugins={[remarkGfm]}>{section.content || ''}</ReactMarkdown>
+        }
+
+        if (typeof section.content === 'string') {
+            return <ReactMarkdown remarkPlugins={[remarkGfm]}>{section.content}</ReactMarkdown>
+        }
+
+        return null
+    }
 
     return (
         <>
@@ -133,12 +235,15 @@ function StructuredResponse({ message, language, onFollowup }) {
                 )}
             </div>
 
+            {message.title && <h2 className="structured-title">{message.title}</h2>}
+            {message.summary && <p className="structured-summary">{message.summary}</p>}
+
             {message.evidenceStatus === 'insufficient' && (
                 <p className="evidence-note">{t.evidenceIncomplete}</p>
             )}
 
             <div className="answer-actions">
-                <button type="button" onClick={() => copyText(message.text, setCopied)}>
+                <button type="button" onClick={() => copyText(message.text || message.answer || '', setCopied)}>
                     {copied ? t.copied : t.copyAnswer}
                 </button>
             </div>
@@ -146,11 +251,9 @@ function StructuredResponse({ message, language, onFollowup }) {
             {sections.length > 0 && (
                 <div className="structured-sections">
                     {sections.map((section) => (
-                        <section className="structured-section" key={section.title}>
+                        <section className="structured-section" key={`${section.title}-${section.type}`}>
                             <h3>{section.title}</h3>
-                            <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                                {section.content}
-                            </ReactMarkdown>
+                            {renderSectionBody(section)}
                         </section>
                     ))}
                 </div>
@@ -166,6 +269,7 @@ function StructuredResponse({ message, language, onFollowup }) {
                         const standardNumber =
                             source.standard_number ||
                             source.number ||
+                            source.identifier ||
                             source.id
 
                         const standardLabel = [
@@ -181,6 +285,8 @@ function StructuredResponse({ message, language, onFollowup }) {
                             .join(' ')
 
                         const sourceText = source.evidence || source.title || source.identifier || ''
+                        const sourceUrl = source.url || source.source_url || source.document_url || getOfficialSourceUrl(source)
+
                         return (
                             <div
                                 className="source-item"
@@ -196,7 +302,7 @@ function StructuredResponse({ message, language, onFollowup }) {
                                         {source.source && <>{source.source} </>}
                                         {source.lab_name && <>• {source.lab_name} </>}
                                         {source.lab_code && <>• Lab {source.lab_code} </>}
-                                        {source.qco_identifier && <>• QCO {source.qco_identifier}</>}
+                                        {source.qco_document_id && <>• QCO {source.qco_document_id}</>}
                                     </small>
                                 </span>
 
@@ -207,9 +313,9 @@ function StructuredResponse({ message, language, onFollowup }) {
                                     </details>
                                 )}
 
-                                {getOfficialSourceUrl(source) && (
+                                {sourceUrl && (
                                     <a
-                                        href={getOfficialSourceUrl(source)}
+                                        href={sourceUrl}
                                         target="_blank"
                                         rel="noreferrer"
                                         aria-label={`${t.viewSource}: ${standardNumber || 'BIS'}`}
@@ -320,10 +426,13 @@ function AssistantPage({ language = 'en', onLanguageChange }) {
                 {
                     from: 'assistant',
                     text: data.answer,
+                    answer: data.answer,
+                    title: data.title,
+                    summary: data.summary,
                     confidence: data.in_scope ? 'High' : 'Insufficient evidence',
                     sources: data.in_scope ? (data.sources || []) : [],
                     sections: data.sections || [],
-                    evidenceStatus: data.evidence_status,
+                    evidenceStatus: data.evidence_status || 'supported',
                     followups: data.followups || [],
                     languageName: data.language_name
                 }

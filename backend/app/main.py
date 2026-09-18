@@ -390,8 +390,13 @@ def search(
 
     response = {
         "query": request.query,
-        "answer": generated["answer"],
-        "sources": generated["sources"],
+        "answer": generated.get("answer", ""),
+        "title": generated.get("title"),
+        "summary": generated.get("summary"),
+        "sections": generated.get("sections", []),
+        "sources": generated.get("sources", []),
+        "followups": generated.get("followups", []),
+        "evidence_status": generated.get("evidence_status", "supported" if generated.get("sources") else "insufficient"),
         "in_scope": True,
         **response_language
     }
