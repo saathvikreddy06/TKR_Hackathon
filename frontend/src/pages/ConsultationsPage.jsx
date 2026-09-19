@@ -71,7 +71,7 @@ function ConsultationsPage({ role = 'user' }) {
     const saveConsultantProfile = async (event) => {
         event.preventDefault()
         try {
-            await createConsultant({ name: profileName, bio: profileBio, expertise: profileExpertise.split(',').map((item) => item.trim()).filter(Boolean) })
+            await createConsultant({ name: profileName, bio: profileBio, expertise: (profileExpertise || '').split(',').map((item) => item.trim()).filter(Boolean) })
             setStatus('Consultant profile created.')
         } catch (error) { setStatus(error.message) }
     }
